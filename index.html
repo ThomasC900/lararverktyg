@@ -3,22 +3,367 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Lärarverktyg</title>
+
+  <style>
+    :root {
+      --bg: #f4f7f5;
+      --surface: #ffffff;
+      --text: #1f2933;
+      --muted: #64748b;
+      --accent: #2f6f5e;
+      --accent-dark: #245548;
+      --border: #dce5e1;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, #2f6f5e, #4f8b78);
+      color: white;
+      padding: 60px 24px 50px;
+    }
+
+    .header-content {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2.3rem, 6vw, 4.4rem);
+      letter-spacing: -0.03em;
+    }
+
+    .intro {
+      max-width: 720px;
+      margin: 0;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 45px 24px 70px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 38px;
+    }
+
+    .search {
+      flex: 1;
+      min-width: 230px;
+      max-width: 450px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: var(--surface);
+    }
+
+    .theme-button {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    section {
+      margin-bottom: 48px;
+    }
+
+    h2 {
+      margin-bottom: 18px;
+      font-size: 1.7rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      min-height: 220px;
+      padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.11);
+    }
+
+    .icon {
+      font-size: 2.4rem;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.25rem;
+    }
+
+    .card p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+
+    .card a,
+    .coming-soon {
+      display: inline-block;
+      align-self: flex-start;
+      text-decoration: none;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .coming-soon {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 25px;
+      font-size: 0.9rem;
+    }
+
+    body.dark {
+      --bg: #17201d;
+      --surface: #222d29;
+      --text: #edf4f1;
+      --muted: #b4c4be;
+      --accent: #89c7b1;
+      --border: #35443f;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    body.dark header {
+      background: linear-gradient(135deg, #183b31, #2e5d4e);
+    }
+
+    body.dark input {
+      color: var(--text);
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 45px 20px 38px;
+      }
+
+      main {
+        padding: 30px 18px 50px;
+      }
+
+      .card {
+        min-height: auto;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Lärarverktyg</h1>
 
-  <p>
-    Digitala verktyg och aktiviteter för undervisningen.
-  </p>
+  <header>
+    <div class="header-content">
+      <h1>Lärarverktyg</h1>
+      <p class="intro">
+        Digitala spel, aktiviteter och hjälpmedel för klassrummet.
+        Enkla att starta och gjorda för att fungera direkt i webbläsaren.
+      </p>
+    </div>
+  </header>
 
-  <h2>Verktyg</h2>
+  <main>
 
-  <p>
-    Här kommer snart Multiplikationsbingo, Pay Out,
-    Jeopardy och andra undervisningsverktyg.
-  </p>
+    <div class="toolbar">
+      <div class="search">
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Sök bland verktygen..."
+          aria-label="Sök bland verktygen"
+        >
+      </div>
+
+      <button class="theme-button" id="themeButton">
+        🌙 Mörkt läge
+      </button>
+    </div>
+
+
+    <section>
+      <h2>Matematik</h2>
+
+      <div class="grid">
+
+        <article class="card">
+          <div class="icon">✖️</div>
+          <h3>Multiplikationsbingo</h3>
+          <p>
+            Träna multiplikation på ett enkelt och spelifierat sätt.
+          </p>
+          <span class="coming-soon">Kommer snart</span>
+        </article>
+
+        <article class="card">
+          <div class="icon">💰</div>
+          <h3>Pay Out</h3>
+          <p>
+            Ett strategiskt matematikspel för elever och klassrum.
+          </p>
+          <span class="coming-soon">Kommer snart</span>
+        </article>
+
+        <article class="card">
+          <div class="icon">🎯</div>
+          <h3>Jeopardy</h3>
+          <p>
+            Quizformat för repetition, huvudräkning och andra ämnesområden.
+          </p>
+          <span class="coming-soon">Kommer snart</span>
+        </article>
+
+      </div>
+    </section>
+
+
+    <section>
+      <h2>Spel & quiz</h2>
+
+      <div class="grid">
+
+        <article class="card">
+          <div class="icon">🎵</div>
+          <h3>Musikquiz</h3>
+          <p>
+            Färdiga musikquiz som fungerar bra på stor skärm.
+          </p>
+          <span class="coming-soon">Kommer snart</span>
+        </article>
+
+        <article class="card">
+          <div class="icon">🚶</div>
+          <h3>Tipspromenader</h3>
+          <p>
+            Frågor och aktiviteter för undervisning och avslutningar.
+          </p>
+          <span class="coming-soon">Kommer snart</span>
+        </article>
+
+        <article class="card">
+          <div class="icon">♟️</div>
+          <h3>Schack</h3>
+          <p>
+            Verktyg för turneringar, resultat och aktiviteter.
+          </p>
+          <span class="coming-soon">Kommer snart</span>
+        </article>
+
+      </div>
+    </section>
+
+
+    <section>
+      <h2>Klassrumsverktyg</h2>
+
+      <div class="grid">
+
+        <article class="card">
+          <div class="icon">👥</div>
+          <h3>Gruppgenerator</h3>
+          <p>
+            Skapa slumpmässiga grupper snabbt och enkelt.
+          </p>
+          <span class="coming-soon">Kommer snart</span>
+        </article>
+
+        <article class="card">
+          <div class="icon">🏃</div>
+          <h3>Brännboll</h3>
+          <p>
+            Hantera matcher, resultat och tabeller i en brännbollsturnering.
+          </p>
+          <span class="coming-soon">Kommer snart</span>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <footer>
+    Lärarverktyg · Digitala verktyg för undervisningen
+  </footer>
+
+
+  <script>
+    const searchInput = document.getElementById("searchInput");
+    const cards = document.querySelectorAll(".card");
+
+    searchInput.addEventListener("input", function () {
+      const searchTerm = this.value.toLowerCase();
+
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+
+        if (text.includes(searchTerm)) {
+          card.style.display = "flex";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+
+
+    const themeButton = document.getElementById("themeButton");
+
+    themeButton.addEventListener("click", function () {
+      document.body.classList.toggle("dark");
+
+      if (document.body.classList.contains("dark")) {
+        themeButton.textContent = "☀️ Ljust läge";
+      } else {
+        themeButton.textContent = "🌙 Mörkt läge";
+      }
+    });
+  </script>
 
 </body>
 </html>
