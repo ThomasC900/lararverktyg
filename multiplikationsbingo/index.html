@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Multiplikationsbingo</title>
+
   <style>
     :root {
       --bg: #f4f7fb;
@@ -17,7 +18,9 @@
       --border: #dbe3f0;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -40,7 +43,9 @@
       gap: 20px;
     }
 
-    header { text-align: center; }
+    header {
+      text-align: center;
+    }
 
     h1 {
       margin: 0;
@@ -108,8 +113,13 @@
       transition: transform 0.12s ease, background 0.12s ease, opacity 0.12s ease;
     }
 
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(1px); }
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
 
     .primary {
       background: var(--accent);
@@ -118,7 +128,9 @@
       padding: 18px 32px;
     }
 
-    .primary:hover { background: var(--accent-dark); }
+    .primary:hover {
+      background: var(--accent-dark);
+    }
 
     .secondary {
       background: #e0e7ff;
@@ -144,7 +156,9 @@
       box-shadow: 0 12px 35px rgba(30, 41, 59, 0.08);
     }
 
-    .history-panel.show { display: block; }
+    .history-panel.show {
+      display: block;
+    }
 
     .history-header {
       display: flex;
@@ -185,6 +199,27 @@
       color: var(--good);
       font-weight: 900;
       font-size: 1.2rem;
+    }
+
+    /* Tillbaka till startsidan */
+    .back-link {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 1000;
+      text-decoration: none;
+      background: rgba(255,255,255,0.95);
+      color: #172033;
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      box-shadow: 0 6px 18px rgba(30, 41, 59, 0.12);
+      transition: transform 0.12s ease;
+    }
+
+    .back-link:hover {
+      transform: translateY(-1px);
     }
 
     /* Projektorläge */
@@ -250,28 +285,12 @@
       background: rgba(255,80,80,0.22);
       color: white;
     }
-back-link {
-  position: fixed;
-  top: 18px;
-  left: 18px;
-  z-index: 1000;
-  text-decoration: none;
-  background: rgba(255,255,255,0.95);
-  color: #172033;
-  border: 1px solid var(--border);
-  padding: 10px 14px;
-  border-radius: 999px;
-  font-weight: 800;
-  box-shadow: 0 6px 18px rgba(30, 41, 59, 0.12);
-}
 
-.back-link:hover {
-  transform: translateY(-1px);
-}
+    /* Dölj tillbaka-knappen i projektorläge */
+    body.projector .back-link {
+      display: none;
+    }
 
-body.projector .back-link {
-  display: none;
-}
     @media print {
       body {
         background: white;
@@ -279,7 +298,9 @@ body.projector .back-link {
         color: black;
       }
 
-      header, .main-card {
+      header,
+      .main-card,
+      .back-link {
         display: none;
       }
 
@@ -299,30 +320,11 @@ body.projector .back-link {
     }
   </style>
 </head>
+
 <body>
-  .back-link {
-  position: fixed;
-  top: 18px;
-  left: 18px;
-  z-index: 1000;
-  text-decoration: none;
-  background: rgba(255,255,255,0.95);
-  color: #172033;
-  border: 1px solid var(--border);
-  padding: 10px 14px;
-  border-radius: 999px;
-  font-weight: 800;
-  box-shadow: 0 6px 18px rgba(30, 41, 59, 0.12);
-}
 
-.back-link:hover {
-  transform: translateY(-1px);
-}
-
-body.projector .back-link {
-  display: none;
-}
   <a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
+
   <div class="app">
     <header>
       <h1>Multiplikationsbingo</h1>
@@ -342,7 +344,9 @@ body.projector .back-link {
         <button class="danger" id="resetButton">Starta om</button>
       </div>
 
-      <div class="status" id="status">0 av 100 multiplikationer har slumpats.</div>
+      <div class="status" id="status">
+        0 av 100 multiplikationer har slumpats.
+      </div>
     </main>
 
     <section class="history-panel" id="historyPanel">
@@ -350,6 +354,7 @@ body.projector .back-link {
         <h2>Slumpade multiplikationer</h2>
         <div class="status" id="historyStatus">0 av 100</div>
       </div>
+
       <div id="historyList" class="history-grid">
         <div class="empty">Inga multiplikationer har slumpats ännu.</div>
       </div>
@@ -362,7 +367,11 @@ body.projector .back-link {
 
     for (let a = 1; a <= 10; a++) {
       for (let b = 1; b <= 10; b++) {
-        allMultiplications.push({ a, b, text: `${a} × ${b}` });
+        allMultiplications.push({
+          a,
+          b,
+          text: `${a} × ${b}`
+        });
       }
     }
 
@@ -391,8 +400,11 @@ body.projector .back-link {
     }
 
     function updateStatus() {
-      statusEl.textContent = `${drawn.length} av ${allMultiplications.length} multiplikationer har slumpats.`;
-      historyStatusEl.textContent = `${drawn.length} av ${allMultiplications.length}`;
+      statusEl.textContent =
+        `${drawn.length} av ${allMultiplications.length} multiplikationer har slumpats.`;
+
+      historyStatusEl.textContent =
+        `${drawn.length} av ${allMultiplications.length}`;
 
       if (drawn.length === allMultiplications.length) {
         drawButton.disabled = true;
@@ -423,8 +435,14 @@ body.projector .back-link {
 
     function toggleProjectorMode() {
       document.body.classList.toggle("projector");
-      const isProjector = document.body.classList.contains("projector");
-      projectorButton.textContent = isProjector ? "Avsluta projektorläge" : "Projektorläge";
+
+      const isProjector =
+        document.body.classList.contains("projector");
+
+      projectorButton.textContent =
+        isProjector
+          ? "Avsluta projektorläge"
+          : "Projektorläge";
 
       if (isProjector) {
         historyPanel.classList.remove("show");
@@ -440,7 +458,9 @@ body.projector .back-link {
         return;
       }
 
-      const randomIndex = Math.floor(Math.random() * remaining.length);
+      const randomIndex =
+        Math.floor(Math.random() * remaining.length);
+
       const chosen = remaining[randomIndex];
 
       drawn.push(chosen);
@@ -452,14 +472,23 @@ body.projector .back-link {
       updateStatus();
     });
 
-    projectorButton.addEventListener("click", toggleProjectorMode);
+    projectorButton.addEventListener(
+      "click",
+      toggleProjectorMode
+    );
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && document.body.classList.contains("projector")) {
+    document.addEventListener("keydown", event => {
+      if (
+        event.key === "Escape" &&
+        document.body.classList.contains("projector")
+      ) {
         toggleProjectorMode();
       }
 
-      if (event.code === "Space" && document.body.classList.contains("projector")) {
+      if (
+        event.code === "Space" &&
+        document.body.classList.contains("projector")
+      ) {
         event.preventDefault();
         drawButton.click();
       }
@@ -471,9 +500,12 @@ body.projector .back-link {
       }
 
       historyPanel.classList.toggle("show");
-      historyButton.textContent = historyPanel.classList.contains("show")
-        ? "Dölj slumpade"
-        : "Visa slumpade";
+
+      historyButton.textContent =
+        historyPanel.classList.contains("show")
+          ? "Dölj slumpade"
+          : "Visa slumpade";
+
       renderHistory();
     });
 
@@ -484,14 +516,20 @@ body.projector .back-link {
     });
 
     resetButton.addEventListener("click", () => {
-      const shouldReset = confirm("Vill du starta om och rensa alla slumpade multiplikationer?");
+      const shouldReset = confirm(
+        "Vill du starta om och rensa alla slumpade multiplikationer?"
+      );
+
       if (!shouldReset) return;
 
       drawn.length = 0;
+
       multiplicationEl.className = "placeholder";
       multiplicationEl.textContent = "Tryck på slumpa";
+
       drawButton.disabled = false;
       drawButton.style.opacity = "1";
+
       renderHistory();
       updateStatus();
     });
@@ -499,5 +537,6 @@ body.projector .back-link {
     renderHistory();
     updateStatus();
   </script>
+
 </body>
 </html>
