@@ -250,7 +250,28 @@
       background: rgba(255,80,80,0.22);
       color: white;
     }
+back-link {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 1000;
+  text-decoration: none;
+  background: rgba(255,255,255,0.95);
+  color: #172033;
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  box-shadow: 0 6px 18px rgba(30, 41, 59, 0.12);
+}
 
+.back-link:hover {
+  transform: translateY(-1px);
+}
+
+body.projector .back-link {
+  display: none;
+}
     @media print {
       body {
         background: white;
@@ -279,6 +300,29 @@
   </style>
 </head>
 <body>
+  .back-link {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 1000;
+  text-decoration: none;
+  background: rgba(255,255,255,0.95);
+  color: #172033;
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  box-shadow: 0 6px 18px rgba(30, 41, 59, 0.12);
+}
+
+.back-link:hover {
+  transform: translateY(-1px);
+}
+
+body.projector .back-link {
+  display: none;
+}
+  <a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
   <div class="app">
     <header>
       <h1>Multiplikationsbingo</h1>
