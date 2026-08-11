@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multiplikationsbingo</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #657089;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --good: #16a34a;
+      --danger: #dc2626;
+      --border: #dbe3f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, #dbeafe 0, transparent 30%),
+        radial-gradient(circle at bottom right, #dcfce7 0, transparent 25%),
+        var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 24px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .app {
+      width: min(1100px, 100%);
+      display: grid;
+      gap: 20px;
+    }
+
+    header { text-align: center; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-top: 8px;
+    }
+
+    .main-card {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(30, 41, 59, 0.12);
+      padding: clamp(20px, 4vw, 42px);
+      display: grid;
+      gap: 24px;
+      text-align: center;
+      transition: all 0.25s ease;
+    }
+
+    .multiplication-box {
+      min-height: 240px;
+      display: grid;
+      place-items: center;
+      border-radius: 26px;
+      background: linear-gradient(135deg, #eff6ff, #ffffff 45%, #f0fdf4);
+      border: 2px dashed #bfdbfe;
+      padding: 28px;
+      transition: all 0.25s ease;
+    }
+
+    .multiplication {
+      font-size: clamp(4rem, 16vw, 10rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.08em;
+    }
+
+    .placeholder {
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 16px 24px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease, opacity 0.12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(1px); }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+      font-size: 1.3rem;
+      padding: 18px 32px;
+    }
+
+    .primary:hover { background: var(--accent-dark); }
+
+    .secondary {
+      background: #e0e7ff;
+      color: #1e3a8a;
+    }
+
+    .danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .history-panel {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 12px 35px rgba(30, 41, 59, 0.08);
+    }
+
+    .history-panel.show { display: block; }
+
+    .history-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 10px;
+    }
+
+    .history-item {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .finished {
+      color: var(--good);
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    /* Projektorläge */
+    body.projector {
+      background: #020617;
+      color: white;
+      padding: 10px;
+    }
+
+    body.projector header {
+      display: none;
+    }
+
+    body.projector .app {
+      width: 100%;
+      min-height: calc(100vh - 20px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    body.projector .main-card {
+      min-height: calc(100vh - 20px);
+      border-radius: 32px;
+      background: radial-gradient(circle at center, #1e3a8a 0, #020617 70%);
+      border: 2px solid rgba(255,255,255,0.18);
+      box-shadow: none;
+      justify-content: center;
+    }
+
+    body.projector .multiplication-box {
+      min-height: 58vh;
+      background: rgba(255,255,255,0.08);
+      border: 4px solid rgba(255,255,255,0.22);
+    }
+
+    body.projector .multiplication {
+      font-size: clamp(8rem, 26vw, 22rem);
+      color: white;
+      text-shadow: 0 12px 45px rgba(0,0,0,0.6);
+    }
+
+    body.projector .placeholder {
+      font-size: clamp(4rem, 12vw, 10rem);
+      color: rgba(255,255,255,0.75);
+    }
+
+    body.projector .status {
+      color: rgba(255,255,255,0.78);
+      font-size: 1.4rem;
+    }
+
+    body.projector .history-panel {
+      display: none !important;
+    }
+
+    body.projector .secondary {
+      background: rgba(255,255,255,0.16);
+      color: white;
+    }
+
+    body.projector .danger {
+      background: rgba(255,80,80,0.22);
+      color: white;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+        color: black;
+      }
+
+      header, .main-card {
+        display: none;
+      }
+
+      .history-panel {
+        display: block !important;
+        box-shadow: none;
+        border: 0;
+      }
+
+      .history-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .history-item {
+        font-size: 15pt;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Multiplikationsbingo</h1>
+      <div class="subtitle">Slumpar multiplikationer från 1×1 till 10×10</div>
+    </header>
+
+    <main class="main-card">
+      <section class="multiplication-box" aria-live="polite">
+        <div id="multiplication" class="placeholder">Tryck på slumpa</div>
+      </section>
+
+      <div class="controls">
+        <button class="primary" id="drawButton">Slumpa multiplikation</button>
+        <button class="secondary" id="projectorButton">Projektorläge</button>
+        <button class="secondary" id="historyButton">Visa slumpade</button>
+        <button class="secondary" id="printButton">Skriv ut lista</button>
+        <button class="danger" id="resetButton">Starta om</button>
+      </div>
+
+      <div class="status" id="status">0 av 100 multiplikationer har slumpats.</div>
+    </main>
+
+    <section class="history-panel" id="historyPanel">
+      <div class="history-header">
+        <h2>Slumpade multiplikationer</h2>
+        <div class="status" id="historyStatus">0 av 100</div>
+      </div>
+      <div id="historyList" class="history-grid">
+        <div class="empty">Inga multiplikationer har slumpats ännu.</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const allMultiplications = [];
+    const drawn = [];
+
+    for (let a = 1; a <= 10; a++) {
+      for (let b = 1; b <= 10; b++) {
+        allMultiplications.push({ a, b, text: `${a} × ${b}` });
+      }
+    }
+
+    const multiplicationEl = document.getElementById("multiplication");
+    const statusEl = document.getElementById("status");
+    const historyStatusEl = document.getElementById("historyStatus");
+    const drawButton = document.getElementById("drawButton");
+    const projectorButton = document.getElementById("projectorButton");
+    const historyButton = document.getElementById("historyButton");
+    const printButton = document.getElementById("printButton");
+    const resetButton = document.getElementById("resetButton");
+    const historyPanel = document.getElementById("historyPanel");
+    const historyList = document.getElementById("historyList");
+
+    function remainingMultiplications() {
+      return allMultiplications.filter(item =>
+        !drawn.some(d => d.a === item.a && d.b === item.b)
+      );
+    }
+
+    function sortMultiplications(list) {
+      return [...list].sort((x, y) => {
+        if (x.a !== y.a) return x.a - y.a;
+        return x.b - y.b;
+      });
+    }
+
+    function updateStatus() {
+      statusEl.textContent = `${drawn.length} av ${allMultiplications.length} multiplikationer har slumpats.`;
+      historyStatusEl.textContent = `${drawn.length} av ${allMultiplications.length}`;
+
+      if (drawn.length === allMultiplications.length) {
+        drawButton.disabled = true;
+        drawButton.style.opacity = "0.55";
+        multiplicationEl.className = "finished";
+        multiplicationEl.textContent = "Alla multiplikationer är slut!";
+      }
+    }
+
+    function renderHistory() {
+      historyList.innerHTML = "";
+
+      if (drawn.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Inga multiplikationer har slumpats ännu.";
+        historyList.appendChild(empty);
+        return;
+      }
+
+      sortMultiplications(drawn).forEach(item => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        div.textContent = `${item.a} × ${item.b} = ${item.a * item.b}`;
+        historyList.appendChild(div);
+      });
+    }
+
+    function toggleProjectorMode() {
+      document.body.classList.toggle("projector");
+      const isProjector = document.body.classList.contains("projector");
+      projectorButton.textContent = isProjector ? "Avsluta projektorläge" : "Projektorläge";
+
+      if (isProjector) {
+        historyPanel.classList.remove("show");
+        historyButton.textContent = "Visa slumpade";
+      }
+    }
+
+    drawButton.addEventListener("click", () => {
+      const remaining = remainingMultiplications();
+
+      if (remaining.length === 0) {
+        updateStatus();
+        return;
+      }
+
+      const randomIndex = Math.floor(Math.random() * remaining.length);
+      const chosen = remaining[randomIndex];
+
+      drawn.push(chosen);
+
+      multiplicationEl.className = "multiplication";
+      multiplicationEl.textContent = chosen.text;
+
+      renderHistory();
+      updateStatus();
+    });
+
+    projectorButton.addEventListener("click", toggleProjectorMode);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && document.body.classList.contains("projector")) {
+        toggleProjectorMode();
+      }
+
+      if (event.code === "Space" && document.body.classList.contains("projector")) {
+        event.preventDefault();
+        drawButton.click();
+      }
+    });
+
+    historyButton.addEventListener("click", () => {
+      if (document.body.classList.contains("projector")) {
+        toggleProjectorMode();
+      }
+
+      historyPanel.classList.toggle("show");
+      historyButton.textContent = historyPanel.classList.contains("show")
+        ? "Dölj slumpade"
+        : "Visa slumpade";
+      renderHistory();
+    });
+
+    printButton.addEventListener("click", () => {
+      historyPanel.classList.add("show");
+      renderHistory();
+      window.print();
+    });
+
+    resetButton.addEventListener("click", () => {
+      const shouldReset = confirm("Vill du starta om och rensa alla slumpade multiplikationer?");
+      if (!shouldReset) return;
+
+      drawn.length = 0;
+      multiplicationEl.className = "placeholder";
+      multiplicationEl.textContent = "Tryck på slumpa";
+      drawButton.disabled = false;
+      drawButton.style.opacity = "1";
+      renderHistory();
+      updateStatus();
+    });
+
+    renderHistory();
+    updateStatus();
+  </script>
+</body>
+</html>
