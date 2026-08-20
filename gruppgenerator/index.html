@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gruppindelare</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --text:#1f2a37;
+      --muted:#5b6675;
+      --accent:#2d6cdf;
+      --accent-2:#1849a9;
+      --border:#d9e2f0;
+      --shadow:0 10px 25px rgba(24, 73, 169, 0.08);
+      --success:#eaf4ea;
+      --highlight:#fff7db;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#eef4ff 0%, var(--bg) 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:1150px;
+      margin:0 auto;
+      padding:32px 18px 50px;
+    }
+    h1{
+      margin:0 0 8px;
+      font-size:2rem;
+    }
+    .lead{
+      margin:0 0 24px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1.15fr 0.85fr;
+      gap:20px;
+    }
+    .panel{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+    label{
+      display:block;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    textarea, input[type="number"]{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px 14px;
+      font-size:1rem;
+      outline:none;
+      transition:border-color .2s, box-shadow .2s;
+      background:#fff;
+    }
+    textarea:focus, input[type="number"]:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(45,108,223,.12);
+    }
+    textarea{
+      min-height:330px;
+      resize:vertical;
+      line-height:1.5;
+    }
+    .radio-card{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px 14px;
+      margin-bottom:12px;
+      background:#fbfdff;
+    }
+    .radio-card label{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:0;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:.95rem;
+      margin:8px 0 0 28px;
+      line-height:1.4;
+    }
+    .field{
+      margin-top:14px;
+    }
+    .hidden{
+      display:none;
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:20px;
+    }
+    button{
+      border:none;
+      border-radius:12px;
+      padding:12px 18px;
+      font-size:1rem;
+      font-weight:700;
+      cursor:pointer;
+      transition:transform .05s ease, opacity .2s ease, background .2s ease;
+    }
+    button:active{
+      transform:translateY(1px);
+    }
+    .primary{
+      background:var(--accent);
+      color:white;
+    }
+    .primary:hover{
+      background:var(--accent-2);
+    }
+    .secondary{
+      background:#eef3fb;
+      color:var(--text);
+    }
+    .secondary:hover{
+      background:#e1e9f7;
+    }
+    .pick-btn{
+      width:100%;
+      margin-top:12px;
+      background:#f0f5ff;
+      color:var(--accent-2);
+      border:1px solid #cfe0ff;
+      padding:10px 12px;
+    }
+    .pick-btn:hover{
+      background:#e6efff;
+    }
+    .status{
+      margin-top:14px;
+      font-weight:600;
+      color:var(--muted);
+      min-height:24px;
+    }
+    .results-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      background:var(--success);
+      border:1px solid #cfe6cf;
+      color:#295c29;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:.95rem;
+      font-weight:700;
+    }
+    .groups{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+      gap:14px;
+    }
+    .group-card{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      background:#fcfdff;
+    }
+    .group-card h3{
+      margin:0 0 10px;
+      font-size:1.08rem;
+      color:var(--accent-2);
+    }
+    .group-card ol{
+      margin:0;
+      padding-left:22px;
+      line-height:1.65;
+    }
+    .meta{
+      color:var(--muted);
+      font-size:.95rem;
+      margin-bottom:10px;
+    }
+    .picked-name{
+      margin-top:12px;
+      padding:12px;
+      border-radius:12px;
+      background:var(--highlight);
+      border:1px solid #f0dea2;
+      font-weight:700;
+      min-height:48px;
+      display:flex;
+      align-items:center;
+    }
+    .picked-name span{
+      color:var(--accent-2);
+      margin-left:6px;
+    }
+    .empty{
+      color:var(--muted);
+      border:2px dashed var(--border);
+      border-radius:16px;
+      padding:24px;
+      text-align:center;
+      background:#fbfcfe;
+    }
+    .note{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.5;
+    }
+
+    /* Tillbaka till startsidan */
+    .back-link{
+      position:fixed;
+      top:18px;
+      left:18px;
+      z-index:1000;
+      text-decoration:none;
+      background:rgba(255,255,255,0.96);
+      color:var(--text);
+      border:1px solid var(--border);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:700;
+      box-shadow:0 6px 18px rgba(24,73,169,.12);
+      transition:transform .12s ease, background .2s ease;
+    }
+    .back-link:hover{
+      transform:translateY(-1px);
+      background:#ffffff;
+    }
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr}
+      textarea{min-height:240px}
+    }
+    @media print{
+      body{
+        background:white;
+      }
+      .no-print, .pick-btn, .back-link{
+        display:none !important;
+      }
+      .wrap{
+        max-width:none;
+        padding:0;
+      }
+      .panel{
+        box-shadow:none;
+        border:1px solid #bbb;
+      }
+      .groups{
+        grid-template-columns:repeat(2, 1fr);
+      }
+      .picked-name{
+        background:#fff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
+
+  <div class="wrap">
+    <h1>Gruppindelare</h1>
+    <p class="lead">Skriv in namn och skapa slumpade grupper på två sätt: antingen utifrån <strong>antal personer per grupp</strong> eller utifrån <strong>antal grupper</strong>. Du kan också slumpa fram ett namn från varje grupp.</p>
+
+    <div class="grid">
+      <section class="panel no-print">
+        <label for="names">Namn</label>
+        <textarea id="names" placeholder="Skriv ett namn per rad, till exempel:
+Anna
+Bo
+Cecilia
+David"></textarea>
+
+        <div style="margin-top:18px;">
+          <div class="radio-card">
+            <label>
+              <input type="radio" name="mode" value="size" checked />
+              Val 1: Skapa grupper utifrån antal medlemmar per grupp
+            </label>
+            <p class="sub">Exempel: skriver du 4 försöker programmet skapa grupper med cirka 4 personer i varje grupp.</p>
+          </div>
+
+          <div class="radio-card">
+            <label>
+              <input type="radio" name="mode" value="count" />
+              Val 2: Skapa grupper utifrån antal grupper
+            </label>
+            <p class="sub">Exempel: skriver du 5 delas alla namn upp i totalt 5 grupper.</p>
+          </div>
+        </div>
+
+        <div id="sizeField" class="field">
+          <label for="groupSize">Antal medlemmar per grupp</label>
+          <input id="groupSize" type="number" min="1" value="4" />
+        </div>
+
+        <div id="countField" class="field hidden">
+          <label for="groupCount">Antal grupper</label>
+          <input id="groupCount" type="number" min="1" value="2" />
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="generateBtn" type="button">Skapa grupper</button>
+          <button class="secondary" id="clearBtn" type="button">Rensa</button>
+          <button class="secondary" id="printBtn" type="button">Skriv ut</button>
+        </div>
+
+        <div id="status" class="status"></div>
+        <p class="note">Tips: Du kan skriva ett namn per rad. Programmet blandar namnen slumpmässigt varje gång du trycker på <strong>Skapa grupper</strong>. Under varje grupp finns också en knapp för att slumpa fram ett namn.</p>
+      </section>
+
+      <section class="panel">
+        <div class="results-top">
+          <h2 style="margin:0;">Resultat</h2>
+          <div id="summary" class="pill" style="display:none;"></div>
+        </div>
+        <div id="results">
+          <div class="empty">Här visas grupperna när du har skapat dem.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const namesEl = document.getElementById('names');
+    const groupSizeEl = document.getElementById('groupSize');
+    const groupCountEl = document.getElementById('groupCount');
+    const sizeField = document.getElementById('sizeField');
+    const countField = document.getElementById('countField');
+    const statusEl = document.getElementById('status');
+    const resultsEl = document.getElementById('results');
+    const summaryEl = document.getElementById('summary');
+    const modeRadios = document.querySelectorAll('input[name="mode"]');
+
+    let currentGroups = [];
+
+    modeRadios.forEach(radio => {
+      radio.addEventListener('change', toggleFields);
+    });
+
+    document.getElementById('generateBtn').addEventListener('click', generateGroups);
+    document.getElementById('clearBtn').addEventListener('click', clearAll);
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    function toggleFields(){
+      const mode = getMode();
+      sizeField.classList.toggle('hidden', mode !== 'size');
+      countField.classList.toggle('hidden', mode !== 'count');
+      statusEl.textContent = '';
+    }
+
+    function getMode(){
+      return [...modeRadios].find(r => r.checked).value;
+    }
+
+    function parseNames(text){
+      return text
+        .split('\n')
+        .map(name => name.trim())
+        .filter(name => name.length > 0);
+    }
+
+    function shuffle(array){
+      const arr = [...array];
+      for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function splitIntoGroups(names, mode, value){
+      if(mode === 'size'){
+        const groupSize = value;
+        const numberOfGroups = Math.ceil(names.length / groupSize);
+        return distribute(names, numberOfGroups);
+      } else {
+        const numberOfGroups = value;
+        return distribute(names, numberOfGroups);
+      }
+    }
+
+    function distribute(names, numberOfGroups){
+      const groups = Array.from({ length: numberOfGroups }, () => []);
+      names.forEach((name, index) => {
+        groups[index % numberOfGroups].push(name);
+      });
+      return groups.filter(group => group.length > 0);
+    }
+
+    function generateGroups(){
+      const names = parseNames(namesEl.value);
+      if(names.length === 0){
+        showStatus('Skriv in minst ett namn först.');
+        renderEmpty('Här visas grupperna när du har skapat dem.');
+        return;
+      }
+
+      const mode = getMode();
+      const rawValue = mode === 'size' ? Number(groupSizeEl.value) : Number(groupCountEl.value);
+
+      if(!Number.isInteger(rawValue) || rawValue < 1){
+        showStatus('Ange ett giltigt heltal som är minst 1.');
+        return;
+      }
+
+      if(mode === 'count' && rawValue > names.length){
+        showStatus('Antal grupper kan inte vara större än antal namn.');
+        return;
+      }
+
+      const shuffledNames = shuffle(names);
+      currentGroups = splitIntoGroups(shuffledNames, mode, rawValue);
+
+      renderGroups(currentGroups);
+      summaryEl.style.display = 'inline-block';
+      summaryEl.textContent = `${names.length} namn fördelade i ${currentGroups.length} grupper`;
+      showStatus('Grupper skapade.');
+    }
+
+    function renderGroups(groups){
+      if(groups.length === 0){
+        renderEmpty('Inga grupper att visa.');
+        return;
+      }
+
+      const groupsWrapper = document.createElement('div');
+      groupsWrapper.className = 'groups';
+
+      groups.forEach((group, index) => {
+        const card = document.createElement('div');
+        card.className = 'group-card';
+
+        const title = document.createElement('h3');
+        title.textContent = `Grupp ${index + 1}`;
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = `${group.length} medlem${group.length === 1 ? '' : 'mar'}`;
+
+        const list = document.createElement('ol');
+        group.forEach(name => {
+          const li = document.createElement('li');
+          li.textContent = name;
+          list.appendChild(li);
+        });
+
+        const pickBtn = document.createElement('button');
+        pickBtn.type = 'button';
+        pickBtn.className = 'pick-btn';
+        pickBtn.textContent = 'Slumpa namn från gruppen';
+        pickBtn.addEventListener('click', () => pickName(index));
+
+        const picked = document.createElement('div');
+        picked.className = 'picked-name';
+        picked.id = `picked-${index}`;
+        picked.textContent = 'Valt namn visas här';
+
+        card.appendChild(title);
+        card.appendChild(meta);
+        card.appendChild(list);
+        card.appendChild(pickBtn);
+        card.appendChild(picked);
+        groupsWrapper.appendChild(card);
+      });
+
+      resultsEl.innerHTML = '';
+      resultsEl.appendChild(groupsWrapper);
+    }
+
+    function pickName(groupIndex){
+      const group = currentGroups[groupIndex];
+      if(!group || group.length === 0) return;
+
+      const name = group[Math.floor(Math.random() * group.length)];
+      const pickedEl = document.getElementById(`picked-${groupIndex}`);
+      pickedEl.innerHTML = `Slumpat namn:<span>${escapeHtml(name)}</span>`;
+    }
+
+    function escapeHtml(text){
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function renderEmpty(message){
+      resultsEl.innerHTML = `<div class="empty">${message}</div>`;
+      summaryEl.style.display = 'none';
+      currentGroups = [];
+    }
+
+    function showStatus(message){
+      statusEl.textContent = message;
+    }
+
+    function clearAll(){
+      namesEl.value = '';
+      groupSizeEl.value = 4;
+      groupCountEl.value = 2;
+      document.querySelector('input[name="mode"][value="size"]').checked = true;
+      toggleFields();
+      renderEmpty('Här visas grupperna när du har skapat dem.');
+      showStatus('Allt är rensat.');
+    }
+
+    toggleFields();
+  </script>
+</body>
+</html>
