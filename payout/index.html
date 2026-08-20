@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pay Out</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#15202b;--muted:#64748b;--line:#cbd5e1;--accent:#2563eb;--ok:#16a34a;--warn:#f59e0b;--bad:#dc2626;--p1:#2563eb;--p2:#dc2626;--p3:#16a34a;--p4:#9333ea}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eff6ff,#f8fafc);color:var(--ink)}
+.wrap{max-width:1180px;margin:auto;padding:18px}.top{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}h1{margin:0;font-size:clamp(28px,4vw,48px);letter-spacing:-.03em}.subtitle{color:var(--muted);font-weight:600}.layout{display:grid;grid-template-columns:minmax(360px,680px) 1fr;gap:18px}.card{background:var(--card);border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 10px 28px #0f172a14;padding:16px}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}button,select,input{font:inherit}button{border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;background:#e2e8f0;color:#0f172a}button.primary{background:var(--accent);color:white}button.good{background:var(--ok);color:white}button.warn{background:var(--warn);color:#111827}button.danger{background:var(--bad);color:white}button:disabled{opacity:.45;cursor:not-allowed}.board{display:grid;grid-template-columns:58px repeat(6,1fr);gap:0;border:3px solid #111827;border-radius:14px;overflow:hidden;background:#111827}.cell,.head,.corner{min-height:74px;display:flex;align-items:center;justify-content:center;border:1px solid #111827;background:white;font-size:24px;font-weight:800}.head,.corner{background:#d9d9d9}.cell{position:relative;cursor:pointer;transition:.12s}.cell:hover{filter:brightness(.97)}.cell.available{outline:5px solid #facc15;outline-offset:-7px;background:#fffbea}.cell.blocked{opacity:.55;cursor:not-allowed}.piece{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:20px;box-shadow:inset 0 -4px 0 #0003,0 4px 10px #0003}.p1{background:var(--p1)}.p2{background:var(--p2)}.p3{background:var(--p3)}.p4{background:var(--p4)}.dice{display:flex;gap:10px;margin:12px 0}.die{width:58px;height:58px;border-radius:14px;background:white;border:3px solid #111827;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;box-shadow:0 4px 0 #11182722}.status{font-size:18px;font-weight:800;margin:10px 0;padding:12px;border-radius:14px;background:#f1f5f9}.players{display:grid;gap:10px}.player{border:2px solid #e2e8f0;border-radius:14px;padding:10px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}.player.active{border-color:#facc15;background:#fffbeb}.dot{width:28px;height:28px;border-radius:50%}.score{font-size:26px;font-weight:900}.small{font-size:13px;color:var(--muted);font-weight:700}.log{max-height:260px;overflow:auto;border-radius:12px;background:#0f172a;color:#e2e8f0;padding:10px;font-size:13px}.log div{padding:4px 0;border-bottom:1px solid #ffffff12}.rules{line-height:1.45}.rules h2{margin:.2rem 0 .4rem}.rules ul{margin-top:.3rem}.settings{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.settings label{font-size:13px;font-weight:800;color:#475569}.settings select,.settings input{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:10px;background:white}.flash{animation:flash .65s ease}@keyframes flash{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}.back-link{display:inline-block;margin:14px 0 0 18px;text-decoration:none;background:rgba(255,255,255,.96);color:var(--ink);border:1px solid #e2e8f0;padding:10px 14px;border-radius:999px;font-weight:800;box-shadow:0 6px 18px #0f172a14;transition:transform .12s ease}
+.back-link:hover{transform:translateY(-1px)}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.cell,.head,.corner{min-height:52px}.piece{width:36px;height:36px}.board{grid-template-columns:42px repeat(6,1fr)}}
+</style>
+</head>
+<body>
+<a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
+<div class="wrap">
+  <div class="top"><div><h1>Pay Out</h1><div class="subtitle">Digital spelplan med tärningar, turordning och automatisk poängräkning</div></div><div class="controls"><button id="newGame" class="danger">Nytt spel</button></div></div>
+  <div class="layout">
+    <section class="card">
+      <div id="board" class="board"></div>
+      <div class="dice"><div class="die" id="d1">–</div><div class="die" id="d2">–</div><div class="die" id="d3">–</div></div>
+      <div class="controls"><button id="roll" class="primary">Slå 3 tärningar</button><button id="pass" class="warn" disabled>Passa turen</button><button id="undo">Ångra senaste drag</button></div>
+      <div id="status" class="status">Välj antal spelare och tryck “Nytt spel”.</div>
+    </section>
+    <aside class="card">
+      <div class="settings">
+        <div><label>Antal spelare</label><select id="numPlayers"><option>2</option><option selected>3</option><option>4</option></select></div>
+        <div><label>Specialregel</label><select id="jokerRule"><option value="off" selected>Två lika följer tärningarna</option><option value="pair">Två lika = valfri tom ruta</option></select></div>
+      </div>
+      <h2>Spelare</h2><div id="players" class="players"></div>
+      <h2>Händelser</h2><div id="log" class="log"></div>
+      <div class="rules"><h2>Regler från spelplanen</h2><p>2–4 spelare. Antal spelpjäser: 36 / antal spelare. Slå tre tärningar och välj två av dem som koordinat, till exempel 2–5 eller 5–2. Markera rutan på spelplanen. <b>Vid tre lika är alla omarkerade rutor valbara.</b></p><ul><li>Tre i rad: 3 poäng</li><li>Fyra i rad: 4 poäng</li><li>Fem i rad: 5 poäng</li><li>Sex i rad: 10 poäng</li><li>Fyra rutor i kvadrat: 4 poäng</li><li>Nio rutor i kvadrat: 16 poäng</li></ul><p>Poängen adderas hela tiden. Om en rad senare byggs ut får spelaren nya poäng för den längre raden. Kan man inte lägga ut en spelpjäs går turen vidare.</p></div>
+    </aside>
+  </div>
+</div>
+<script>
+const N=6; const ptsLine={3:3,4:4,5:5,6:10}, ptsSq={2:4,3:16};
+let state, history=[];
+const $=id=>document.getElementById(id);
+function init(){let n=+$('numPlayers').value; state={n,turn:0,board:Array.from({length:N},()=>Array(N).fill(null)),scores:Array(n).fill(0),left:Array(n).fill(36/n),scored:Array.from({length:n},()=>new Set()),dice:null,available:[],mustRoll:true,over:false}; history=[]; drawBoard(); drawPlayers(); log('Nytt spel startat.'); setStatus(`Spelare 1 börjar. Slå tärningarna.`); updateButtons();}
+function drawBoard(){let b=$('board'); b.innerHTML=''; b.appendChild(div('corner','')); for(let c=1;c<=N;c++)b.appendChild(div('head',c)); for(let r=1;r<=N;r++){b.appendChild(div('head',r)); for(let c=1;c<=N;c++){let cell=div('cell',''); cell.dataset.r=r-1; cell.dataset.c=c-1; cell.onclick=()=>place(r-1,c-1); b.appendChild(cell);}} renderPieces();}
+function div(cls,txt){let e=document.createElement('div'); e.className=cls; e.textContent=txt; return e;}
+function renderPieces(){document.querySelectorAll('.cell').forEach(cell=>{let r=+cell.dataset.r,c=+cell.dataset.c,p=state.board[r][c]; cell.className='cell'; cell.innerHTML=''; if(p!==null){let pe=div('piece p'+(p+1),p+1); cell.appendChild(pe); cell.classList.add('blocked')} if(state.available.some(x=>x[0]===r&&x[1]===c) && p===null) cell.classList.add('available');});}
+function drawPlayers(){let box=$('players'); box.innerHTML=''; for(let i=0;i<state.n;i++){let row=document.createElement('div'); row.className='player '+(i===state.turn?'active':''); row.innerHTML=`<div class="dot p${i+1}"></div><div><b>Spelare ${i+1}</b><div class="small">Pjäser kvar: ${state.left[i]}</div></div><div class="score">${state.scores[i]}</div>`; box.appendChild(row);} }
+function roll(){if(state.over)return; save(); let d=[rand(),rand(),rand()]; state.dice=d; $('d1').textContent=d[0]; $('d2').textContent=d[1]; $('d3').textContent=d[2]; document.querySelectorAll('.die').forEach(x=>{x.classList.remove('flash'); void x.offsetWidth; x.classList.add('flash')}); state.available=getAvailable(d); state.mustRoll=false; renderPieces(); let msg=`Spelare ${state.turn+1}: slog ${d.join(' – ')}. `; msg += state.available.length?`Välj en gulmarkerad ruta.`:`Inget möjligt drag. Passa turen.`; setStatus(msg); log(msg); updateButtons();}
+function rand(){return Math.floor(Math.random()*6)+1}
+function getAvailable(d){
+  // Valbara rutor räknas från två TÄRNINGAR, inte bara två olika värden.
+  // Exempel: 2–5–6 ger 2-5, 2-6, 5-2, 5-6, 6-2, 6-5.
+  // Exempel: 2–2–6 ger 2-2, 2-6 och 6-2, men varje ruta visas bara en gång.
+  let joker=false, rule=$('jokerRule').value;
+  let counts={}; d.forEach(x=>counts[x]=(counts[x]||0)+1);
+  // Tre lika är alltid joker: alla omarkerade rutor ska vara valbara.
+  // Två lika kan också göras till joker med inställningen till höger.
+  if(Object.values(counts).some(v=>v>=3)) joker=true;
+  else if(rule==='pair'&&Object.values(counts).some(v=>v>=2)) joker=true;
+  let a=[];
+  if(joker){
+    for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(state.board[r][c]===null)a.push([r,c]);
+    return a;
+  }
+  let seen=new Set();
+  for(let i=0;i<d.length;i++){
+    for(let j=0;j<d.length;j++){
+      if(i===j) continue;
+      let r=d[i]-1,c=d[j]-1,k=r+','+c;
+      if(state.board[r][c]===null&&!seen.has(k)){seen.add(k);a.push([r,c]);}
+    }
+  }
+  return a;
+}
+function place(r,c){if(state.mustRoll||state.over)return; if(!state.available.some(x=>x[0]===r&&x[1]===c))return; save(); let p=state.turn; state.board[r][c]=p; state.left[p]--; let gained=scoreMove(p,r,c); state.scores[p]+=gained.total; let detail=gained.parts.length?' Poäng: '+gained.parts.join(', ')+` = ${gained.total}.`:' Inga poäng denna gång.'; log(`Spelare ${p+1} placerade på ${r+1}-${c+1}.${detail}`); nextTurn();}
+function scoreMove(p,r,c){
+ let total=0, parts=[];
+ const dirs=[[1,0],[0,1],[1,1],[1,-1]];
+
+ // Linjepoäng: räkna bara den längsta sammanhängande raden som den nya rutan ingår i.
+ // Det gör att t.ex. X _ X X som fylls blir 4 poäng, inte 3+3+4.
+ for(const [dr,dc] of dirs){
+   let cells=[[r,c]];
+   let rr=r-dr, cc=c-dc;
+   while(rr>=0&&rr<N&&cc>=0&&cc<N&&state.board[rr][cc]===p){cells.unshift([rr,cc]); rr-=dr; cc-=dc;}
+   rr=r+dr; cc=c+dc;
+   while(rr>=0&&rr<N&&cc>=0&&cc<N&&state.board[rr][cc]===p){cells.push([rr,cc]); rr+=dr; cc+=dc;}
+   let len=cells.length;
+   if(len>=3){
+     if(len>6) len=6;
+     let useCells=cells.slice(0,len);
+     let id='L'+len+':'+useCells.map(x=>x.join('-')).join('|');
+     if(!state.scored[p].has(id)){
+       state.scored[p].add(id);
+       total+=ptsLine[len];
+       parts.push(`${len} i rad (${ptsLine[len]})`);
+     }
+   }
+ }
+
+ // Kvadratpoäng: om en 3×3-kvadrat bildas räknas den som 16 poäng.
+ // Annars räknas nya 2×2-kvadrater som 4 poäng.
+ let found3=false;
+ for(let sr=r-2;sr<=r;sr++)for(let sc=c-2;sc<=c;sc++){
+   let cells=[];
+   for(let rr=sr;rr<sr+3;rr++)for(let cc=sc;cc<sc+3;cc++)cells.push([rr,cc]);
+   if(cells.every(([rr,cc])=>rr>=0&&rr<N&&cc>=0&&cc<N&&state.board[rr][cc]===p)){
+     let id='S3:'+cells.map(x=>x.join('-')).join('|');
+     if(!state.scored[p].has(id)){
+       state.scored[p].add(id);
+       total+=ptsSq[3];
+       parts.push(`3×3 kvadrat (${ptsSq[3]})`);
+     }
+     found3=true;
+   }
+ }
+ if(!found3){
+   for(let sr=r-1;sr<=r;sr++)for(let sc=c-1;sc<=c;sc++){
+     let cells=[];
+     for(let rr=sr;rr<sr+2;rr++)for(let cc=sc;cc<sc+2;cc++)cells.push([rr,cc]);
+     if(cells.every(([rr,cc])=>rr>=0&&rr<N&&cc>=0&&cc<N&&state.board[rr][cc]===p)){
+       let id='S2:'+cells.map(x=>x.join('-')).join('|');
+       if(!state.scored[p].has(id)){
+         state.scored[p].add(id);
+         total+=ptsSq[2];
+         parts.push(`2×2 kvadrat (${ptsSq[2]})`);
+       }
+     }
+   }
+ }
+ return {total,parts};
+}
+
+function nextTurn(){state.available=[]; state.dice=null; state.mustRoll=true; $('d1').textContent=$('d2').textContent=$('d3').textContent='–'; if(isGameOver()){state.over=true; let max=Math.max(...state.scores), winners=state.scores.map((s,i)=>s===max?i+1:null).filter(Boolean); setStatus(`Spelet är slut! Vinnare: ${winners.join(', ')} med ${max} poäng.`); log(`Spelet är slut. Vinnare: ${winners.join(', ')}.`);} else {do{state.turn=(state.turn+1)%state.n;}while(state.left[state.turn]<=0); setStatus(`Spelare ${state.turn+1}: slå tärningarna.`)} renderPieces(); drawPlayers(); updateButtons();}
+function isGameOver(){return state.board.flat().every(x=>x!==null)||state.left.every(x=>x<=0)}
+function pass(){if(state.mustRoll||state.over)return; save(); log(`Spelare ${state.turn+1} passar.`); nextTurn();}
+function save(){history.push(JSON.stringify({...state,scored:state.scored.map(s=>[...s])})); if(history.length>100)history.shift();}
+function undo(){let h=history.pop(); if(!h)return; let obj=JSON.parse(h); obj.scored=obj.scored.map(a=>new Set(a)); state=obj; $('d1').textContent=state.dice?state.dice[0]:'–'; $('d2').textContent=state.dice?state.dice[1]:'–'; $('d3').textContent=state.dice?state.dice[2]:'–'; renderPieces(); drawPlayers(); setStatus('Senaste draget är ångrat.'); updateButtons();}
+function log(t){let e=document.createElement('div'); e.textContent=t; $('log').prepend(e)}
+function setStatus(t){$('status').textContent=t}
+function updateButtons(){$('roll').disabled=state.over||!state.mustRoll; $('pass').disabled=state.over||state.mustRoll; $('undo').disabled=!history.length;}
+$('newGame').onclick=init; $('roll').onclick=roll; $('pass').onclick=pass; $('undo').onclick=undo; $('numPlayers').onchange=init; init();
+</script>
+</body>
+</html>
