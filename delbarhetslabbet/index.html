@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delbarhetslabbet</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;--accent:#3457d5;--accent2:#6c4de6;--good:#18864b;--bad:#c43b45;--warn:#b7791f;--line:#dce3ee;--shadow:0 12px 30px rgba(26,39,64,.10)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-rounded,"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at top left,rgba(52,87,213,.12),transparent 35%),radial-gradient(circle at top right,rgba(108,77,230,.10),transparent 30%),var(--bg);color:var(--text);min-height:100vh}
+header{padding:28px 5vw 12px;text-align:center}h1{margin:0;font-size:clamp(2.2rem,5vw,4.6rem);letter-spacing:-.04em}.subtitle{margin:10px auto 0;color:var(--muted);font-size:clamp(1rem,2vw,1.35rem);max-width:900px}
+main{width:min(1500px,94vw);margin:0 auto 50px}.tabs{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:18px 0 28px}
+button{border:0;border-radius:16px;padding:15px 22px;font-size:1.05rem;font-weight:750;cursor:pointer;transition:.18s ease}button:hover{transform:translateY(-2px)}button:active{transform:translateY(0)}
+.tab-btn{background:#e7ebf6;color:#344054}.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:var(--shadow)}
+.panel{display:none}.panel.active{display:block}.rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.rule-card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);min-height:170px;display:flex;gap:17px;align-items:flex-start}
+.badge{width:62px;height:62px;flex:0 0 62px;border-radius:18px;display:grid;place-items:center;color:#fff;font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.rule-card h2{margin:2px 0 8px;font-size:1.35rem}.rule-card p{margin:0;line-height:1.5;font-size:1.06rem}
+.practice{background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:30px;padding:clamp(22px,4vw,46px);box-shadow:var(--shadow)}
+.number-label{text-align:center;color:var(--muted);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.95rem}
+.number{text-align:center;font-variant-numeric:tabular-nums;font-size:clamp(5.5rem,16vw,12rem);line-height:1;font-weight:950;letter-spacing:.02em;margin:16px 0 18px;text-shadow:0 4px 0 rgba(52,87,213,.08)}
+.prompt{text-align:center;font-size:clamp(1.15rem,2.2vw,1.65rem);font-weight:700;margin:0 auto 20px}.choice-title{text-align:center;margin:0 0 12px;font-weight:800;color:#344054}
+.choice-grid{display:grid;grid-template-columns:repeat(7,minmax(74px,1fr));gap:12px;max-width:980px;margin:0 auto 24px}
+.choice-btn{background:#eef2f8;border:3px solid transparent;color:#24314d;border-radius:20px;min-height:76px;font-size:1.7rem;font-weight:900;padding:10px 8px}
+.choice-btn.selected{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 7px 16px rgba(52,87,213,.19)}
+.choice-btn.correct{background:rgba(24,134,75,.12);color:var(--good);border-color:var(--good)}.choice-btn.wrong{background:rgba(196,59,69,.10);color:var(--bad);border-color:var(--bad)}.choice-btn.missed{background:rgba(183,121,31,.10);color:#8a5b17;border-color:#c48a2c}.choice-btn:disabled{cursor:default}
+.controls{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}.primary{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2))}.check{color:#fff;background:#172033;min-width:150px}
+.feedback{display:none;max-width:1050px;margin:28px auto 0}.feedback.show{display:block}.success{text-align:center;padding:22px;border-radius:22px;background:rgba(24,134,75,.09);border:2px solid rgba(24,134,75,.28)}
+.success .big-icon{font-size:2.8rem;display:block;margin-bottom:5px}.success h2{margin:0 0 6px;color:var(--good)}.success p{margin:0;font-size:1.08rem}
+.mistake-heading{margin:0 0 8px;text-align:center;font-size:1.75rem}.mistake-intro{margin:0 auto 18px;color:var(--muted);text-align:center;font-size:1.05rem}
+.mistakes{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px}.mistake-card{border-radius:20px;padding:18px 20px;background:#fff;border:2px solid rgba(196,59,69,.24)}.mistake-card.missed-card{border-color:rgba(183,121,31,.34);background:rgba(183,121,31,.035)}
+.mistake-card h3{margin:0 0 8px;font-size:1.18rem}.mistake-card p{margin:0;line-height:1.5}.rule-reminder{display:block;margin-top:10px;padding:10px 12px;border-radius:12px;background:#f3f5f9;font-weight:700}
+.legend{display:none;justify-content:center;flex-wrap:wrap;gap:16px;margin:16px auto 0;color:var(--muted);font-size:.92rem}.legend.show{display:flex}.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-1px}.lg-good::before{background:var(--good)}.lg-bad::before{background:var(--bad)}.lg-missed::before{background:#c48a2c}
+.teacher-note{margin-top:22px;text-align:center;color:var(--muted);font-size:.95rem}.projector-hint{margin:22px auto 0;max-width:900px;background:#fff9db;border:1px solid #f1df8a;padding:14px 18px;border-radius:16px;color:#654f00}
+
+.back-link{
+  position:fixed;
+  top:18px;
+  left:18px;
+  z-index:1000;
+  text-decoration:none;
+  background:rgba(255,255,255,.96);
+  color:var(--text);
+  border:1px solid var(--line);
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:800;
+  box-shadow:0 6px 18px rgba(26,39,64,.12);
+  transition:transform .12s ease, background .18s ease;
+}
+.back-link:hover{
+  transform:translateY(-1px);
+  background:#fff;
+}
+@media(max-width:850px){.choice-grid{grid-template-columns:repeat(4,1fr)}}@media(max-width:520px){.choice-grid{grid-template-columns:repeat(3,1fr)}.number{font-size:24vw}.practice{border-radius:22px}}
+</style>
+</head>
+<body>
+<a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
+<header><h1>Delbarhetslabbet</h1><p class="subtitle">Upptäck mönster, resonera och träna på att använda delbarhetsreglerna.</p></header>
+<main>
+<div class="tabs"><button class="tab-btn active" data-target="rules">1. Gå igenom reglerna</button><button class="tab-btn" data-target="practice">2. Träna själv</button></div>
+<section id="rules" class="panel active">
+<div class="rules-grid">
+<article class="rule-card"><div class="badge">2</div><div><h2>Delbart med 2</h2><p>Sista siffran är <strong>0, 2, 4, 6 eller 8</strong>.</p></div></article>
+<article class="rule-card"><div class="badge">3</div><div><h2>Delbart med 3</h2><p>Addera talets alla siffror. Om <strong>siffersumman är delbar med 3</strong> är hela talet delbart med 3.</p></div></article>
+<article class="rule-card"><div class="badge">4</div><div><h2>Delbart med 4</h2><p>De <strong>två sista siffrorna</strong> bildar ett tal som är delbart med 4.</p></div></article>
+<article class="rule-card"><div class="badge">5</div><div><h2>Delbart med 5</h2><p>Sista siffran är <strong>0 eller 5</strong>.</p></div></article>
+<article class="rule-card"><div class="badge">6</div><div><h2>Delbart med 6</h2><p>Talet måste vara delbart med <strong>både 2 och 3</strong>.</p></div></article>
+<article class="rule-card"><div class="badge">9</div><div><h2>Delbart med 9</h2><p>Addera talets alla siffror. Om <strong>siffersumman är delbar med 9</strong> är hela talet delbart med 9.</p></div></article>
+<article class="rule-card"><div class="badge">10</div><div><h2>Delbart med 10</h2><p>Sista siffran är <strong>0</strong>.</p></div></article>
+</div>
+<div class="projector-hint"><strong>Tips:</strong> Börja med att fråga vad man behöver undersöka: sista siffran, de två sista siffrorna eller siffersumman.</div>
+</section>
+<section id="practice" class="panel">
+<div class="practice">
+<div class="number-label">Undersök talet</div>
+<div id="number" class="number">2460</div>
+<p class="prompt">Vilka av talen nedan är talet delbart med?</p>
+<p class="choice-title">Klicka på alla alternativ som du tror stämmer.</p>
+<div id="choiceGrid" class="choice-grid">
+<button class="choice-btn" data-divisor="2">2</button><button class="choice-btn" data-divisor="3">3</button><button class="choice-btn" data-divisor="4">4</button><button class="choice-btn" data-divisor="5">5</button><button class="choice-btn" data-divisor="6">6</button><button class="choice-btn" data-divisor="9">9</button><button class="choice-btn" data-divisor="10">10</button>
+</div>
+<div class="controls"><button id="newNumber" class="primary">🎲 Nytt tal</button><button id="checkAnswer" class="check">✓ Rätta</button></div>
+<div id="legend" class="legend"><span class="lg-good">Rätt val</span><span class="lg-bad">Felaktigt valt</span><span class="lg-missed">Missat rätt svar</span></div>
+<div id="feedback" class="feedback" aria-live="polite"></div>
+<div class="teacher-note">Du kan ändra dina val tills du klickar på <strong>Rätta</strong>. Klicka sedan på <strong>Nytt tal</strong> för nästa uppgift.</div>
+</div>
+</section>
+</main>
+<script>
+const divisors=[2,3,4,5,6,9,10],numberEl=document.getElementById("number"),choiceButtons=[...document.querySelectorAll(".choice-btn")],feedbackEl=document.getElementById("feedback"),legendEl=document.getElementById("legend"),checkBtn=document.getElementById("checkAnswer");let currentNumber=2460,checked=false;
+function digitSum(n){return String(n).split("").reduce((s,d)=>s+Number(d),0)}
+function ruleText(d){return {2:"Regeln: sista siffran ska vara 0, 2, 4, 6 eller 8.",3:"Regeln: talets siffersumma ska vara delbar med 3.",4:"Regeln: talet som bildas av de två sista siffrorna ska vara delbart med 4.",5:"Regeln: sista siffran ska vara 0 eller 5.",6:"Regeln: talet måste vara delbart med både 2 och 3.",9:"Regeln: talets siffersumma ska vara delbar med 9.",10:"Regeln: sista siffran ska vara 0."}[d]}
+function explanation(n,d){const last=n%10,sum=digitSum(n),two=n%100,parts=String(n).split("").join(" + ");if(d===2)return `Sista siffran är <strong>${last}</strong>. ${[0,2,4,6,8].includes(last)?"Det är en jämn siffra, så talet är delbart med 2.":"Det är inte en jämn siffra, så talet är inte delbart med 2."}`;if(d===3)return `Siffersumman är <strong>${parts} = ${sum}</strong>. ${sum%3===0?sum+" är delbart med 3, alltså är hela talet delbart med 3.":sum+" är inte delbart med 3, alltså är inte hela talet delbart med 3."}`;if(d===4)return `De två sista siffrorna bildar talet <strong>${two}</strong>. ${two%4===0?two+" är delbart med 4, alltså är hela talet delbart med 4.":two+" är inte delbart med 4, alltså är inte hela talet delbart med 4."}`;if(d===5)return `Sista siffran är <strong>${last}</strong>. ${last===0||last===5?"Den är 0 eller 5, så talet är delbart med 5.":"Den är varken 0 eller 5, så talet är inte delbart med 5."}`;if(d===6){const d2=n%2===0,d3=n%3===0;return `Talet är ${d2?"":"<strong>inte</strong> "}delbart med 2 och ${d3?"":"<strong>inte</strong> "}delbart med 3. ${d2&&d3?"Båda kraven är uppfyllda, så talet är delbart med 6.":"Båda kraven måste vara uppfyllda för att talet ska vara delbart med 6."}`};if(d===9)return `Siffersumman är <strong>${parts} = ${sum}</strong>. ${sum%9===0?sum+" är delbart med 9, alltså är hela talet delbart med 9.":sum+" är inte delbart med 9, alltså är inte hela talet delbart med 9."}`;return `Sista siffran är <strong>${last}</strong>. ${last===0?"Den är 0, så talet är delbart med 10.":"Den är inte 0, så talet är inte delbart med 10."}`}
+function selectedDivisors(){return choiceButtons.filter(b=>b.classList.contains("selected")).map(b=>Number(b.dataset.divisor))}
+function resetChoices(){checked=false;choiceButtons.forEach(b=>{b.disabled=false;b.classList.remove("selected","correct","wrong","missed")});feedbackEl.className="feedback";feedbackEl.innerHTML="";legendEl.classList.remove("show");checkBtn.disabled=false}
+function newNumber(){currentNumber=Math.floor(Math.random()*9990)+10;numberEl.textContent=currentNumber;resetChoices()}
+choiceButtons.forEach(b=>b.addEventListener("click",()=>{if(!checked)b.classList.toggle("selected")}));
+checkBtn.addEventListener("click",()=>{if(checked)return;checked=true;checkBtn.disabled=true;const selected=selectedDivisors(),correct=divisors.filter(d=>currentNumber%d===0),wrongSelected=selected.filter(d=>!correct.includes(d)),missed=correct.filter(d=>!selected.includes(d));choiceButtons.forEach(b=>{const d=Number(b.dataset.divisor),was=b.classList.contains("selected"),should=correct.includes(d);b.disabled=true;b.classList.remove("selected");if(was&&should)b.classList.add("correct");else if(was&&!should)b.classList.add("wrong");else if(!was&&should)b.classList.add("missed")});legendEl.classList.add("show");if(!wrongSelected.length&&!missed.length){feedbackEl.innerHTML=`<div class="success"><span class="big-icon">🎉</span><h2>Helt rätt!</h2><p>Du hittade alla tal som <strong>${currentNumber}</strong> är delbart med.</p></div>`;feedbackEl.classList.add("show");return}let cards=[];wrongSelected.forEach(d=>cards.push(`<article class="mistake-card"><h3>Du valde ${d}, men det stämmer inte</h3><p>${explanation(currentNumber,d)}</p><span class="rule-reminder">${ruleText(d)}</span></article>`));missed.forEach(d=>cards.push(`<article class="mistake-card missed-card"><h3>Du missade ${d}</h3><p>${explanation(currentNumber,d)}</p><span class="rule-reminder">${ruleText(d)}</span></article>`));feedbackEl.innerHTML=`<h2 class="mistake-heading">Nästan – titta på reglerna en gång till</h2><p class="mistake-intro">Här visas bara de delar där något blev fel, så att du kan se vad du behöver tänka på nästa gång.</p><div class="mistakes">${cards.join("")}</div>`;feedbackEl.classList.add("show")});
+document.getElementById("newNumber").addEventListener("click",newNumber);
+document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById(btn.dataset.target).classList.add("active")}));
+</script>
+</body>
+</html>
