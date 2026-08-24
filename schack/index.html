@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Schweizer/Monrad-turnering (8 ronder)</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; background:#f6f7fb; color:#111; }
+    header { background:#111; color:#fff; padding: 16px 20px; }
+    header h1 { margin:0; font-size: 18px; font-weight: 700; }
+    main { padding: 18px 20px; max-width: 1180px; margin: 0 auto; }
+    .grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 980px){ .grid { grid-template-columns: 1.12fr 0.88fr; } }
+    .card { background:#fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.06); padding: 14px; }
+    .card h2 { margin: 0 0 10px; font-size: 16px; }
+    .row { display:flex; gap:10px; flex-wrap: wrap; align-items: center; }
+    label { font-size: 13px; color:#333; }
+    textarea, select, input[type="text"], input[type="number"] {
+      padding: 8px 10px; border:1px solid #d7d9e0; border-radius: 8px; font-size: 14px; background:#fff;
+    }
+    textarea { width:100%; min-height: 120px; resize: vertical; }
+    button {
+      border:0; border-radius: 10px; padding: 10px 12px; font-weight: 650;
+      background:#2f6fed; color:#fff; cursor:pointer;
+    }
+    button.secondary { background:#e9ecf5; color:#111; }
+    button.danger { background:#d73a49; }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    table { width:100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 8px 8px; border-bottom: 1px solid #edf0f6; text-align: left; }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color:#5c6373; }
+    .muted { color:#5c6373; font-size: 13px; }
+    .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; background:#eef2ff; color:#243b9b; font-size: 12px; font-weight: 650; }
+    .pair { border: 1px solid #edf0f6; border-radius: 12px; padding: 10px; margin: 10px 0; }
+    .pair h3 { margin: 0 0 6px; font-size: 14px; }
+    .pair .names { display:flex; gap:10px; flex-wrap: wrap; align-items:center; }
+    .pair .vs { color:#5c6373; font-weight: 700; }
+    .footer { margin-top: 10px; display:flex; gap:10px; flex-wrap: wrap; align-items:center; }
+    .note { background:#fff7e6; border: 1px solid #ffe2a6; padding: 10px 12px; border-radius: 12px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    .small { font-size: 12px; }
+    details summary { cursor:pointer; }
+    .tag { display:inline-block; padding:2px 7px; border-radius: 999px; background:#f3f5fb; color:#445; font-size:12px; border:1px solid #e1e6f3; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:8px; }
+
+    .back-link{
+      display:inline-block;
+      margin:14px 0 0 18px;
+      text-decoration:none;
+      background:rgba(255,255,255,.96);
+      color:#111;
+      border:1px solid #e1e6f3;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:700;
+      box-shadow:0 6px 18px rgba(0,0,0,.08);
+      transition:transform .12s ease, background .18s ease;
+    }
+    .back-link:hover{
+      transform:translateY(-1px);
+      background:#fff;
+    }
+    @media print {
+      body { background:#fff; }
+      header, .no-print, .back-link { display:none !important; }
+      main { max-width:none; padding:0; }
+      .card { box-shadow:none; border-radius:0; padding:0; }
+      .grid { display:block; }
+    }
+  </style>
+</head>
+<body>
+<a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
+<header>
+  <h1>Schweizer/Monrad-turnering — 8 ronder</h1>
+</header>
+
+<main class="grid">
+  <section class="card">
+    <h2>Turnering</h2>
+    <div class="row no-print">
+      <div>
+        <label>Antal ronder</label><br>
+        <span class="pill">8</span>
+      </div>
+      <div>
+        <label>System</label><br>
+        <span class="pill">Schweizer / Monrad</span>
+      </div>
+      <div style="margin-left:auto" class="toolbar">
+        <button class="secondary" id="btnPrintReport">Skriv ut rapport</button>
+        <button class="secondary" id="btnDownloadReport">Spara rapport (HTML)</button>
+        <button class="secondary" id="btnExport">Exportera JSON</button>
+        <button class="secondary" id="btnImport">Importera JSON</button>
+        <button class="secondary" id="btnReset">Nollställ</button>
+      </div>
+    </div>
+
+    <div id="setupArea" style="margin-top:12px;">
+      <div class="note">
+        <div><strong>Start:</strong> Skriv in spelarna, en per rad.</div>
+        <div class="muted">Tips: Du kan klistra in en lista direkt från t.ex. Excel.</div>
+      </div>
+
+      <div style="margin-top:10px;">
+        <label>Spelare (en per rad)</label>
+        <textarea id="playersTextarea" placeholder="Exempel:
+Anna
+Bertil
+Cecilia
+David"></textarea>
+      </div>
+
+      <div class="footer">
+        <button id="btnCreate">Skapa turnering</button>
+        <span class="muted">Första ronden lottas slumpmässigt.</span>
+      </div>
+    </div>
+
+    <div id="tournamentArea" style="display:none; margin-top:12px;">
+      <div class="row">
+        <div><strong>Rond:</strong> <span id="roundLabel">1</span> / 8</div>
+        <div class="muted">Poäng: vinst 1, remi ½, förlust 0. Bye ger 1 poäng.</div>
+      </div>
+
+      <div id="pairingsArea"></div>
+
+      <div class="footer no-print">
+        <button id="btnSaveRound">Spara rondresultat</button>
+        <button id="btnNextRound" disabled>Lotta nästa rond</button>
+        <span class="muted" id="saveHint">Fyll i resultat och spara.</span>
+      </div>
+
+      <details style="margin-top:12px;">
+        <summary><strong>Historik</strong> <span class="muted">(tidigare ronder)</span></summary>
+        <div id="historyArea" style="margin-top:10px;"></div>
+      </details>
+    </div>
+  </section>
+
+  <aside class="card">
+    <h2>Ställning</h2>
+    <div class="muted" id="standingsHint">Skapa turneringen för att se ställning.</div>
+    <div id="standingsArea" style="margin-top:10px;"></div>
+
+    <details style="margin-top:12px;">
+      <summary><strong>Om lottningen</strong></summary>
+      <div class="muted" style="margin-top:8px; line-height:1.35;">
+        Den här sidan använder en förenklad FIDE-inspirerad Swiss-lottning:
+        <ul>
+          <li>Rond 1: slump</li>
+          <li>Rond 2–8: poängbaserad lottning, i första hand inom samma eller nära poänggrupp</li>
+          <li><strong>Inga dubbelmöten:</strong> backtracking flyttar runt spelare inom/kring poänggruppen</li>
+          <li><strong>Färgpreferenser:</strong> tar hänsyn till färgbalans, två raka färger och försöker undvika tre i rad</li>
+          <li><strong>Bye:</strong> till lägst placerade som inte redan fått bye</li>
+        </ul>
+        Tiebreak: <span class="mono">Buchholz (summa motståndarnas poäng)</span> och därefter <span class="mono">Direktpoäng</span>.
+      </div>
+    </details>
+  </aside>
+</main>
+
+<input type="file" id="importFile" accept="application/json" style="display:none;" />
+
+<script>
+(() => {
+  const ROUNDS = 8;
+  const STORAGE_KEY = "schweizer_monrad_v3";
+  const $ = (id) => document.getElementById(id);
+
+  /** @type {Tournament|null} */
+  let t = null;
+
+  /**
+   * @typedef {{id:number, name:string, score:number, opp:number[], results:Record<number, number>, bye:boolean, whiteCount:number, blackCount:number, colorSeq:string[]}} Player
+   * @typedef {{round:number, pairs:{white:number, black:number, result:null|{w:number,b:number}}[], byes:number[]}} Round
+   * @typedef {{createdAt:string, players:Player[], rounds:Round[]}} Tournament
+   */
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(t));
+  }
+
+  function normalizeTournament(obj) {
+    if (!obj || !obj.players) return obj;
+    for (const p of obj.players) {
+      if (typeof p.whiteCount !== "number") p.whiteCount = 0;
+      if (typeof p.blackCount !== "number") p.blackCount = 0;
+      if (!Array.isArray(p.opp)) p.opp = [];
+      if (!p.results) p.results = {};
+      if (typeof p.bye !== "boolean") p.bye = false;
+      if (typeof p.score !== "number") p.score = 0;
+      if (!Array.isArray(p.colorSeq)) p.colorSeq = rebuildColorSeqForPlayer(obj, p.id);
+    }
+    return obj;
+  }
+
+  function rebuildColorSeqForPlayer(obj, playerId) {
+    const seq = [];
+    if (!obj || !obj.rounds) return seq;
+    const rounds = [...obj.rounds].sort((a,b) => a.round - b.round);
+    for (const r of rounds) {
+      if (r.byes?.includes(playerId)) { seq.push("B"); continue; }
+      for (const m of r.pairs || []) {
+        if (m.white === playerId) seq.push("W");
+        if (m.black === playerId) seq.push("B");
+      }
+    }
+    return seq;
+  }
+
+  function load() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    try { return normalizeTournament(JSON.parse(raw)); } catch { return null; }
+  }
+
+  function sanitizeNames(text) {
+    return text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function currentRoundNumber() {
+    if (!t) return 1;
+    return t.rounds.length + 1;
+  }
+
+  function playerById(id) {
+    return t.players.find(p => p.id === id);
+  }
+
+  function havePlayed(aId, bId) {
+    const a = playerById(aId);
+    return a.opp.includes(bId);
+  }
+
+  function formatScore(x) {
+    if (Math.abs(x - Math.round(x)) < 1e-9) return String(Math.round(x));
+    if (Math.abs(x*2 - Math.round(x*2)) < 1e-9) {
+      const twice = Math.round(x*2);
+      if (twice % 2 === 1) return `${Math.floor(twice/2)}½`.replace(/^0½$/,"½");
+    }
+    return String(x);
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  function computeBuchholzFromPlayers(players, playerId) {
+    const p = players.find(x => x.id === playerId);
+    let sum = 0;
+    for (const oid of p.opp) {
+      const opp = players.find(x => x.id === oid);
+      sum += opp ? opp.score : 0;
+    }
+    return sum;
+  }
+
+  function computeDirectPointsFromPlayers(players, playerId) {
+    const p = players.find(x => x.id === playerId);
+    let s = 0;
+    for (const r of Object.values(p.results)) s += r;
+    return s;
+  }
+
+  function standingsFromPlayers(players) {
+    const rows = players.map(p => ({
+      id: p.id,
+      name: p.name,
+      score: p.score,
+      buchholz: computeBuchholzFromPlayers(players, p.id),
+      direct: computeDirectPointsFromPlayers(players, p.id),
+      bye: p.bye ? "Ja" : "Nej",
+      whiteCount: p.whiteCount,
+      blackCount: p.blackCount
+    }));
+    rows.sort((a,b) =>
+      (b.score - a.score) ||
+      (b.buchholz - a.buchholz) ||
+      (b.direct - a.direct) ||
+      a.name.localeCompare(b.name, "sv")
+    );
+    return rows;
+  }
+
+  function standings() {
+    return standingsFromPlayers(t.players);
+  }
+
+  function getStateAfterRound(roundLimit) {
+    const players = t.players.map(p => ({
+      id: p.id,
+      name: p.name,
+      score: 0,
+      opp: [],
+      results: {},
+      bye: false,
+      whiteCount: 0,
+      blackCount: 0,
+      colorSeq: []
+    }));
+
+    function gp(id) { return players.find(p => p.id === id); }
+
+    for (const r of t.rounds.filter(r => r.round <= roundLimit).sort((a,b) => a.round - b.round)) {
+      for (const m of r.pairs) {
+        const wp = gp(m.white), bp = gp(m.black);
+        if (!wp.opp.includes(bp.id)) wp.opp.push(bp.id);
+        if (!bp.opp.includes(wp.id)) bp.opp.push(wp.id);
+        const wPts = m.result?.w ?? 0;
+        const bPts = m.result?.b ?? 0;
+        wp.results[r.round] = wPts;
+        bp.results[r.round] = bPts;
+        wp.score += wPts;
+        bp.score += bPts;
+        wp.whiteCount += 1;
+        bp.blackCount += 1;
+        wp.colorSeq.push("W");
+        bp.colorSeq.push("B");
+      }
+      for (const bid of r.byes || []) {
+        const p = gp(bid);
+        p.bye = true;
+        p.results[r.round] = 1;
+        p.score += 1;
+        p.colorSeq.push("B");
+      }
+    }
+
+    return { players, standings: standingsFromPlayers(players) };
+  }
+
+  function renderStandings() {
+    if (!t) return;
+    const rows = standings();
+    $("standingsHint").textContent = `Uppdaterad efter rond ${t.rounds.length} / ${ROUNDS}.`;
+
+    let html = `<table>
+      <thead><tr>
+        <th>#</th><th>Spelare</th><th>Poäng</th><th>Buchholz</th><th>Färger</th><th>Bye</th>
+      </tr></thead><tbody>`;
+
+    rows.forEach((r, idx) => {
+      html += `<tr>
+        <td>${idx+1}</td>
+        <td>${escapeHtml(r.name)}</td>
+        <td>${formatScore(r.score)}</td>
+        <td>${formatScore(r.buchholz)}</td>
+        <td>${r.whiteCount}V / ${r.blackCount}S</td>
+        <td>${r.bye}</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    $("standingsArea").innerHTML = html;
+  }
+
+  function colorPreferenceInfo(p) {
+    const diff = p.whiteCount - p.blackCount; // positive => too many whites
+    const seq = p.colorSeq || [];
+    const last = seq[seq.length - 1];
+    const prev = seq[seq.length - 2];
+    const lastTwoSame = last && prev && last === prev;
+    let preferred = null;
+    let absolute = false;
+
+    if (lastTwoSame && last !== "B" && last !== "W") {
+      // ignore special case
+    }
+
+    if (lastTwoSame && last === "W") {
+      preferred = "B";
+      absolute = true;
+    } else if (lastTwoSame && last === "B") {
+      preferred = "W";
+      absolute = true;
+    }
+
+    if (!preferred) {
+      if (diff >= 2) { preferred = "B"; absolute = true; }
+      else if (diff <= -2) { preferred = "W"; absolute = true; }
+      else if (diff === 1) { preferred = "B"; }
+      else if (diff === -1) { preferred = "W"; }
+    }
+
+    return { preferred, absolute, diff, seq };
+  }
+
+  function pairRound(roundNo) {
+    const order = standings().map(r => r.id);
+    let pool = [...order];
+
+    const byes = [];
+    if (pool.length % 2 === 1) {
+      const reversed = [...pool].reverse();
+      let byeId = reversed.find(pid => !playerById(pid).bye);
+      if (byeId == null) byeId = reversed[0];
+      byes.push(byeId);
+      pool = pool.filter(pid => pid !== byeId);
+    }
+
+    const scores = new Map(t.players.map(p => [p.id, p.score]));
+
+    function scoreDiff(a, b) {
+      return Math.abs((scores.get(a) ?? 0) - (scores.get(b) ?? 0));
+    }
+
+    function orderDistance(a, b) {
+      return Math.abs(order.indexOf(a) - order.indexOf(b));
+    }
+
+    function candidateList(a, remaining) {
+      return [...remaining].sort((x, y) => {
+        const dx = scoreDiff(a, x), dy = scoreDiff(a, y);
+        if (dx !== dy) return dx - dy;
+        return orderDistance(a, x) - orderDistance(a, y);
+      });
+    }
+
+    function threeInARowPenalty(player, assignedColor) {
+      const seq = (player.colorSeq || []).filter(c => c === "W" || c === "B");
+      if (seq.length < 2) return 0;
+      const last = seq[seq.length - 1];
+      const prev = seq[seq.length - 2];
+      return (last === assignedColor && prev === assignedColor) ? 1000 : 0;
+    }
+
+    function consecutivePenalty(player, assignedColor) {
+      const seq = (player.colorSeq || []).filter(c => c === "W" || c === "B");
+      const last = seq[seq.length - 1];
+      return last === assignedColor ? 25 : 0;
+    }
+
+    function balancePenalty(player, assignedColor) {
+      const w = player.whiteCount + (assignedColor === "W" ? 1 : 0);
+      const b = player.blackCount + (assignedColor === "B" ? 1 : 0);
+      return Math.abs(w - b) * 5;
+    }
+
+    function prefPenalty(player, assignedColor) {
+      const pref = colorPreferenceInfo(player);
+      if (!pref.preferred) return 0;
+      if (pref.preferred === assignedColor) return 0;
+      return pref.absolute ? 250 : 35;
+    }
+
+    function chooseColors(a, b) {
+      const pa = playerById(a), pb = playerById(b);
+
+      function score(whiteId, blackId) {
+        const pw = playerById(whiteId), pbk = playerById(blackId);
+        return (
+          prefPenalty(pw, "W") +
+          prefPenalty(pbk, "B") +
+          threeInARowPenalty(pw, "W") +
+          threeInARowPenalty(pbk, "B") +
+          consecutivePenalty(pw, "W") +
+          consecutivePenalty(pbk, "B") +
+          balancePenalty(pw, "W") +
+          balancePenalty(pbk, "B")
+        );
+      }
+
+      const opt1 = { white: a, black: b, penalty: score(a, b) };
+      const opt2 = { white: b, black: a, penalty: score(b, a) };
+
+      if (opt1.penalty !== opt2.penalty) {
+        return opt1.penalty < opt2.penalty ? opt1 : opt2;
+      }
+
+      const paPref = colorPreferenceInfo(pa);
+      const pbPref = colorPreferenceInfo(pb);
+      if (paPref.preferred === "W" && pbPref.preferred !== "W") return opt1;
+      if (pbPref.preferred === "W" && paPref.preferred !== "W") return opt2;
+      return opt1;
+    }
+
+    function backtrack(currentPairs, remainingIds) {
+      if (remainingIds.length === 0) return currentPairs;
+
+      const a = remainingIds[0];
+      const rest = remainingIds.slice(1);
+
+      for (const b of candidateList(a, rest)) {
+        if (havePlayed(a, b)) continue;
+
+        const colors = chooseColors(a, b);
+        if (colors.penalty >= 1000) continue; // undvik tre lika i rad om möjligt
+
+        const nextPairs = currentPairs.concat([{ white: colors.white, black: colors.black, result: null }]);
+        const nextRemaining = rest.filter(x => x !== b);
+        const solved = backtrack(nextPairs, nextRemaining);
+        if (solved) return solved;
+      }
+
+      for (const b of candidateList(a, rest)) {
+        if (havePlayed(a, b)) continue;
+        const colors = chooseColors(a, b);
+        const nextPairs = currentPairs.concat([{ white: colors.white, black: colors.black, result: null }]);
+        const nextRemaining = rest.filter(x => x !== b);
+        const solved = backtrack(nextPairs, nextRemaining);
+        if (solved) return solved;
+      }
+
+      return null;
+    }
+
+    let pairs = backtrack([], pool);
+
+    if (!pairs) {
+      const remaining = [...pool];
+      pairs = [];
+      while (remaining.length) {
+        const a = remaining.shift();
+        const b = candidateList(a, remaining)[0];
+        remaining.splice(remaining.indexOf(b), 1);
+        const colors = chooseColors(a, b);
+        pairs.push({ white: colors.white, black: colors.black, result: null });
+      }
+    }
+
+    return { round: roundNo, pairs, byes };
+  }
+
+  function renderCurrentRound() {
+    if (!t) return;
+
+    const roundNo = currentRoundNumber();
+    $("roundLabel").textContent = roundNo;
+
+    const pending = window.__pendingRound;
+    const round = pending && pending.round === roundNo ? pending : (window.__pendingRound = pairRound(roundNo));
+
+    let html = "";
+    round.pairs.forEach((p, i) => {
+      const w = playerById(p.white), b = playerById(p.black);
+      const wPref = colorPreferenceInfo(w);
+      const bPref = colorPreferenceInfo(b);
+
+      html += `<div class="pair">
+        <h3>Bord ${i+1}</h3>
+        <div class="names">
+          <strong>${escapeHtml(w.name)}</strong> <span class="muted">(Vit)</span>
+          <span class="vs">vs</span>
+          <strong>${escapeHtml(b.name)}</strong> <span class="muted">(Svart)</span>
+        </div>
+        <div class="row small" style="margin-top:6px;">
+          <span class="tag">${w.whiteCount}V/${w.blackCount}S</span>
+          <span class="tag">${b.whiteCount}V/${b.blackCount}S</span>
+          ${wPref.preferred ? `<span class="tag">${escapeHtml(w.name)} föredrar ${wPref.preferred === "W" ? "vit" : "svart"}</span>` : ``}
+          ${bPref.preferred ? `<span class="tag">${escapeHtml(b.name)} föredrar ${bPref.preferred === "W" ? "vit" : "svart"}</span>` : ``}
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <label>Resultat</label>
+          <select data-match="${i}" class="resultSelect">
+            <option value="">— välj —</option>
+            <option value="1-0">1–0 (vit vinner)</option>
+            <option value="0-1">0–1 (svart vinner)</option>
+            <option value="0.5-0.5">½–½ (remi)</option>
+          </select>
+        </div>
+      </div>`;
+    });
+
+    if (round.byes.length) {
+      const byePlayer = playerById(round.byes[0]);
+      html += `<div class="pair">
+        <h3>Bye</h3>
+        <div class="names"><strong>${escapeHtml(byePlayer.name)}</strong> <span class="muted">får 1 poäng (bye)</span></div>
+      </div>`;
+    }
+
+    $("pairingsArea").innerHTML = html;
+    $("btnNextRound").disabled = true;
+    $("saveHint").textContent = "Fyll i resultat och spara.";
+
+    if (roundNo > ROUNDS) {
+      $("pairingsArea").innerHTML = `<div class="note"><strong>Turneringen är klar.</strong> Inga fler ronder.</div>`;
+      $("btnSaveRound").disabled = true;
+      $("btnNextRound").disabled = true;
+      $("saveHint").textContent = "Klart.";
+    } else {
+      $("btnSaveRound").disabled = false;
+    }
+
+    renderHistory();
+  }
+
+  function renderHistory() {
+    if (!t) return;
+    if (!t.rounds.length) {
+      $("historyArea").innerHTML = `<div class="muted">Inga tidigare ronder ännu.</div>`;
+      return;
+    }
+    let html = "";
+    for (const r of t.rounds) {
+      html += `<div class="pair">
+        <h3>Rond ${r.round}</h3>`;
+      for (const m of r.pairs) {
+        const w = playerById(m.white), b = playerById(m.black);
+        const res = m.result ? `${formatScore(m.result.w)}–${formatScore(m.result.b)}` : "—";
+        html += `<div class="row" style="justify-content:space-between;">
+          <div>${escapeHtml(w.name)} (Vit) <span class="vs">vs</span> ${escapeHtml(b.name)} (Svart)</div>
+          <div class="mono">${res}</div>
+        </div>`;
+      }
+      if (r.byes.length) {
+        html += `<div class="row" style="justify-content:space-between;">
+          <div>Bye: ${escapeHtml(playerById(r.byes[0]).name)}</div>
+          <div class="mono">1</div>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+    $("historyArea").innerHTML = html;
+  }
+
+  function canSaveRound(round) {
+    const selects = document.querySelectorAll(".resultSelect");
+    if (selects.length !== round.pairs.length) return false;
+    for (const s of selects) if (!s.value) return false;
+    return true;
+  }
+
+  function applyRoundResults(round) {
+    const selects = document.querySelectorAll(".resultSelect");
+    round.pairs.forEach((m, i) => {
+      const val = selects[i].value;
+      const [wStr, bStr] = val.split("-");
+      const wPts = Number(wStr);
+      const bPts = Number(bStr);
+
+      m.result = { w: wPts, b: bPts };
+
+      const wp = playerById(m.white);
+      const bp = playerById(m.black);
+
+      if (!wp.opp.includes(bp.id)) wp.opp.push(bp.id);
+      if (!bp.opp.includes(wp.id)) bp.opp.push(wp.id);
+
+      wp.results[round.round] = wPts;
+      bp.results[round.round] = bPts;
+
+      wp.score += wPts;
+      bp.score += bPts;
+
+      wp.whiteCount += 1;
+      bp.blackCount += 1;
+      wp.colorSeq.push("W");
+      bp.colorSeq.push("B");
+    });
+
+    if (round.byes.length) {
+      const p = playerById(round.byes[0]);
+      p.bye = true;
+      p.results[round.round] = 1;
+      p.score += 1;
+      p.colorSeq.push("B");
+    }
+
+    t.rounds.push(round);
+    save();
+  }
+
+  function showTournamentUI() {
+    $("setupArea").style.display = "none";
+    $("tournamentArea").style.display = "block";
+    renderStandings();
+    renderCurrentRound();
+  }
+
+  function renderPrintableReportBody() {
+    if (!t) return `<p>Ingen turnering att skriva ut ännu.</p>`;
+
+    let body = `
+      <h1>Schweizer/Monrad-turnering</h1>
+      <p><strong>Skapad:</strong> ${new Date(t.createdAt).toLocaleString("sv-SE")}</p>
+      <p><strong>Spelare:</strong> ${t.players.length} &nbsp; | &nbsp; <strong>Avslutade ronder:</strong> ${t.rounds.length}</p>
+    `;
+
+    if (!t.rounds.length) {
+      body += `<p>Inga rondresultat ännu.</p>`;
+      return body;
+    }
+
+    for (const r of t.rounds) {
+      body += `<section class="print-section">
+        <h2>Rond ${r.round} – resultat</h2>
+        <table>
+          <thead><tr><th>Bord</th><th>Vit</th><th>Svart</th><th>Resultat</th></tr></thead>
+          <tbody>`;
+      r.pairs.forEach((m, idx) => {
+        const w = playerById(m.white), b = playerById(m.black);
+        const res = m.result ? `${formatScore(m.result.w)}–${formatScore(m.result.b)}` : "—";
+        body += `<tr>
+          <td>${idx + 1}</td>
+          <td>${escapeHtml(w.name)}</td>
+          <td>${escapeHtml(b.name)}</td>
+          <td>${res}</td>
+        </tr>`;
+      });
+      if (r.byes.length) {
+        const p = playerById(r.byes[0]);
+        body += `<tr><td>Bye</td><td colspan="2">${escapeHtml(p.name)}</td><td>1</td></tr>`;
+      }
+      body += `</tbody></table>`;
+
+      const state = getStateAfterRound(r.round);
+      body += `<h3>Ställning efter rond ${r.round}</h3>
+        <table>
+          <thead><tr><th>#</th><th>Spelare</th><th>Poäng</th><th>Buchholz</th><th>Färger</th><th>Bye</th></tr></thead>
+          <tbody>`;
+      state.standings.forEach((row, idx) => {
+        body += `<tr>
+          <td>${idx + 1}</td>
+          <td>${escapeHtml(row.name)}</td>
+          <td>${formatScore(row.score)}</td>
+          <td>${formatScore(row.buchholz)}</td>
+          <td>${row.whiteCount}V / ${row.blackCount}S</td>
+          <td>${row.bye}</td>
+        </tr>`;
+      });
+      body += `</tbody></table></section>`;
+    }
+
+    return body;
+  }
+
+  function reportHtmlDocument() {
+    const body = renderPrintableReportBody();
+    return `<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Turneringsrapport</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 28px; color:#111; }
+  h1 { margin:0 0 10px; }
+  h2 { margin:24px 0 8px; }
+  h3 { margin:16px 0 8px; }
+  table { width:100%; border-collapse: collapse; margin-bottom: 14px; }
+  th, td { border:1px solid #cfd6e3; padding: 7px 8px; text-align:left; font-size: 13px; }
+  th { background:#f3f6fb; }
+  .print-section { page-break-after: always; }
+  .print-section:last-child { page-break-after: auto; }
+</style>
+</head>
+<body>${body}</body>
+</html>`;
+  }
+
+  function printReport() {
+    const w = window.open("", "_blank");
+    if (!w) {
+      alert("Kunde inte öppna utskriftsfönstret. Kontrollera popup-blockering.");
+      return;
+    }
+    w.document.open();
+    w.document.write(reportHtmlDocument());
+    w.document.close();
+    w.focus();
+    setTimeout(() => w.print(), 300);
+  }
+
+  function downloadReport() {
+    const blob = new Blob([reportHtmlDocument()], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "turneringsrapport.html";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  $("btnCreate").addEventListener("click", () => {
+    const names = sanitizeNames($("playersTextarea").value);
+    if (names.length < 2) {
+      alert("Lägg in minst 2 spelare (en per rad).");
+      return;
+    }
+
+    t = {
+      createdAt: new Date().toISOString(),
+      players: names.map((name, idx) => ({
+        id: idx + 1,
+        name,
+        score: 0,
+        opp: [],
+        results: {},
+        bye: false,
+        whiteCount: 0,
+        blackCount: 0,
+        colorSeq: []
+      })),
+      rounds: []
+    };
+
+    shuffle(t.players);
+    t.players.forEach((p, i) => p.id = i + 1);
+
+    window.__pendingRound = null;
+    save();
+    showTournamentUI();
+  });
+
+  $("btnSaveRound").addEventListener("click", () => {
+    const roundNo = currentRoundNumber();
+    if (roundNo > ROUNDS) return;
+
+    const round = window.__pendingRound;
+    if (!round || round.round !== roundNo) {
+      alert("Kunde inte hitta aktuell lottning. Prova att ladda om sidan.");
+      return;
+    }
+
+    if (!canSaveRound(round)) {
+      alert("Fyll i resultat för alla partier innan du sparar.");
+      return;
+    }
+
+    applyRoundResults(round);
+    window.__pendingRound = null;
+
+    renderStandings();
+
+    if (currentRoundNumber() <= ROUNDS) {
+      $("btnNextRound").disabled = false;
+      $("saveHint").textContent = "Sparat! Klicka på “Lotta nästa rond”.";
+    } else {
+      $("btnNextRound").disabled = true;
+      $("saveHint").textContent = "Turneringen är klar.";
+    }
+
+    renderHistory();
+  });
+
+  $("btnNextRound").addEventListener("click", () => {
+    if (!t) return;
+    if (currentRoundNumber() > ROUNDS) return;
+    window.__pendingRound = pairRound(currentRoundNumber());
+    renderCurrentRound();
+    $("btnNextRound").disabled = true;
+  });
+
+  $("btnReset").addEventListener("click", () => {
+    const ok = confirm("Nollställ och ta bort sparad turnering?");
+    if (!ok) return;
+    localStorage.removeItem(STORAGE_KEY);
+    t = null;
+    window.__pendingRound = null;
+    $("tournamentArea").style.display = "none";
+    $("setupArea").style.display = "block";
+    $("standingsArea").innerHTML = "";
+    $("standingsHint").textContent = "Skapa turneringen för att se ställning.";
+  });
+
+  $("btnExport").addEventListener("click", () => {
+    const data = t || load();
+    if (!data) { alert("Ingen turnering att exportera."); return; }
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "schweizer_turnering.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  $("btnImport").addEventListener("click", () => $("importFile").click());
+  $("btnPrintReport").addEventListener("click", printReport);
+  $("btnDownloadReport").addEventListener("click", downloadReport);
+
+  $("importFile").addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const obj = JSON.parse(text);
+      if (!obj.players || !Array.isArray(obj.players) || !obj.rounds || !Array.isArray(obj.rounds)) {
+        alert("Ogiltigt JSON-format.");
+        return;
+      }
+      t = normalizeTournament(obj);
+      save();
+      window.__pendingRound = null;
+      showTournamentUI();
+    } catch(err) {
+      console.error(err);
+      alert("Kunde inte importera filen.");
+    } finally {
+      e.target.value = "";
+    }
+  });
+
+  const existing = load();
+  if (existing) {
+    t = existing;
+    showTournamentUI();
+  }
+})();
+</script>
+</body>
+</html>
