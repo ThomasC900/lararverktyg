@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lektionstimer</title>
+<style>
+:root{
+  --bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;
+  --accent:#3457d5;--accent2:#6c4de6;--line:#dce3ee;
+  --warn:#c77b00;--bad:#c43b45;--shadow:0 14px 34px rgba(26,39,64,.12)
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,ui-rounded,"Segoe UI",Arial,sans-serif}
+body{background:radial-gradient(circle at top left,rgba(52,87,213,.12),transparent 34%),radial-gradient(circle at top right,rgba(108,77,230,.10),transparent 30%),var(--bg);color:var(--text);padding:20px}
+.app{width:min(1200px,96vw);margin:0 auto}
+.back-link{display:inline-block;margin-bottom:16px;text-decoration:none;background:rgba(255,255,255,.96);color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:999px;font-weight:800;box-shadow:0 6px 18px rgba(26,39,64,.10)}
+header{text-align:center;margin:4px 0 18px}
+h1{margin:0;font-size:clamp(2rem,4vw,3.4rem);letter-spacing:-.04em}
+.subtitle{color:var(--muted);margin:8px 0 0;font-size:1.05rem}
+.panel{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:clamp(18px,3vw,32px)}
+.setup,.custom,.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.setup{margin-bottom:22px}.custom{align-items:end;margin-bottom:18px}.controls{margin-top:24px}
+.preset,.control-btn{border:0;border-radius:14px;padding:12px 16px;font-size:1rem;font-weight:800;cursor:pointer;transition:.16s ease}
+.preset{background:#e9edf7;color:#344054}.preset:hover,.control-btn:hover{transform:translateY(-1px)}
+.preset.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.field label{display:block;font-size:.82rem;font-weight:800;color:var(--muted);margin:0 0 5px 4px}
+.field input{width:100px;padding:11px 12px;border:2px solid var(--line);border-radius:12px;font-size:1rem;font-weight:800;text-align:center}
+#endHour{width:140px;min-width:140px}
+.field select{padding:11px 12px;border:2px solid var(--line);border-radius:12px;font-size:1rem;font-weight:800;background:#fff;color:var(--text)}
+.custom-fields{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+.hidden{display:none!important}
+.set-btn,.control-btn.dark{background:#172033;color:#fff}
+.timer-wrap{display:grid;place-items:center;padding:10px 0 4px}
+.time{font-variant-numeric:tabular-nums;font-size:clamp(5.2rem,17vw,12rem);font-weight:950;line-height:1;letter-spacing:-.045em;text-align:center}
+.label{margin-top:8px;color:var(--muted);font-size:clamp(1rem,2vw,1.3rem);font-weight:800;text-align:center}
+.end-time{margin-top:8px;color:var(--muted);font-size:1rem;text-align:center}
+.progress-shell{width:min(900px,100%);height:24px;background:#e5e9f2;border-radius:999px;overflow:hidden;margin:24px auto 6px}
+.progress{height:100%;width:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s linear,background .25s ease}
+.control-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.control-btn.secondary{background:#e9edf7;color:#344054}
+.control-btn.danger{background:#fde7e9;color:#9f2430}
+.status{min-height:28px;margin-top:18px;text-align:center;font-weight:800;color:var(--muted)}
+.finished .time{color:var(--bad)}.finished .progress{background:var(--bad)}.finished .status{color:var(--bad);font-size:1.25rem}
+
+body.fullscreen-mode{background:#08111f;color:#fff;padding:0}
+body.fullscreen-mode .app{width:100%;max-width:none;min-height:100vh;display:flex;flex-direction:column}
+body.fullscreen-mode .back-link,body.fullscreen-mode header,body.fullscreen-mode .setup,body.fullscreen-mode .custom{display:none}
+body.fullscreen-mode .panel{flex:1;border:0;border-radius:0;box-shadow:none;background:#08111f;display:flex;flex-direction:column;justify-content:center;padding:2vw 4vw}
+body.fullscreen-mode .time{font-size:clamp(11rem,34vw,29rem);color:#fff;text-shadow:0 8px 32px rgba(0,0,0,.35)}
+body.fullscreen-mode .label,body.fullscreen-mode .end-time,body.fullscreen-mode .status{color:rgba(255,255,255,.78)}
+body.fullscreen-mode .progress-shell{background:rgba(255,255,255,.16)}
+body.fullscreen-mode .control-btn.secondary{background:rgba(255,255,255,.13);color:#fff}
+body.fullscreen-mode .control-btn.danger{background:rgba(255,80,90,.20);color:#fff}
+body.fullscreen-mode.finished .time{color:#ff6b75}
+body.fullscreen-mode.finished .status{color:#ff8b93}
+
+@media(max-width:600px){
+  body{padding:12px}.panel{border-radius:20px}.time{font-size:22vw}.preset,.control-btn{padding:11px 13px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
+  <header>
+    <h1>Lektionstimer</h1>
+    <p class="subtitle">En tydlig nedräkning som kan visas för hela klassen.</p>
+  </header>
+
+  <main class="panel" id="panel">
+    <div class="setup" aria-label="Snabbval">
+      <button class="preset" data-minutes="5">5 min</button>
+      <button class="preset" data-minutes="10">10 min</button>
+      <button class="preset" data-minutes="15">15 min</button>
+      <button class="preset" data-minutes="20">20 min</button>
+      <button class="preset" data-minutes="30">30 min</button>
+      <button class="preset" data-minutes="40">40 min</button>
+      <button class="preset" data-minutes="60">60 min</button>
+    </div>
+
+    <div class="custom">
+      <div class="field">
+        <label for="mode">Ställ timern via</label>
+        <select id="mode">
+          <option value="countdown" selected>Nedräkningstid</option>
+          <option value="endtime">Sluttid</option>
+        </select>
+      </div>
+
+      <div id="countdownFields" class="custom-fields">
+        <div class="field"><label for="minutes">Minuter</label><input id="minutes" type="number" min="0" max="300" value="20"></div>
+        <div class="field"><label for="seconds">Sekunder</label><input id="seconds" type="number" min="0" max="59" value="0"></div>
+      </div>
+
+      <div id="endtimeFields" class="custom-fields hidden">
+        <div class="field"><label for="endHour">Sluttid</label><input id="endHour" type="time"></div>
+      </div>
+
+      <button id="setTime" class="control-btn set-btn" type="button">Ställ in tid</button>
+    </div>
+
+    <section class="timer-wrap" aria-live="polite">
+      <div id="time" class="time">20:00</div>
+      <div class="label">Tid kvar</div>
+      <div id="endTime" class="end-time">Sluttid: –</div>
+    </section>
+
+    <div class="progress-shell"><div id="progress" class="progress"></div></div>
+
+    <div class="controls">
+      <button id="startPause" class="control-btn primary" type="button">▶ Starta</button>
+      <button id="minusMinute" class="control-btn secondary" type="button">− 1 min</button>
+      <button id="plusMinute" class="control-btn secondary" type="button">+ 1 min</button>
+      <button id="reset" class="control-btn danger" type="button">↺ Återställ</button>
+      <button id="fullscreen" class="control-btn dark" type="button">⛶ Helskärm</button>
+    </div>
+
+    <div id="status" class="status">Timern är redo.</div>
+  </main>
+</div>
+
+<script>
+const timeEl=document.getElementById("time");
+const progressEl=document.getElementById("progress");
+const statusEl=document.getElementById("status");
+const panelEl=document.getElementById("panel");
+const endTimeEl=document.getElementById("endTime");
+const minutesEl=document.getElementById("minutes");
+const secondsEl=document.getElementById("seconds");
+const modeEl=document.getElementById("mode");
+const countdownFields=document.getElementById("countdownFields");
+const endtimeFields=document.getElementById("endtimeFields");
+const endHourEl=document.getElementById("endHour");
+const startPauseBtn=document.getElementById("startPause");
+const fullscreenBtn=document.getElementById("fullscreen");
+
+let initialSeconds=20*60;
+let remainingSeconds=initialSeconds;
+let running=false;
+let intervalId=null;
+let targetEnd=null;
+
+function clamp(n,min,max){return Math.min(max,Math.max(min,n))}
+function formatTime(seconds){
+  seconds=Math.max(0,Math.ceil(seconds));
+  const h=Math.floor(seconds/3600),m=Math.floor((seconds%3600)/60),s=seconds%60;
+  return h>0?`${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${m}:${String(s).padStart(2,"0")}`;
+}
+function formatClock(date){return date?date.toLocaleTimeString("sv-SE",{hour:"2-digit",minute:"2-digit"}):"–"}
+
+function render(){
+  timeEl.textContent=formatTime(remainingSeconds);
+  const fraction=initialSeconds>0?remainingSeconds/initialSeconds:0;
+  progressEl.style.width=`${clamp(fraction*100,0,100)}%`;
+  progressEl.style.background=fraction<=0.1&&remainingSeconds>0?"var(--bad)":fraction<=0.25&&remainingSeconds>0?"var(--warn)":"";
+  endTimeEl.textContent=`Sluttid: ${running?formatClock(targetEnd):"–"}`;
+  panelEl.classList.toggle("finished",remainingSeconds<=0);
+}
+function pauseTimer(changeStatus=true){
+  if(intervalId){clearInterval(intervalId);intervalId=null}
+  if(running&&targetEnd) remainingSeconds=Math.max(0,(targetEnd.getTime()-Date.now())/1000);
+  running=false;targetEnd=null;startPauseBtn.textContent="▶ Starta";
+  if(changeStatus&&remainingSeconds>0) statusEl.textContent="Timern är pausad.";
+  render();
+}
+function setTimer(seconds){
+  pauseTimer(false);
+  initialSeconds=Math.max(1,seconds);
+  remainingSeconds=initialSeconds;
+  statusEl.textContent="Timern är redo.";
+  render();
+}
+function startTimer(){
+  if(remainingSeconds<=0)return;
+  running=true;
+  targetEnd=new Date(Date.now()+remainingSeconds*1000);
+  startPauseBtn.textContent="⏸ Pausa";
+  statusEl.textContent="Timern räknar ned.";
+  intervalId=setInterval(()=>{
+    remainingSeconds=Math.max(0,(targetEnd.getTime()-Date.now())/1000);
+    if(remainingSeconds<=0){
+      remainingSeconds=0;
+      pauseTimer(false);
+      statusEl.textContent="⏰ Tiden är slut!";
+    }
+    render();
+  },250);
+  render();
+}
+function toggleStartPause(){running?pauseTimer():startTimer()}
+function adjustTime(delta){
+  if(running&&targetEnd){
+    targetEnd=new Date(targetEnd.getTime()+delta*1000);
+    remainingSeconds=Math.max(0,(targetEnd.getTime()-Date.now())/1000);
+  }else{
+    remainingSeconds=Math.max(0,remainingSeconds+delta);
+  }
+  initialSeconds=Math.max(initialSeconds,remainingSeconds);
+  if(remainingSeconds<=0){pauseTimer(false);statusEl.textContent="⏰ Tiden är slut!"}
+  render();
+}
+function resetTimer(){
+  pauseTimer(false);
+  remainingSeconds=initialSeconds;
+  statusEl.textContent="Timern är återställd.";
+  render();
+}
+async function toggleFullscreen(){
+  try{
+    if(!document.fullscreenElement){
+      await document.documentElement.requestFullscreen();
+    }else{
+      await document.exitFullscreen();
+    }
+  }catch(e){
+    document.body.classList.toggle("fullscreen-mode");
+  }
+}
+document.addEventListener("fullscreenchange",()=>{
+  const active=!!document.fullscreenElement;
+  document.body.classList.toggle("fullscreen-mode",active);
+  fullscreenBtn.textContent=active?"⛶ Avsluta helskärm":"⛶ Helskärm";
+});
+document.querySelectorAll(".preset").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const mins=Number(btn.dataset.minutes);
+    modeEl.value="countdown";
+    updateModeUI();
+    minutesEl.value=mins;secondsEl.value=0;
+    document.querySelectorAll(".preset").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    setTimer(mins*60);
+  });
+});
+function updateModeUI(){
+  const isCountdown=modeEl.value==="countdown";
+  countdownFields.classList.toggle("hidden",!isCountdown);
+  endtimeFields.classList.toggle("hidden",isCountdown);
+}
+
+modeEl.addEventListener("change",updateModeUI);
+
+document.getElementById("setTime").addEventListener("click",()=>{
+  document.querySelectorAll(".preset").forEach(b=>b.classList.remove("active"));
+
+  if(modeEl.value==="countdown"){
+    const mins=clamp(parseInt(minutesEl.value||"0",10),0,300);
+    const secs=clamp(parseInt(secondsEl.value||"0",10),0,59);
+    minutesEl.value=mins;
+    secondsEl.value=secs;
+    const total=mins*60+secs;
+
+    if(total<1){
+      statusEl.textContent="Välj minst 1 sekund.";
+      return;
+    }
+
+    setTimer(total);
+    return;
+  }
+
+  if(!endHourEl.value){
+    statusEl.textContent="Välj en sluttid.";
+    return;
+  }
+
+  const [hour,minute]=endHourEl.value.split(":").map(Number);
+  const now=new Date();
+  const target=new Date(now);
+  target.setHours(hour,minute,0,0);
+
+  if(target<=now){
+    target.setDate(target.getDate()+1);
+  }
+
+  const seconds=Math.round((target-now)/1000);
+
+  if(seconds<1 || seconds>24*60*60){
+    statusEl.textContent="Sluttiden måste ligga inom det närmaste dygnet.";
+    return;
+  }
+
+  setTimer(seconds);
+  statusEl.textContent=`Timern är inställd till ${formatClock(target)}.`;
+});
+startPauseBtn.addEventListener("click",toggleStartPause);
+document.getElementById("minusMinute").addEventListener("click",()=>adjustTime(-60));
+document.getElementById("plusMinute").addEventListener("click",()=>adjustTime(60));
+document.getElementById("reset").addEventListener("click",resetTimer);
+fullscreenBtn.addEventListener("click",toggleFullscreen);
+document.addEventListener("keydown",e=>{
+  const tag=document.activeElement?.tagName;
+  if(tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT")return;
+  if(e.code==="Space"){e.preventDefault();toggleStartPause()}
+});
+const suggestedEnd=new Date(Date.now()+20*60*1000);
+endHourEl.value=`${String(suggestedEnd.getHours()).padStart(2,"0")}:${String(suggestedEnd.getMinutes()).padStart(2,"0")}`;
+updateModeUI();
+render();
+</script>
+</body>
+</html>
