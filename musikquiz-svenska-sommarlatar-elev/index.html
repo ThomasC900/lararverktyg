@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Musikquiz – Svenska sommarlåtar</title>
+<style>
+    :root {
+        --bg1: #fff7d6;
+        --bg2: #d8f4ff;
+        --accent: #ff7a59;
+        --accent2: #2b8c67;
+        --dark: #17324d;
+        --line: #f0c36a;
+        --white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(135deg, var(--bg1), var(--bg2));
+        color: var(--dark);
+        padding: 24px;
+    }
+
+    .back-link {
+        display: inline-block; margin: 0 0 16px 0; text-decoration: none;
+        background: rgba(255,255,255,0.96); color: var(--dark);
+        border: 1px solid #d9e2ec; padding: 10px 14px; border-radius: 999px;
+        font-weight: 800; box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    .back-link:hover { text-decoration: none; transform: translateY(-1px); }
+
+    .page {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: rgba(255,255,255,0.92);
+        border-radius: 24px;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+        overflow: hidden;
+        border: 4px solid #fff;
+    }
+    header {
+        padding: 28px 32px;
+        background: linear-gradient(90deg, #ffcf5c, #ff8a65, #6ec6ff);
+        color: #102a43;
+    }
+    h1 {
+        margin: 0;
+        font-size: 34px;
+        letter-spacing: 0.5px;
+    }
+    .subtitle {
+        margin-top: 8px;
+        font-size: 17px;
+        max-width: 900px;
+        line-height: 1.45;
+    }
+    .toolbar {
+        padding: 14px 22px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        background: #fff8e6;
+        border-bottom: 2px solid var(--line);
+    }
+    button {
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        background: var(--dark);
+        color: white;
+    }
+    button.secondary {
+        background: var(--accent2);
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+    th {
+        background: var(--dark);
+        color: white;
+        padding: 12px 10px;
+        text-align: left;
+        font-size: 14px;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    td {
+        vertical-align: top;
+        padding: 12px 10px;
+        border-bottom: 1px solid #e6edf3;
+        line-height: 1.35;
+        font-size: 14px;
+    }
+    tr:nth-child(even) td {
+        background: #fffaf0;
+    }
+    th:nth-child(1), td:nth-child(1) { width: 21%; }
+    th:nth-child(2), td:nth-child(2) { width: 25%; }
+    th:nth-child(3), td:nth-child(3) { width: 25%; }
+    th:nth-child(4), td:nth-child(4) { width: 14.5%; }
+    th:nth-child(5), td:nth-child(5) { width: 14.5%; }
+    a {
+        color: #005bbb;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
+    .num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: white;
+        font-size: 12px;
+        font-weight: 800;
+    }
+    .answer {
+        font-weight: 700;
+        color: #174b38;
+    }
+    .hide-answers .answer {
+        color: transparent;
+        text-shadow: 0 0 9px rgba(23,75,56,0.35);
+        user-select: none;
+    }
+    footer {
+        padding: 16px 24px;
+        font-size: 13px;
+        color: #52616b;
+        background: #f8fbfd;
+    }
+    @media print {
+        body { background: white; padding: 0; }
+        .page { box-shadow: none; border: none; border-radius: 0; }
+        .toolbar, .back-link { display: none; }
+        header { padding: 16px; }
+        h1 { font-size: 24px; }
+        .subtitle { font-size: 12px; }
+        th, td { font-size: 10px; padding: 6px; }
+        a { color: black; }
+        .answer { color: black !important; text-shadow: none !important; }
+    }
+</style>
+</head>
+<body>
+<a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
+<div class="page">
+    <header>
+        <h1>Musikquiz: Svenska sommarlåtar</h1>
+        <div class="subtitle">
+            Spela låten via Spotify-länken och ställ två frågor som mer eller mindre kopplar till låten, artisten, platsen eller känslan.
+        </div>
+    </header>
+
+    <div class="toolbar">
+        <button onclick="document.body.classList.toggle('hide-answers')">Visa/dölj svar</button>
+        <button class="secondary" onclick="window.print()">Skriv ut</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Spotify / låt</th>
+                <th>Fråga A</th>
+                <th>Fråga B</th>
+                <th>Svar A</th>
+                <th>Svar B</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        <tr>
+            <td class="song"><span class="num">1</span><a href="https://open.spotify.com/search/Tomas%20Ledin%20Sommaren%20%C3%A4r%20kort" target="_blank" rel="noopener">Tomas Ledin – Sommaren är kort</a></td>
+            <td>Tomas Ledin sjunger att sommaren är kort. Vilken månad har vanligtvis flest soldagar i Sverige: juni, juli eller augusti?</td>
+            <td>Låten handlar mycket om svensk sommarkänsla. Vilken blomma brukar ofta kopplas till midsommarfirande?</td>
+            <td class="answer">Juli</td>
+            <td class="answer">Prästkrage</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">2</span><a href="https://open.spotify.com/search/Gyllene%20Tider%20Sommartider" target="_blank" rel="noopener">Gyllene Tider – Sommartider</a></td>
+            <td>Gyllene Tider kommer från Halmstad. I vilket landskap ligger Halmstad?</td>
+            <td>Bandets sångare heter Per Gessle. Vilken internationellt känd popduo var han också med i?</td>
+            <td class="answer">Halland</td>
+            <td class="answer">Roxette</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">3</span><a href="https://open.spotify.com/search/Ted%20G%C3%A4rdestad%20Sol%20vind%20och%20vatten" target="_blank" rel="noopener">Ted Gärdestad – Sol, vind och vatten</a></td>
+            <td>Titeln nämner tre naturfenomen. Vilket av dem är en energikälla som driver segelbåtar?</td>
+            <td>Ted Gärdestad tävlade i Melodifestivalen med låten Satellit. Vilket årtionde slog han igenom?</td>
+            <td class="answer">Vind</td>
+            <td class="answer">1970-talet</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">4</span><a href="https://open.spotify.com/search/Laleh%20Goliat" target="_blank" rel="noopener">Laleh – Goliat</a></td>
+            <td>Namnet Goliat kommer från en känd berättelse. Vem besegrade Goliat enligt Bibeln?</td>
+            <td>Laleh växte upp i Sverige men föddes i ett annat land. Vilket?</td>
+            <td class="answer">David</td>
+            <td class="answer">Iran</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">5</span><a href="https://open.spotify.com/search/H%C3%A5kan%20Hellstr%C3%B6m%20K%C3%A4nn%20ingen%20sorg%20f%C3%B6r%20mig%20G%C3%B6teborg" target="_blank" rel="noopener">Håkan Hellström – Känn ingen sorg för mig Göteborg</a></td>
+            <td>Låten nämner Göteborg. Vad heter Sveriges största nöjespark som ligger i Göteborg?</td>
+            <td>Göteborg ligger vid Sveriges västkust. Vilket hav ligger utanför västkusten?</td>
+            <td class="answer">Liseberg</td>
+            <td class="answer">Kattegatt / Nordsjön</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">6</span><a href="https://open.spotify.com/search/Lasse%20Berghagen%20Stockholm%20i%20mitt%20hj%C3%A4rta" target="_blank" rel="noopener">Lasse Berghagen – Stockholm i mitt hjärta</a></td>
+            <td>Stockholm ligger på flera öar. Vad heter vattnet mellan Södermalm och Gamla stan?</td>
+            <td>Lasse Berghagen ledde länge ett klassiskt sommarprogram på TV. Vad heter programmet?</td>
+            <td class="answer">Riddarfjärden</td>
+            <td class="answer">Allsång på Skansen</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">7</span><a href="https://open.spotify.com/search/Markoolio%20Mera%20m%C3%A5l" target="_blank" rel="noopener">Markoolio – Mera mål</a></td>
+            <td>Låten kopplas till fotboll. Hur många spelare har ett fotbollslag på planen från start?</td>
+            <td>Vad kallas turneringen där landslag från hela världen tävlar om att bli världsmästare i fotboll?</td>
+            <td class="answer">11 spelare</td>
+            <td class="answer">Fotbolls-VM</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">8</span><a href="https://open.spotify.com/search/Orup%20Magaluf" target="_blank" rel="noopener">Orup – Magaluf</a></td>
+            <td>Magaluf ligger på en spansk ö. Vad heter ön?</td>
+            <td>Vilket hav ligger Mallorca i?</td>
+            <td class="answer">Mallorca</td>
+            <td class="answer">Medelhavet</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">9</span><a href="https://open.spotify.com/search/Sven-Ingvars%20Tv%C3%A5%20m%C3%B6rka%20%C3%B6gon" target="_blank" rel="noopener">Sven-Ingvars – Två mörka ögon</a></td>
+            <td>Sven-Ingvars förknippas med dansbandsmusik. Vilket instrument har ofta tangenter och bälg i dansbands- och folkmusik?</td>
+            <td>Bandet kommer från Värmland. Vad heter Värmlands största stad?</td>
+            <td class="answer">Dragspel</td>
+            <td class="answer">Karlstad</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">10</span><a href="https://open.spotify.com/search/Mats%20R%C3%A5dberg%20Rankarna%20Peta%20in%20en%20pinne%20i%20brasan" target="_blank" rel="noopener">Mats Rådberg &amp; Rankarna – Peta in en pinne i brasan</a></td>
+            <td>En brasa behöver syre, värme och bränsle. Vad kallas denna modell med tre delar?</td>
+            <td>Vad heter högtiden på våren då många i Sverige tänder stora brasor?</td>
+            <td class="answer">Brandtriangeln</td>
+            <td class="answer">Valborgsmässoafton</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">11</span><a href="https://open.spotify.com/search/Adolphson%20Falk%20Mer%20jul" target="_blank" rel="noopener">Adolphson &amp; Falk – Mer jul</a></td>
+            <td>Denna låt är egentligen inte somrig, men kan ge kontrast i quizet. Vilken månad infaller julafton i Sverige?</td>
+            <td>Vad heter den svenska traditionen den 13 december med ljus i håret?</td>
+            <td class="answer">December</td>
+            <td class="answer">Lucia</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">12</span><a href="https://open.spotify.com/search/Snowstorm%20Sommarnatt" target="_blank" rel="noopener">Snowstorm – Sommarnatt</a></td>
+            <td>En sommarnatt nära polcirkeln kan vara mycket ljus. Vad kallas fenomenet när solen inte går ner?</td>
+            <td>Vilken svensk stad brukar ofta kopplas till ishotellet och norrskensturism?</td>
+            <td class="answer">Midnattssol</td>
+            <td class="answer">Kiruna</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">13</span><a href="https://open.spotify.com/search/Tomas%20Ledin%20En%20dag%20p%C3%A5%20stranden" target="_blank" rel="noopener">Tomas Ledin – En dag på stranden</a></td>
+            <td>På stranden mäter man ibland UV-index. Vad skyddar solkräm huden mot?</td>
+            <td>Vad heter Sveriges största ö, känd för många stränder och raukar?</td>
+            <td class="answer">Ultraviolett strålning / UV-strålning</td>
+            <td class="answer">Gotland</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">14</span><a href="https://open.spotify.com/search/Uno%20Svenningsson%20Under%20ytan" target="_blank" rel="noopener">Uno Svenningsson – Under ytan</a></td>
+            <td>Under ytan i havet finns stora algskogar. Vad heter den gröna process där växter och alger använder solljus?</td>
+            <td>Vilket ämne tar människor upp när vi andas, och som fiskar får från vattnet via gälar?</td>
+            <td class="answer">Fotosyntes</td>
+            <td class="answer">Syre</td>
+        </tr>
+    
+        <tr>
+            <td class="song"><span class="num">15</span><a href="https://open.spotify.com/search/Evert%20Taube%20S%C3%A5%20skimrande%20var%20aldrig%20havet" target="_blank" rel="noopener">Evert Taube – Så skimrande var aldrig havet</a></td>
+            <td>Evert Taube skrev många visor med havsmotiv. Vad kallas en person som arbetar på ett fartyg?</td>
+            <td>Vad heter det instrument som traditionellt används för att bestämma läge till havs med hjälp av stjärnor?</td>
+            <td class="answer">Sjöman</td>
+            <td class="answer">Sextant</td>
+        </tr>
+    
+        </tbody>
+    </table>
+
+    <footer>
+        Tips: Använd knappen “Visa/dölj svar” om du vill kunna visa quizet på skärm utan att svaren syns direkt.
+    </footer>
+</div>
+<script>
+    document.body.classList.add('hide-answers');
+</script>
+</body>
+</html>
