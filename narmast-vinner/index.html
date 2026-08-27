@@ -62,6 +62,7 @@ h1{margin:0;font-size:clamp(2.4rem,5vw,4.8rem);letter-spacing:-.045em}
 .setting-group:first-of-type{border-top:0;padding-top:0}
 .setting-group h3{margin:0 0 10px;font-size:1rem}
 .range-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.count-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .field label{display:block;font-size:.78rem;font-weight:800;color:var(--muted);margin:0 0 5px 3px}
 .field input{
   width:100%;
@@ -185,6 +186,7 @@ body.fullscreen-mode .secondary{background:rgba(255,255,255,.13);color:white}
   .number-card{min-height:82px;border-radius:16px;font-size:9vw}
   .target{min-height:120px}
   .range-row,.time-row{grid-template-columns:1fr 1fr}
+  .count-row{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 </style>
 </head>
@@ -215,6 +217,23 @@ body.fullscreen-mode .secondary{background:rgba(255,255,255,.13);color:white}
             <label for="maxNumber">Största tal</label>
             <input id="maxNumber" type="number" value="10">
           </div>
+        </div>
+        <div class="count-row">
+          <div class="field">
+            <label for="oneDigitCount">Ensiffriga</label>
+            <input id="oneDigitCount" type="number" min="0" max="5" value="5">
+          </div>
+          <div class="field">
+            <label for="twoDigitCount">Tvåsiffriga</label>
+            <input id="twoDigitCount" type="number" min="0" max="5" value="0">
+          </div>
+          <div class="field">
+            <label for="threeDigitCount">Tresiffriga</label>
+            <input id="threeDigitCount" type="number" min="0" max="5" value="0">
+          </div>
+        </div>
+        <div class="settings-intro" style="margin:8px 0 0;">
+          Antalet ska tillsammans bli <strong>5</strong>. Talen hämtas alltid inom intervallet ovan.
         </div>
         <label class="checkbox">
           <input id="uniqueNumbers" type="checkbox">
@@ -309,6 +328,9 @@ const minTargetEl=document.getElementById("minTarget");
 const maxTargetEl=document.getElementById("maxTarget");
 const secondsEl=document.getElementById("seconds");
 const uniqueEl=document.getElementById("uniqueNumbers");
+const oneDigitCountEl=document.getElementById("oneDigitCount");
+const twoDigitCountEl=document.getElementById("twoDigitCount");
+const threeDigitCountEl=document.getElementById("threeDigitCount");
 const numbersEl=document.getElementById("numbers");
 const targetEl=document.getElementById("target");
 const timerEl=document.getElementById("timer");
@@ -319,7 +341,7 @@ const pauseBtn=document.getElementById("pause");
 const fullscreenBtn=document.getElementById("fullscreen");
 const errorEl=document.getElementById("settingsError");
 
-let settings={minNumber:1,maxNumber:10,minTarget:10,maxTarget:100,seconds:90,unique:false};
+let settings={minNumber:1,maxNumber:10,minTarget:10,maxTarget:100,seconds:90,unique:false,oneDigitCount:5,twoDigitCount:0,threeDigitCount:0};
 let remaining=settings.seconds;
 let initial=settings.seconds;
 let running=false;
@@ -339,19 +361,47 @@ function showError(msg){
   errorEl.textContent=msg;
   errorEl.classList.toggle("show",!!msg);
 }
+function categoryRange(kind,minNumber,maxNumber){
+  const limits={
+    one:[1,9],
+    two:[10,99],
+    three:[100,999]
+  }[kind];
+  const min=Math.max(minNumber,limits[0]);
+  const max=Math.min(maxNumber,limits[1]);
+  return min<=max ? [min,max] : null;
+}
+
+function categorySize(kind,minNumber,maxNumber){
+  const range=categoryRange(kind,minNumber,maxNumber);
+  return range ? range[1]-range[0]+1 : 0;
+}
+
 function validateAndApply(){
   const minNumber=Number(minNumberEl.value);
   const maxNumber=Number(maxNumberEl.value);
   const minTarget=Number(minTargetEl.value);
   const maxTarget=Number(maxTargetEl.value);
   const seconds=Number(secondsEl.value);
+  const oneDigitCount=Number(oneDigitCountEl.value);
+  const twoDigitCount=Number(twoDigitCountEl.value);
+  const threeDigitCount=Number(threeDigitCountEl.value);
 
-  if(![minNumber,maxNumber,minTarget,maxTarget,seconds].every(Number.isFinite)){
+  const allValues=[
+    minNumber,maxNumber,minTarget,maxTarget,seconds,
+    oneDigitCount,twoDigitCount,threeDigitCount
+  ];
+
+  if(!allValues.every(Number.isFinite)){
     showError("Alla inställningar måste innehålla giltiga tal.");
     return false;
   }
-  if(![minNumber,maxNumber,minTarget,maxTarget,seconds].every(Number.isInteger)){
+  if(!allValues.every(Number.isInteger)){
     showError("Använd heltal i inställningarna.");
+    return false;
+  }
+  if(minNumber<1 || maxNumber>999){
+    showError("Intervallet för de blå talen måste ligga mellan 1 och 999.");
     return false;
   }
   if(minNumber>maxNumber){
@@ -366,12 +416,41 @@ function validateAndApply(){
     showError("Tiden måste vara mellan 10 och 1800 sekunder.");
     return false;
   }
-  if(uniqueEl.checked && (maxNumber-minNumber+1)<5){
-    showError("Intervallet måste innehålla minst fem olika tal när 'alla olika' är valt.");
+  if([oneDigitCount,twoDigitCount,threeDigitCount].some(n=>n<0 || n>5)){
+    showError("Antalet ensiffriga, tvåsiffriga och tresiffriga tal måste vara mellan 0 och 5.");
+    return false;
+  }
+  if(oneDigitCount+twoDigitCount+threeDigitCount!==5){
+    showError("Välj totalt exakt 5 blå tal.");
     return false;
   }
 
-  settings={minNumber,maxNumber,minTarget,maxTarget,seconds,unique:uniqueEl.checked};
+  const requested=[
+    ["one",oneDigitCount,"ensiffriga"],
+    ["two",twoDigitCount,"tvåsiffriga"],
+    ["three",threeDigitCount,"tresiffriga"]
+  ];
+
+  for(const [kind,count,label] of requested){
+    if(count===0) continue;
+    const available=categorySize(kind,minNumber,maxNumber);
+
+    if(available===0){
+      showError(`Intervallet ${minNumber}–${maxNumber} innehåller inga ${label} tal.`);
+      return false;
+    }
+    if(uniqueEl.checked && available<count){
+      showError(`Det finns bara ${available} olika ${label} tal i intervallet, men du har valt ${count}.`);
+      return false;
+    }
+  }
+
+  settings={
+    minNumber,maxNumber,minTarget,maxTarget,seconds,
+    unique:uniqueEl.checked,
+    oneDigitCount,twoDigitCount,threeDigitCount
+  };
+
   showError("");
   statusEl.textContent="Inställningarna är uppdaterade.";
   if(!running){
@@ -381,17 +460,42 @@ function validateAndApply(){
   }
   return true;
 }
-function drawNumbers(){
+
+function drawFromCategory(kind,count){
+  if(count===0) return [];
+
+  const range=categoryRange(kind,settings.minNumber,settings.maxNumber);
+  if(!range) return [];
+
+  const [min,max]=range;
+
   if(!settings.unique){
-    return Array.from({length:5},()=>randomInt(settings.minNumber,settings.maxNumber));
+    return Array.from({length:count},()=>randomInt(min,max));
   }
+
   const pool=[];
-  for(let n=settings.minNumber;n<=settings.maxNumber;n++)pool.push(n);
+  for(let n=min;n<=max;n++) pool.push(n);
+
   for(let i=pool.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
     [pool[i],pool[j]]=[pool[j],pool[i]];
   }
-  return pool.slice(0,5);
+  return pool.slice(0,count);
+}
+
+function drawNumbers(){
+  const values=[
+    ...drawFromCategory("one",settings.oneDigitCount),
+    ...drawFromCategory("two",settings.twoDigitCount),
+    ...drawFromCategory("three",settings.threeDigitCount)
+  ];
+
+  for(let i=values.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [values[i],values[j]]=[values[j],values[i]];
+  }
+
+  return values;
 }
 function renderTimer(){
   timerEl.textContent=formatTime(remaining);
