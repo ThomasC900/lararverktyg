@@ -37,13 +37,10 @@ h1{margin:2mm 0 1mm;font-size:25pt;letter-spacing:.4px;color:var(--green)}
 .meal.alt .label{color:var(--green2)}
 .food{font-size:10.7pt;line-height:1.17;font-weight:700}
 .meal.alt .food{font-weight:400}
-.monthly{display:grid;grid-template-columns:1.35fr .65fr;gap:2.5mm;height:15mm;margin-top:3mm;position:relative;z-index:1}
-.monthlybox{background:#e4ead9;border-radius:4mm;padding:2.6mm 5mm}
-.monthlybox.fruit{background:#eee7f2}
-.monthlybox b{color:var(--green);font-size:8.4pt}
-.monthlybox.fruit b{color:#694b74}
-.monthlybox span{display:block;color:var(--green);font-size:11pt;font-weight:800;margin-top:1mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.monthlybox.fruit span{color:#694b74}
+.monthly{height:15mm;margin-top:3mm;position:relative;z-index:1}
+.monthlybox{width:100%;background:#e4ead9;border-radius:4mm;padding:2.6mm 5mm}
+.monthlybox b{color:var(--green);font-size:8.8pt}
+.monthlybox span{display:block;color:var(--green);font-size:11.5pt;font-weight:800;margin-top:1mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 footer{text-align:center;font-size:6.7pt;font-style:italic;color:var(--muted);margin-top:3mm;position:relative;z-index:1}
 .status{position:absolute;right:13mm;bottom:7.7mm;font-size:6pt;color:#7a847e}
 @media print{
@@ -78,10 +75,6 @@ footer{text-align:center;font-size:6.7pt;font-style:italic;color:var(--muted);ma
       <b>🥬 MÅNADENS GRÖNSAK</b>
       <span id="monthlyGreen">–</span>
     </div>
-    <div class="monthlybox fruit">
-      <b>🫐 MÅNADENS FRUKT</b>
-      <span id="monthlyFruit">–</span>
-    </div>
   </section>
   <footer>
     Till varje lunch erbjuds mjölk, vatten, bröd, matfett och salladsutbud varierat efter säsong.
@@ -94,7 +87,6 @@ footer{text-align:center;font-size:6.7pt;font-style:italic;color:var(--muted);ma
 const fallback = {
   school:"Ölyckeskolan",week:36,year:2026,period:"31 augusti – 4 september 2026",
   monthly_green:"Vitkål, tomat & äpple",
-  monthly_fruit:"Björnbär",
   days:[
     {day:"Måndag",date_label:"31 augusti",meal1:"Kycklinggryta med curry serveras med havreris",meal2:"Vegetarisk currygryta med havreris"},
     {day:"Tisdag",date_label:"1 september",meal1:"Pocherad sej serveras med potatis & varm dillsås",meal2:"Hirsbiff med stekt potatis och äppeltzatziki"},
@@ -107,7 +99,6 @@ function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&l
 function render(data, source){
   document.getElementById("weekline").textContent=`VECKA ${data.week}  •  ${data.period}`;
   document.getElementById("monthlyGreen").textContent=data.monthly_green || "–";
-  document.getElementById("monthlyFruit").textContent=data.monthly_fruit || "–";
   const wrap=document.getElementById("days"); wrap.innerHTML="";
   for(const d of data.days.slice(0,5)){
     const card=document.createElement("article");card.className="card";
