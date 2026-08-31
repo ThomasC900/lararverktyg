@@ -1,17 +1,18 @@
 {
   "school": "Ölyckeskolan",
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=69775c47e2d237d90a0ebde8&startDate=2026-08-31&endDate=2026-09-06&lang=sv",
   "week": 36,
   "year": 2026,
   "period": "31 augusti – 4 september 2026",
   "updated": "2026-08-31",
-  "monthly_green": "Vitkål, tomat & äpple",
+  "monthly_green": "",
   "days": [
     {
       "date": "2026-08-31",
       "day": "Måndag",
       "date_label": "31 augusti",
       "meal1": "Kycklinggryta med curry serveras med havreris",
-      "meal2": "Vegetarisk currygryta med havreris"
+      "meal2": "Stekt sojakorv med krämig potatissallad"
     },
     {
       "date": "2026-09-01",
