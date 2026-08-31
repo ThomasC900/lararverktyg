@@ -77,9 +77,9 @@ def option_text(course: dict) -> str:
         or course.get("MenuAlternativeName")
     )
 
-def choose_daily_meals(meals_for_day: list[dict]) -> tuple[str, str, str]:
+def choose_daily_meals(meals_for_day: list[dict]) -> tuple[str, str, str, str]:
     """
-    Returnerar (dagens1, dagens2, månadens_grönt).
+    Returnerar (dagens1, dagens2, månadens_grönt, månadens_frukt).
 
     Matilda-strukturen är:
       meal -> name
@@ -94,6 +94,7 @@ def choose_daily_meals(meals_for_day: list[dict]) -> tuple[str, str, str]:
     meal1 = ""
     meal2 = ""
     monthly_green = ""
+    monthly_fruit = ""
 
     # Första passet: använd tydliga etiketter.
     unlabeled_daily = []
@@ -110,14 +111,25 @@ def choose_daily_meals(meals_for_day: list[dict]) -> tuple[str, str, str]:
             option = option_text(course).casefold()
             combined = f"{meal_name} {option}".strip()
 
-            # Månadens grönsak/grönt
-            if (
-                "månadens" in combined
-                or "grönsak" in combined
-                or "grönt" in combined
-            ):
+            # Månadens grönsak/grönt och månadens frukt hålls isär.
+            is_monthly_green = (
+                "månadens grönsak" in combined
+                or "månadens grönt" in combined
+                or ("månadens" in combined and ("grönsak" in combined or "grönt" in combined))
+            )
+            is_monthly_fruit = (
+                "månadens frukt" in combined
+                or ("månadens" in combined and "frukt" in combined)
+            )
+
+            if is_monthly_green:
                 if not monthly_green:
                     monthly_green = dish
+                continue
+
+            if is_monthly_fruit:
+                if not monthly_fruit:
+                    monthly_fruit = dish
                 continue
 
             # Dagens 1 / alternativ 1
@@ -159,7 +171,16 @@ def choose_daily_meals(meals_for_day: list[dict]) -> tuple[str, str, str]:
                 combined = f"{meal_name} {option}".strip()
                 if not dish:
                     continue
-                if "månadens" in combined or "grönsak" in combined or "grönt" in combined:
+                is_monthly_green = (
+                    "månadens grönsak" in combined
+                    or "månadens grönt" in combined
+                    or ("månadens" in combined and ("grönsak" in combined or "grönt" in combined))
+                )
+                is_monthly_fruit = (
+                    "månadens frukt" in combined
+                    or ("månadens" in combined and "frukt" in combined)
+                )
+                if is_monthly_green or is_monthly_fruit:
                     continue
                 if dish not in candidates:
                     candidates.append(dish)
@@ -169,7 +190,7 @@ def choose_daily_meals(meals_for_day: list[dict]) -> tuple[str, str, str]:
         if not meal2 and len(candidates) > 1:
             meal2 = candidates[1]
 
-    return meal1, meal2, monthly_green
+    return meal1, meal2, monthly_green, monthly_fruit
 
 def build_menu() -> dict:
     today = date.today()
@@ -189,11 +210,12 @@ def build_menu() -> dict:
 
     days = []
     green_values = []
+    fruit_values = []
 
     for i, day_name in enumerate(DAY_NAMES):
         d = monday + timedelta(days=i)
         meals_for_day = by_date.get(d, [])
-        meal1, meal2, monthly_green = choose_daily_meals(meals_for_day)
+        meal1, meal2, monthly_green, monthly_fruit = choose_daily_meals(meals_for_day)
 
         if not meal1 and not meal2:
             raise RuntimeError(
@@ -202,6 +224,8 @@ def build_menu() -> dict:
 
         if monthly_green:
             green_values.append(monthly_green)
+        if monthly_fruit:
+            fruit_values.append(monthly_fruit)
 
         days.append({
             "date": d.isoformat(),
@@ -213,6 +237,18 @@ def build_menu() -> dict:
 
     # Vanligen samma hela veckan. Ta första värdet som hittas.
     monthly_green = green_values[0] if green_values else ""
+    monthly_fruit = fruit_values[0] if fruit_values else ""
+
+    # Ta bort Matildas förklarande suffix om det följer med i rättnamnet.
+    import re
+    if monthly_green:
+        monthly_green = re.sub(
+            r"\s*-\s*månadens\s+(?:grönt|grönsak).*$", "", monthly_green, flags=re.I
+        ).strip()
+    if monthly_fruit:
+        monthly_fruit = re.sub(
+            r"\s*-\s*månadens\s+frukt.*$", "", monthly_fruit, flags=re.I
+        ).strip()
 
     period = (
         f"{monday.day} {MONTHS[monday.month]} – "
@@ -234,6 +270,7 @@ def build_menu() -> dict:
         "period": period,
         "updated": date.today().isoformat(),
         "monthly_green": monthly_green,
+        "monthly_fruit": monthly_fruit,
         "days": days,
     }
 
@@ -254,7 +291,9 @@ def main() -> int:
     for d in data["days"]:
         print(f"{d['day']}: {d['meal1']} | {d['meal2']}")
     if data.get("monthly_green"):
-        print(f"Månadens grönt: {data['monthly_green']}")
+        print(f"Månadens grönsak: {data['monthly_green']}")
+    if data.get("monthly_fruit"):
+        print(f"Månadens frukt: {data['monthly_fruit']}")
 
     return 0
 
