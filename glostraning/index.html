@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Glosträning</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#172033;
+      --muted:#667085;
+      --line:#d9deea;
+      --accent:#2563eb;
+      --accent-dark:#1d4ed8;
+      --good:#16803a;
+      --good-bg:#eaf8ef;
+      --bad:#b42318;
+      --bad-bg:#fff0ee;
+      --warn:#9a6700;
+      --warn-bg:#fff7df;
+      --shadow:0 12px 35px rgba(25,42,70,.10);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 0%, #e9f0ff 0, transparent 28rem),
+        var(--bg);
+      min-height:100vh;
+    }
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    button:disabled{cursor:not-allowed;opacity:.55}
+
+    .page{
+      width:min(1050px, calc(100% - 28px));
+      margin:0 auto;
+      padding:26px 0 48px;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:20px;
+    }
+    .brand h1{
+      margin:0;
+      font-size:clamp(1.9rem,4vw,3rem);
+      line-height:1;
+      letter-spacing:-.035em;
+    }
+    .brand p{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:1rem;
+    }
+    .back{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      color:var(--text);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.8);
+      padding:10px 14px;
+      border-radius:14px;
+      font-weight:650;
+      white-space:nowrap;
+    }
+
+    .panel{
+      background:var(--panel);
+      border:1px solid rgba(217,222,234,.8);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:clamp(18px,3vw,30px);
+    }
+
+    .setup-grid{
+      display:grid;
+      grid-template-columns:1.35fr .65fr;
+      gap:24px;
+      align-items:start;
+    }
+    .section-title{
+      margin:0 0 8px;
+      font-size:1.28rem;
+    }
+    .help{
+      margin:0 0 14px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    textarea{
+      width:100%;
+      min-height:245px;
+      resize:vertical;
+      border:1.5px solid var(--line);
+      border-radius:16px;
+      padding:15px;
+      line-height:1.5;
+      color:var(--text);
+      background:#fbfcfe;
+      outline:none;
+    }
+    textarea:focus,input:focus,select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px rgba(37,99,235,.12);
+    }
+    .example{
+      margin-top:10px;
+      padding:12px 14px;
+      background:#f7f9fc;
+      border-radius:14px;
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.55;
+    }
+    code{
+      color:var(--text);
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .controls{
+      display:grid;
+      gap:15px;
+    }
+    .field label,.label{
+      display:block;
+      font-weight:700;
+      margin-bottom:7px;
+    }
+    select,input[type="text"]{
+      width:100%;
+      min-height:48px;
+      border:1.5px solid var(--line);
+      border-radius:13px;
+      padding:10px 12px;
+      background:#fff;
+      outline:none;
+    }
+    .checkrow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 13px;
+      border:1px solid var(--line);
+      border-radius:13px;
+      background:#fbfcfe;
+    }
+    .checkrow input{
+      width:19px;
+      height:19px;
+      accent-color:var(--accent);
+    }
+    .btn{
+      min-height:48px;
+      border:0;
+      border-radius:14px;
+      padding:11px 17px;
+      font-weight:750;
+    }
+    .btn.primary{background:var(--accent);color:white}
+    .btn.primary:hover{background:var(--accent-dark)}
+    .btn.secondary{
+      background:#eef2f7;
+      color:var(--text);
+      border:1px solid #e0e5ed;
+    }
+    .btn.danger{
+      background:#fff;
+      color:#9f1c15;
+      border:1px solid #f2c4bf;
+    }
+    .btn.good{
+      background:var(--good);
+      color:#fff;
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .actions .btn{flex:1 1 160px}
+    .status{
+      min-height:24px;
+      margin-top:12px;
+      font-weight:650;
+    }
+    .status.error{color:var(--bad)}
+    .status.ok{color:var(--good)}
+
+    .hidden{display:none!important}
+
+    .study{
+      max-width:830px;
+      margin:0 auto;
+    }
+    .study-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+    .progress-wrap{
+      flex:1 1 350px;
+      min-width:0;
+    }
+    .progress-top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-size:.93rem;
+      margin-bottom:7px;
+    }
+    .bar{
+      height:10px;
+      background:#e9edf3;
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      width:0;
+      background:var(--accent);
+      transition:width .25s ease;
+    }
+    .metrics{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      background:#f1f4f8;
+      border:1px solid #e3e7ee;
+      border-radius:999px;
+      padding:8px 11px;
+      font-size:.9rem;
+      font-weight:700;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:linear-gradient(180deg,#fff,#fbfcff);
+      min-height:340px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      padding:32px 22px;
+      box-shadow:0 10px 28px rgba(24,36,60,.08);
+    }
+    .eyebrow{
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-size:.78rem;
+      font-weight:800;
+      margin-bottom:16px;
+    }
+    .prompt{
+      font-size:clamp(2.1rem,7vw,4.8rem);
+      line-height:1.08;
+      font-weight:820;
+      letter-spacing:-.04em;
+      overflow-wrap:anywhere;
+    }
+    .answer{
+      margin-top:22px;
+      padding-top:20px;
+      width:min(620px,100%);
+      border-top:1px solid var(--line);
+      font-size:clamp(1.55rem,4.4vw,2.8rem);
+      color:var(--accent-dark);
+      font-weight:760;
+      overflow-wrap:anywhere;
+    }
+    .study-actions{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:11px;
+      margin-top:16px;
+    }
+    .study-actions .btn{min-width:150px}
+
+    .spelling-area{
+      width:min(560px,100%);
+      margin-top:26px;
+    }
+    .spelling-area input{
+      text-align:center;
+      font-size:1.3rem;
+      min-height:58px;
+    }
+    .feedback{
+      margin-top:14px;
+      min-height:58px;
+      border-radius:14px;
+      padding:12px 14px;
+      line-height:1.4;
+      display:none;
+    }
+    .feedback.good{display:block;background:var(--good-bg);color:var(--good)}
+    .feedback.bad{display:block;background:var(--bad-bg);color:var(--bad)}
+    .feedback.warn{display:block;background:var(--warn-bg);color:var(--warn)}
+
+    .summary{
+      text-align:center;
+      padding:20px 0 4px;
+    }
+    .summary .big{
+      font-size:clamp(2.5rem,7vw,5rem);
+      font-weight:850;
+      letter-spacing:-.05em;
+      margin:6px 0 8px;
+    }
+    .summary p{color:var(--muted);font-size:1.05rem}
+    .missed{
+      margin-top:22px;
+      text-align:left;
+    }
+    .missed-list{
+      display:grid;
+      gap:8px;
+      margin-top:10px;
+    }
+    .missed-row{
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#f7f9fc;
+      border:1px solid #e8ebf0;
+    }
+    .arrow{color:var(--muted)}
+
+    @media (max-width:760px){
+      .setup-grid{grid-template-columns:1fr}
+      .topbar{align-items:flex-start}
+      .brand p{font-size:.94rem}
+      .card{min-height:300px;padding:28px 16px}
+      .study-actions .btn{flex:1 1 130px}
+    }
+    @media (max-width:520px){
+      .page{width:min(100% - 18px,1050px);padding-top:14px}
+      .topbar{display:block}
+      .back{margin-bottom:16px}
+      .panel{padding:16px;border-radius:18px}
+      textarea{min-height:210px}
+      .missed-row{grid-template-columns:1fr}
+      .arrow{display:none}
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <a class="back" href="../">← Till lärverktygen</a>
+      <div class="brand">
+        <h1>Glosträning</h1>
+        <p>Klistra in glosor och träna med flashcards eller stavningskontroll.</p>
+      </div>
+    </div>
+
+    <section id="setup" class="panel">
+      <div class="setup-grid">
+        <div>
+          <h2 class="section-title">1. Lägg in din gloslista</h2>
+          <p class="help">
+            Klistra in två kolumner från Google Kalkyl eller skriv en glosa per rad.
+            Första kolumnen blir sida A och andra kolumnen sida B.
+          </p>
+          <textarea id="wordInput" spellcheck="false" aria-label="Gloslista" placeholder="house	hus
+dog	hund
+beautiful	vacker"></textarea>
+          <div class="example">
+            Fungerar med <code>tabb</code> mellan kolumnerna (som vid kopiering från Google Kalkyl).
+            Även <code>;</code>, <code>=</code> eller <code> - </code> fungerar som avskiljare.<br>
+            Om flera svar ska godkännas i stavningsträningen kan du skilja dem åt med <code>/</code>,
+            till exempel <code>because = för att / eftersom</code>.
+          </div>
+        </div>
+
+        <div class="controls">
+          <div>
+            <h2 class="section-title">2. Välj träning</h2>
+          </div>
+
+          <div class="field">
+            <label for="mode">Träningssätt</label>
+            <select id="mode">
+              <option value="flash">Flashcards – visa svaret</option>
+              <option value="spell">Stavning – skriv svaret</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="direction">Riktning</label>
+            <select id="direction">
+              <option value="a-b">Sida A → Sida B</option>
+              <option value="b-a">Sida B → Sida A</option>
+              <option value="mixed">Blandat åt båda håll</option>
+            </select>
+          </div>
+
+          <label class="checkrow">
+            <input id="shuffle" type="checkbox" checked>
+            <span>Blanda glosornas ordning</span>
+          </label>
+
+          <label class="checkrow">
+            <input id="caseSensitive" type="checkbox">
+            <span>Skilj på stora och små bokstäver vid stavning</span>
+          </label>
+
+          <div class="actions">
+            <button id="startBtn" class="btn primary" type="button">Starta träningen</button>
+            <button id="demoBtn" class="btn secondary" type="button">Fyll med exempel</button>
+          </div>
+          <div id="setupStatus" class="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="study" class="panel study hidden">
+      <div class="study-head">
+        <div class="progress-wrap">
+          <div class="progress-top">
+            <span id="progressText">Glosa 1 av 10</span>
+            <span id="modeText">Flashcards</span>
+          </div>
+          <div class="bar" aria-hidden="true"><div id="progressBar"></div></div>
+        </div>
+        <div class="metrics">
+          <span class="pill" id="correctPill">Rätt: 0</span>
+          <span class="pill" id="streakPill">I rad: 0</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="sideLabel" class="eyebrow">Översätt</div>
+        <div id="prompt" class="prompt">house</div>
+
+        <div id="flashAnswer" class="answer hidden">hus</div>
+
+        <div id="spellingArea" class="spelling-area hidden">
+          <label class="label" for="spellInput">Skriv svaret</label>
+          <input id="spellInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <div id="feedback" class="feedback" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div id="flashControls" class="study-actions">
+        <button id="showBtn" class="btn primary" type="button">Visa svaret</button>
+        <button id="wrongBtn" class="btn danger hidden" type="button">Kunde inte</button>
+        <button id="rightBtn" class="btn good hidden" type="button">Kunde</button>
+      </div>
+
+      <div id="spellControls" class="study-actions hidden">
+        <button id="checkBtn" class="btn primary" type="button">Rätta</button>
+        <button id="nextBtn" class="btn secondary hidden" type="button">Nästa glosa</button>
+      </div>
+
+      <div class="study-actions">
+        <button id="quitBtn" class="btn secondary" type="button">Avsluta träningen</button>
+      </div>
+    </section>
+
+    <section id="summary" class="panel study hidden">
+      <div class="summary">
+        <div class="eyebrow">Träningen är klar</div>
+        <div id="scoreBig" class="big">10 / 10</div>
+        <p id="scoreText">Bra jobbat!</p>
+
+        <div id="missed" class="missed hidden">
+          <h2 class="section-title">Glosor att träna mer på</h2>
+          <div id="missedList" class="missed-list"></div>
+        </div>
+
+        <div class="study-actions">
+          <button id="retryMissedBtn" class="btn primary hidden" type="button">Träna på misstagen</button>
+          <button id="restartBtn" class="btn secondary" type="button">Ny gloslista / nytt val</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+
+    const setup = $("setup");
+    const study = $("study");
+    const summary = $("summary");
+
+    const wordInput = $("wordInput");
+    const mode = $("mode");
+    const direction = $("direction");
+    const shuffle = $("shuffle");
+    const caseSensitive = $("caseSensitive");
+    const setupStatus = $("setupStatus");
+
+    const progressText = $("progressText");
+    const modeText = $("modeText");
+    const progressBar = $("progressBar");
+    const correctPill = $("correctPill");
+    const streakPill = $("streakPill");
+    const sideLabel = $("sideLabel");
+    const promptEl = $("prompt");
+    const flashAnswer = $("flashAnswer");
+    const spellingArea = $("spellingArea");
+    const spellInput = $("spellInput");
+    const feedback = $("feedback");
+
+    const flashControls = $("flashControls");
+    const spellControls = $("spellControls");
+    const showBtn = $("showBtn");
+    const wrongBtn = $("wrongBtn");
+    const rightBtn = $("rightBtn");
+    const checkBtn = $("checkBtn");
+    const nextBtn = $("nextBtn");
+
+    let deck = [];
+    let originalDeck = [];
+    let index = 0;
+    let correct = 0;
+    let streak = 0;
+    let misses = [];
+    let answered = false;
+    let currentMode = "flash";
+
+    const demoWords =
+`house\thus
+dog\thund
+beautiful\tvacker
+school\tskola
+to understand\tatt förstå
+question\tfråga
+always\talltid
+because\tför att / eftersom`;
+
+    function parseWords(text) {
+      const lines = text
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      const pairs = [];
+      for (const line of lines) {
+        let parts = null;
+
+        if (line.includes("\t")) {
+          parts = line.split("\t");
+        } else if (line.includes(";")) {
+          parts = line.split(";");
+        } else if (line.includes("=")) {
+          parts = line.split("=");
+        } else if (line.includes(" - ")) {
+          parts = line.split(" - ");
+        }
+
+        if (!parts || parts.length < 2) continue;
+
+        const a = parts[0].trim();
+        const b = parts.slice(1).join(" ").trim();
+        if (a && b) pairs.push({ a, b });
+      }
+      return pairs;
+    }
+
+    function shuffled(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function makeDeck(pairs) {
+      const dir = direction.value;
+      let result = pairs.map(pair => {
+        if (dir === "a-b") return { prompt: pair.a, answer: pair.b, a: pair.a, b: pair.b };
+        if (dir === "b-a") return { prompt: pair.b, answer: pair.a, a: pair.a, b: pair.b };
+        const flip = Math.random() < 0.5;
+        return flip
+          ? { prompt: pair.a, answer: pair.b, a: pair.a, b: pair.b }
+          : { prompt: pair.b, answer: pair.a, a: pair.a, b: pair.b };
+      });
+      return shuffle.checked ? shuffled(result) : result;
+    }
+
+    function normalize(value) {
+      let v = value.trim().replace(/\s+/g, " ");
+      if (!caseSensitive.checked) v = v.toLocaleLowerCase("sv-SE");
+      return v;
+    }
+
+    function acceptedAnswers(answer) {
+      // Tillåter flera uttryck skrivna med /, | eller ;
+      return answer
+        .split(/\s*(?:\/|\||;)\s*/)
+        .map(normalize)
+        .filter(Boolean);
+    }
+
+    function isCorrect(input, answer) {
+      const candidate = normalize(input);
+      return acceptedAnswers(answer).includes(candidate);
+    }
+
+    function setScreen(which) {
+      setup.classList.toggle("hidden", which !== "setup");
+      study.classList.toggle("hidden", which !== "study");
+      summary.classList.toggle("hidden", which !== "summary");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderCard() {
+      if (index >= deck.length) {
+        showSummary();
+        return;
+      }
+
+      const item = deck[index];
+      answered = false;
+      progressText.textContent = `Glosa ${index + 1} av ${deck.length}`;
+      modeText.textContent = currentMode === "flash" ? "Flashcards" : "Stavning";
+      progressBar.style.width = `${(index / deck.length) * 100}%`;
+      correctPill.textContent = `Rätt: ${correct}`;
+      streakPill.textContent = `I rad: ${streak}`;
+      promptEl.textContent = item.prompt;
+      flashAnswer.textContent = item.answer;
+      flashAnswer.classList.add("hidden");
+      feedback.className = "feedback";
+      feedback.textContent = "";
+      spellInput.value = "";
+
+      if (direction.value === "a-b") sideLabel.textContent = "Sida A → Sida B";
+      else if (direction.value === "b-a") sideLabel.textContent = "Sida B → Sida A";
+      else sideLabel.textContent = "Översätt";
+
+      if (currentMode === "flash") {
+        spellingArea.classList.add("hidden");
+        flashControls.classList.remove("hidden");
+        spellControls.classList.add("hidden");
+        showBtn.classList.remove("hidden");
+        wrongBtn.classList.add("hidden");
+        rightBtn.classList.add("hidden");
+      } else {
+        spellingArea.classList.remove("hidden");
+        flashControls.classList.add("hidden");
+        spellControls.classList.remove("hidden");
+        checkBtn.classList.remove("hidden");
+        nextBtn.classList.add("hidden");
+        spellInput.disabled = false;
+        setTimeout(() => spellInput.focus(), 30);
+      }
+    }
+
+    function recordResult(ok) {
+      if (ok) {
+        correct++;
+        streak++;
+      } else {
+        streak = 0;
+        misses.push(deck[index]);
+      }
+      correctPill.textContent = `Rätt: ${correct}`;
+      streakPill.textContent = `I rad: ${streak}`;
+    }
+
+    function nextCard() {
+      index++;
+      renderCard();
+    }
+
+    function startWithPairs(pairs) {
+      originalDeck = pairs.map(x => ({...x}));
+      deck = makeDeck(pairs);
+      index = 0;
+      correct = 0;
+      streak = 0;
+      misses = [];
+      answered = false;
+      currentMode = mode.value;
+      setScreen("study");
+      renderCard();
+    }
+
+    function startTraining() {
+      const pairs = parseWords(wordInput.value);
+      if (pairs.length < 2) {
+        setupStatus.className = "status error";
+        setupStatus.textContent = "Lägg in minst två giltiga glosor med två kolumner.";
+        return;
+      }
+      if (pairs.length > 500) {
+        setupStatus.className = "status error";
+        setupStatus.textContent = "Listan är för lång. Använd högst 500 glosor åt gången.";
+        return;
+      }
+      setupStatus.className = "status ok";
+      setupStatus.textContent = `${pairs.length} glosor hittades.`;
+      startWithPairs(pairs);
+    }
+
+    function showSummary() {
+      progressBar.style.width = "100%";
+      const total = deck.length;
+      const pct = total ? Math.round((correct / total) * 100) : 0;
+      $("scoreBig").textContent = `${correct} / ${total}`;
+
+      let message = "Bra jobbat!";
+      if (pct === 100) message = "Full pott – snyggt!";
+      else if (pct >= 80) message = "Mycket bra! Några få glosor kvar att nöta.";
+      else if (pct >= 60) message = "Bra träning. Ta gärna misstagen en gång till.";
+      else message = "Fortsätt träna – repetition gör stor skillnad.";
+      $("scoreText").textContent = `${message} ${pct}% rätt.`;
+
+      const uniqueMisses = [];
+      const seen = new Set();
+      for (const m of misses) {
+        const key = `${m.a}|||${m.b}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniqueMisses.push(m);
+        }
+      }
+
+      const missed = $("missed");
+      const list = $("missedList");
+      const retry = $("retryMissedBtn");
+      list.innerHTML = "";
+
+      if (uniqueMisses.length) {
+        missed.classList.remove("hidden");
+        retry.classList.remove("hidden");
+        for (const m of uniqueMisses) {
+          const row = document.createElement("div");
+          row.className = "missed-row";
+
+          const a = document.createElement("strong");
+          a.textContent = m.a;
+          const arrow = document.createElement("span");
+          arrow.className = "arrow";
+          arrow.textContent = "↔";
+          const b = document.createElement("span");
+          b.textContent = m.b;
+
+          row.append(a, arrow, b);
+          list.appendChild(row);
+        }
+        retry.dataset.misses = JSON.stringify(uniqueMisses.map(m => ({a:m.a,b:m.b})));
+      } else {
+        missed.classList.add("hidden");
+        retry.classList.add("hidden");
+        retry.dataset.misses = "";
+      }
+
+      setScreen("summary");
+    }
+
+    $("demoBtn").addEventListener("click", () => {
+      wordInput.value = demoWords;
+      setupStatus.className = "status ok";
+      setupStatus.textContent = "Exempelglosor har lagts in.";
+    });
+
+    $("startBtn").addEventListener("click", startTraining);
+
+    showBtn.addEventListener("click", () => {
+      flashAnswer.classList.remove("hidden");
+      showBtn.classList.add("hidden");
+      wrongBtn.classList.remove("hidden");
+      rightBtn.classList.remove("hidden");
+    });
+
+    wrongBtn.addEventListener("click", () => {
+      recordResult(false);
+      nextCard();
+    });
+
+    rightBtn.addEventListener("click", () => {
+      recordResult(true);
+      nextCard();
+    });
+
+    function checkSpelling() {
+      if (answered) return;
+      const value = spellInput.value.trim();
+      if (!value) {
+        feedback.className = "feedback warn";
+        feedback.textContent = "Skriv ett svar först.";
+        return;
+      }
+
+      answered = true;
+      spellInput.disabled = true;
+      const item = deck[index];
+      const ok = isCorrect(value, item.answer);
+      recordResult(ok);
+
+      if (ok) {
+        feedback.className = "feedback good";
+        feedback.textContent = "Rätt!";
+      } else {
+        feedback.className = "feedback bad";
+        feedback.textContent = `Inte riktigt. Rätt svar: ${item.answer}`;
+      }
+
+      checkBtn.classList.add("hidden");
+      nextBtn.classList.remove("hidden");
+      nextBtn.focus();
+    }
+
+    checkBtn.addEventListener("click", checkSpelling);
+    spellInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (!answered) checkSpelling();
+      }
+    });
+
+    nextBtn.addEventListener("click", nextCard);
+
+    $("quitBtn").addEventListener("click", () => {
+      setScreen("setup");
+    });
+
+    $("restartBtn").addEventListener("click", () => {
+      setScreen("setup");
+    });
+
+    $("retryMissedBtn").addEventListener("click", () => {
+      const data = $("retryMissedBtn").dataset.misses;
+      if (!data) return;
+      const pairs = JSON.parse(data);
+      if (!pairs.length) return;
+      startWithPairs(pairs);
+    });
+  })();
+  </script>
+</body>
+</html>
