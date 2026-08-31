@@ -52,6 +52,28 @@ footer{text-align:center;font-size:6.7pt;font-style:italic;color:var(--muted);ma
 @media(max-width:850px){
   .toolbar{padding:0 12px}
   .sheet{transform-origin:top left}
+}.back-button {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 100;
+  padding: 9px 14px;
+  background: #355c4a;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.back-button:hover {
+  background: #29483a;
+}
+
+@media print {
+  .back-button {
+    display: none;
+  }
 }
 </style>
 </head>
