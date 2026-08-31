@@ -9,7 +9,7 @@ import sys
 import urllib.parse
 import urllib.request
 
-DISTRIBUTOR_ID = "69775c47e2d237d90a0ebde8"
+DISTRIBUTOR_ID = "6a5713fad6523cfd795c45ce"
 API = "https://menu.matildaplatform.com/api/menu"
 OUT = Path(__file__).with_name("menu.json")
 
