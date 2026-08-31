@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meny Ölyckeskolan</title>
+<style>
+:root{
+  --bg:#f7f3e8;--paper:#fffdf7;--green:#315a45;--green2:#6f8d6a;
+  --gold:#d6a84b;--terracotta:#c96f4a;--ink:#26332c;--muted:#66736b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#e7e8e4;font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+.toolbar{max-width:210mm;margin:16px auto 10px;display:flex;gap:10px;justify-content:flex-end}
+button{border:0;border-radius:999px;padding:10px 16px;background:var(--green);color:#fff;font-weight:700;cursor:pointer}
+button.secondary{background:#fff;color:var(--green);border:1px solid #ccd3ce}
+.sheet{
+  width:210mm;height:297mm;margin:auto;background:var(--bg);position:relative;overflow:hidden;
+  padding:12mm 14mm 10mm;box-shadow:0 8px 30px #0002;
+}
+.sheet:before{content:"";position:absolute;inset:8mm;border:1.6px solid var(--green);border-radius:5mm;pointer-events:none}
+.decor{position:absolute;font-size:25px;opacity:.92;user-select:none}
+.d1{left:11mm;top:12mm;transform:rotate(-15deg)} .d2{right:12mm;top:13mm;transform:rotate(12deg)}
+.d3{left:12mm;bottom:14mm;transform:rotate(15deg)} .d4{right:13mm;bottom:13mm;transform:rotate(-15deg)}
+header{text-align:center;position:relative;z-index:1}
+h1{margin:2mm 0 1mm;font-size:25pt;letter-spacing:.4px;color:var(--green)}
+.sub{font-size:11.5pt;font-weight:800;color:var(--terracotta);text-transform:uppercase}
+.rule{width:70%;height:2px;background:var(--gold);margin:3mm auto 4mm}
+.days{display:grid;grid-template-rows:repeat(5,1fr);gap:2.2mm;height:206mm;position:relative;z-index:1}
+.card{background:var(--paper);border:1px solid #d9d5c9;border-radius:4mm;padding:0 5mm 3mm;position:relative;overflow:hidden}
+.dayhead{display:inline-block;margin-left:-5mm;padding:2.7mm 4mm 2.2mm;background:var(--green);color:#fff;font-weight:900;font-size:9.7pt;border-radius:0 0 4mm 0}
+.card:nth-child(even) .dayhead{background:var(--green2)}
+.plate{position:absolute;right:5mm;top:3mm;width:8mm;height:8mm;border:2px solid var(--gold);border-radius:50%}
+.plate:after{content:"";position:absolute;inset:1.4mm;border:1px solid var(--gold);border-radius:50%}
+.meal{display:grid;grid-template-columns:23mm 1fr;gap:2mm;align-items:start;margin-top:3.2mm}
+.label{font-size:8.5pt;font-weight:900;color:var(--terracotta)}
+.meal.alt .label{color:var(--green2)}
+.food{font-size:10.7pt;line-height:1.17;font-weight:700}
+.meal.alt .food{font-weight:400}
+.greenbox{height:15mm;background:#e4ead9;border-radius:4mm;margin-top:3mm;padding:2.6mm 5mm;position:relative;z-index:1}
+.greenbox b{color:var(--green);font-size:9pt}.greenbox span{display:block;color:var(--green);font-size:12pt;font-weight:800;margin-top:1mm}
+footer{text-align:center;font-size:6.7pt;font-style:italic;color:var(--muted);margin-top:3mm;position:relative;z-index:1}
+.status{position:absolute;right:13mm;bottom:7.7mm;font-size:6pt;color:#7a847e}
+@media print{
+  @page{size:A4;margin:0}
+  html,body{margin:0;background:#fff}
+  .toolbar{display:none}
+  .sheet{margin:0;box-shadow:none;width:210mm;height:297mm;break-after:avoid;page-break-after:avoid}
+}
+@media(max-width:850px){
+  .toolbar{padding:0 12px}
+  .sheet{transform-origin:top left}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <button class="secondary" onclick="location.reload()">Uppdatera</button>
+  <button onclick="window.print()">🖨️ Skriv ut A4</button>
+</div>
+
+<main class="sheet">
+  <div class="decor d1">🥬</div><div class="decor d2">🍎</div>
+  <div class="decor d3">🥕</div><div class="decor d4">🍅</div>
+  <header>
+    <h1>MENY ÖLYCKESKOLAN</h1>
+    <div id="weekline" class="sub">VECKA</div>
+    <div class="rule"></div>
+  </header>
+  <section id="days" class="days"></section>
+  <section class="greenbox">
+    <b>MÅNADENS GRÖNT</b>
+    <span id="monthlyGreen">–</span>
+  </section>
+  <footer>
+    Till varje lunch erbjuds mjölk, vatten, bröd, matfett och salladsutbud varierat efter säsong.
+    Med reservation för lokala ändringar.
+  </footer>
+  <div id="status" class="status"></div>
+</main>
+
+<script>
+const fallback = {
+  school:"Ölyckeskolan",week:36,year:2026,period:"31 augusti – 4 september 2026",
+  monthly_green:"Vitkål, tomat & äpple",
+  days:[
+    {day:"Måndag",date_label:"31 augusti",meal1:"Kycklinggryta med curry serveras med havreris",meal2:"Vegetarisk currygryta med havreris"},
+    {day:"Tisdag",date_label:"1 september",meal1:"Pocherad sej serveras med potatis & varm dillsås",meal2:"Hirsbiff med stekt potatis och äppeltzatziki"},
+    {day:"Onsdag",date_label:"2 september",meal1:"Skånsk kalops med kokt potatis och betor",meal2:"Kalops på quorn serveras med kokt potatis & betor"},
+    {day:"Torsdag",date_label:"3 september",meal1:"Vårrullar serveras med ris & salsa",meal2:"BBQ fajita med pulled oats serveras med havreris"},
+    {day:"Fredag",date_label:"4 september",meal1:"Spaghetti med köttfärssås",meal2:"Spaghetti med färssås"}
+  ]
+};
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function render(data, source){
+  document.getElementById("weekline").textContent=`VECKA ${data.week}  •  ${data.period}`;
+  document.getElementById("monthlyGreen").textContent=data.monthly_green || "Se salladsutbudet i restaurangen";
+  const wrap=document.getElementById("days"); wrap.innerHTML="";
+  for(const d of data.days.slice(0,5)){
+    const card=document.createElement("article");card.className="card";
+    card.innerHTML=`<div class="dayhead">${esc(d.day).toUpperCase()} ${esc(d.date_label).toUpperCase()}</div>
+      <div class="plate"></div>
+      <div class="meal"><div class="label">DAGENS 1</div><div class="food">${esc(d.meal1 || "–")}</div></div>
+      <div class="meal alt"><div class="label">DAGENS 2</div><div class="food">${esc(d.meal2 || "–")}</div></div>`;
+    wrap.appendChild(card);
+  }
+  document.getElementById("status").textContent=source==="live" ? `Uppdaterad ${data.updated || ""}` : "Reservmeny visas";
+}
+fetch("./menu.json",{cache:"no-store"})
+  .then(r=>{if(!r.ok)throw new Error();return r.json()})
+  .then(d=>render(d,"live"))
+  .catch(()=>render(fallback,"fallback"));
+</script>
+</body>
+</html>

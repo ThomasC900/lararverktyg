@@ -1,0 +1,45 @@
+{
+  "school": "Ölyckeskolan",
+  "week": 36,
+  "year": 2026,
+  "period": "31 augusti – 4 september 2026",
+  "updated": "2026-08-31",
+  "monthly_green": "Vitkål, tomat & äpple",
+  "days": [
+    {
+      "date": "2026-08-31",
+      "day": "Måndag",
+      "date_label": "31 augusti",
+      "meal1": "Kycklinggryta med curry serveras med havreris",
+      "meal2": "Vegetarisk currygryta med havreris"
+    },
+    {
+      "date": "2026-09-01",
+      "day": "Tisdag",
+      "date_label": "1 september",
+      "meal1": "Pocherad sej serveras med potatis & varm dillsås",
+      "meal2": "Hirsbiff med stekt potatis och äppeltzatziki"
+    },
+    {
+      "date": "2026-09-02",
+      "day": "Onsdag",
+      "date_label": "2 september",
+      "meal1": "Skånsk kalops med kokt potatis och betor",
+      "meal2": "Kalops på quorn serveras med kokt potatis & betor"
+    },
+    {
+      "date": "2026-09-03",
+      "day": "Torsdag",
+      "date_label": "3 september",
+      "meal1": "Vårrullar serveras med ris & salsa",
+      "meal2": "BBQ fajita med pulled oats serveras med havreris"
+    },
+    {
+      "date": "2026-09-04",
+      "day": "Fredag",
+      "date_label": "4 september",
+      "meal1": "Spaghetti med köttfärssås",
+      "meal2": "Spaghetti med färssås"
+    }
+  ]
+}
