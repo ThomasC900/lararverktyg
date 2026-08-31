@@ -192,6 +192,55 @@ def choose_daily_meals(meals_for_day: list[dict]) -> tuple[str, str, str, str]:
 
     return meal1, meal2, monthly_green, monthly_fruit
 
+
+def find_monthly_items(raw_meals: list[dict]) -> tuple[str, str]:
+    """
+    Letar globalt i hela Matilda-svaret efter månadens grönsak/grönt och frukt.
+
+    Vi använder både meal.name, course.optionName och själva rättnamnet.
+    Det sista är viktigt eftersom Eslöv t.ex. publicerar:
+    "Vitkål, tomat & äpple - månadens grönt".
+    """
+    import re
+
+    monthly_green = ""
+    monthly_fruit = ""
+
+    for meal in raw_meals:
+        meal_name = norm(meal.get("name"))
+        for course in (meal.get("courses") or []):
+            dish = course_text(course)
+            option = option_text(course)
+            haystack = f"{meal_name} {option} {dish}".casefold()
+
+            if not monthly_green and (
+                "månadens grönt" in haystack
+                or "månadens grönsak" in haystack
+            ):
+                monthly_green = re.sub(
+                    r"\s*[-–]\s*månadens\s+(?:grönt|grönsak).*$",
+                    "",
+                    dish,
+                    flags=re.I,
+                ).strip()
+
+                # Om etiketten, inte rättnamnet, bar signalen behåller vi rättnamnet.
+                if not monthly_green:
+                    monthly_green = dish.strip()
+
+            if not monthly_fruit and "månadens frukt" in haystack:
+                monthly_fruit = re.sub(
+                    r"\s*[-–]\s*månadens\s+frukt.*$",
+                    "",
+                    dish,
+                    flags=re.I,
+                ).strip()
+
+                if not monthly_fruit:
+                    monthly_fruit = dish.strip()
+
+    return monthly_green, monthly_fruit
+
 def build_menu() -> dict:
     today = date.today()
     monday = monday_of(today)
@@ -199,6 +248,9 @@ def build_menu() -> dict:
 
     data = api_get(monday, monday + timedelta(days=6))
     raw_meals = data.get("meals") or []
+
+    # Hämta månadens poster globalt ur hela veckosvaret.
+    global_green, global_fruit = find_monthly_items(raw_meals)
 
     by_date: dict[date, list[dict]] = defaultdict(list)
     for meal in raw_meals:
@@ -236,18 +288,25 @@ def build_menu() -> dict:
         })
 
     # Vanligen samma hela veckan. Ta första värdet som hittas.
-    monthly_green = green_values[0] if green_values else ""
-    monthly_fruit = fruit_values[0] if fruit_values else ""
+    # Global sökning är säkrast; dagssökningen finns kvar som reserv.
+    monthly_green = global_green or (green_values[0] if green_values else "")
+    monthly_fruit = global_fruit or (fruit_values[0] if fruit_values else "")
 
-    # Ta bort Matildas förklarande suffix om det följer med i rättnamnet.
+    # Ta bort eventuella kvarvarande förklarande suffix.
     import re
     if monthly_green:
         monthly_green = re.sub(
-            r"\s*-\s*månadens\s+(?:grönt|grönsak).*$", "", monthly_green, flags=re.I
+            r"\s*[-–]\s*månadens\s+(?:grönt|grönsak).*$",
+            "",
+            monthly_green,
+            flags=re.I,
         ).strip()
     if monthly_fruit:
         monthly_fruit = re.sub(
-            r"\s*-\s*månadens\s+frukt.*$", "", monthly_fruit, flags=re.I
+            r"\s*[-–]\s*månadens\s+frukt.*$",
+            "",
+            monthly_fruit,
+            flags=re.I,
         ).strip()
 
     period = (
@@ -292,8 +351,13 @@ def main() -> int:
         print(f"{d['day']}: {d['meal1']} | {d['meal2']}")
     if data.get("monthly_green"):
         print(f"Månadens grönsak: {data['monthly_green']}")
+    else:
+        print("Månadens grönsak: ingen post hittad i API-svaret")
+
     if data.get("monthly_fruit"):
         print(f"Månadens frukt: {data['monthly_fruit']}")
+    else:
+        print("Månadens frukt: ingen post hittad i API-svaret")
 
     return 0
 
