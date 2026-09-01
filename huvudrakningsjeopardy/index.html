@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Huvudräknings-Jeopardy Åk 9</title>
+<style>
+:root{--bg:#071833;--panel:#0d2f68;--cell:#1546a0;--cell-hover:#2563eb;--gold:#ffd54a;--text:#fff;--muted:#dbe7ff;--used:#5b6780;--good:#16a34a;--bad:#dc2626;--warn:#f97316}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#030b1d 0%,var(--bg) 100%);color:var(--text)}
+.wrap{max-width:1700px;margin:0 auto;padding:18px}.backlink{display:inline-block;margin-bottom:8px;padding:10px 14px;border-radius:10px;background:#dbeafe;color:#111827;text-decoration:none;font-weight:800}.backlink:hover{background:#bfdbfe}
+h1{text-align:center;margin:8px 0 6px;font-size:2.35rem}.subtitle{text-align:center;color:var(--muted);margin-bottom:18px}
+.panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;box-shadow:0 10px 28px rgba(0,0,0,.18)}
+.top{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start}.setup{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.setup label{font-weight:700}
+select,input{border:none;border-radius:10px;padding:10px 12px;font-size:1rem}.scoreboard{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.team{background:var(--panel);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.14);text-align:center}.team input{width:100%;text-align:center;font-size:1.05rem;font-weight:bold;background:#fff;color:#111827;margin-bottom:10px}
+.points{font-size:2rem;font-weight:700;margin:10px 0 12px;color:var(--gold)}.btnrow{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+button{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}.plus{background:var(--good);color:white}.minus{background:var(--bad);color:white}.small{background:#dbeafe;color:#111827}.danger{background:#fee2e2;color:#991b1b}.warning{background:#ffedd5;color:#9a3412}
+.question h2{margin:0 0 10px;font-size:1.3rem}.meta{color:var(--muted);margin-bottom:8px;font-size:.98rem}
+.prompt{font-size:2.4rem;font-weight:900;text-align:center;background:rgba(255,255,255,.08);padding:22px;border-radius:14px;margin:12px 0;min-height:150px;display:flex;align-items:center;justify-content:center}
+.timerBox{text-align:center;font-size:1.4rem;font-weight:800;color:var(--gold);margin:8px 0}.answer{margin-top:12px;padding:16px;border-radius:12px;background:rgba(255,213,74,.13);border:1px solid rgba(255,213,74,.35);display:none;font-size:1.5rem;line-height:1.5;text-align:center}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.board{margin-top:18px}table{width:100%;border-collapse:separate;border-spacing:8px;table-layout:fixed}
+th,td{text-align:center;border-radius:14px;overflow:hidden}th{background:#0d2f68;padding:16px 8px;font-size:1rem;color:#fff4bf;border:1px solid rgba(255,255,255,.12)}
+td{background:var(--cell);color:var(--gold);font-weight:800;font-size:1.8rem;padding:20px 8px;cursor:pointer;user-select:none;border:1px solid rgba(255,255,255,.1);transition:transform .08s ease,background .12s ease}
+td:hover{background:var(--cell-hover);transform:translateY(-1px)}td.used{background:var(--used);color:#e5e7eb;cursor:not-allowed;transform:none}.footer-note{text-align:center;margin-top:10px;color:var(--muted);font-size:.95rem}
+@media(max-width:1250px){.top{grid-template-columns:1fr}.scoreboard{grid-template-columns:repeat(3,1fr)}}@media(max-width:780px){.scoreboard{grid-template-columns:1fr}td{font-size:1.35rem;padding:14px 4px}th{font-size:.85rem}.prompt{font-size:1.8rem;min-height:120px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="backlink" href="../">← Tillbaka till Lärarverktyg</a>
+<h1>Huvudräknings-Jeopardy Åk 9 🧠</h1>
+<div class="subtitle">Nya huvudräkningsuppgifter skapas varje gång du spelar. Svårighetsgraden stiger från 100 till 500 poäng.</div>
+
+<div class="top">
+<div class="panel">
+<div class="setup">
+<label for="teamCount">Antal lag:</label>
+<select id="teamCount" onchange="setTeamCount()"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select>
+<label for="timeLimit">Maxtid/fråga:</label>
+<select id="timeLimit"><option value="0">Ingen timer</option><option value="10">10 sek</option><option value="15" selected>15 sek</option><option value="20">20 sek</option><option value="30">30 sek</option><option value="45">45 sek</option><option value="60">60 sek</option></select>
+<button class="small" onclick="resetScores()">Nollställ poäng</button><button class="danger" onclick="resetBoard()">Nytt spel</button>
+</div>
+<h2 style="margin-top:0">Poängtavla</h2>
+<div class="scoreboard">
+<div class="team" data-team="1"><input value="Lag 1"><div class="points" id="team1">0</div><div class="btnrow"><button class="plus" onclick="addPoints(1)">+ Poäng</button><button class="minus" onclick="removePoints(1)">− Poäng</button></div></div><div class="team" data-team="2"><input value="Lag 2"><div class="points" id="team2">0</div><div class="btnrow"><button class="plus" onclick="addPoints(2)">+ Poäng</button><button class="minus" onclick="removePoints(2)">− Poäng</button></div></div><div class="team" data-team="3"><input value="Lag 3"><div class="points" id="team3">0</div><div class="btnrow"><button class="plus" onclick="addPoints(3)">+ Poäng</button><button class="minus" onclick="removePoints(3)">− Poäng</button></div></div><div class="team" data-team="4"><input value="Lag 4"><div class="points" id="team4">0</div><div class="btnrow"><button class="plus" onclick="addPoints(4)">+ Poäng</button><button class="minus" onclick="removePoints(4)">− Poäng</button></div></div><div class="team" data-team="5"><input value="Lag 5"><div class="points" id="team5">0</div><div class="btnrow"><button class="plus" onclick="addPoints(5)">+ Poäng</button><button class="minus" onclick="removePoints(5)">− Poäng</button></div></div><div class="team" data-team="6"><input value="Lag 6"><div class="points" id="team6">0</div><div class="btnrow"><button class="plus" onclick="addPoints(6)">+ Poäng</button><button class="minus" onclick="removePoints(6)">− Poäng</button></div></div>
+</div></div>
+<div class="panel question"><h2>Aktuell fråga</h2><div class="meta" id="meta">Välj en ruta i spelplanen.</div><div class="timerBox" id="timerBox">Timer: —</div><div class="prompt" id="questionPrompt">—</div>
+<div class="controls"><button class="small" id="showAnswerBtn" onclick="showAnswer()" disabled>Visa facit</button><button class="warning" id="restartTimerBtn" onclick="restartTimer()" disabled>Starta om timer</button></div>
+<div class="answer" id="answerBox"><strong>Facit:</strong> <span id="answerText"></span></div><div class="footer-note">Frågan skapas när rutan väljs. Timern startar automatiskt.</div></div></div>
+
+<div class="board panel"><table>
+<tr><th>Addition</th><th>Subtraktion</th><th>Multiplikation</th><th>Division</th><th>Potenser</th><th>Kvadratrötter</th><th>Grundpotensform</th></tr>
+<tr><td onclick="pickQuestion(this,'Addition',100)">100</td><td onclick="pickQuestion(this,'Subtraktion',100)">100</td><td onclick="pickQuestion(this,'Multiplikation',100)">100</td><td onclick="pickQuestion(this,'Division',100)">100</td><td onclick="pickQuestion(this,'Potenser',100)">100</td><td onclick="pickQuestion(this,'Kvadratrötter',100)">100</td><td onclick="pickQuestion(this,'Grundpotensform',100)">100</td></tr>
+<tr><td onclick="pickQuestion(this,'Addition',200)">200</td><td onclick="pickQuestion(this,'Subtraktion',200)">200</td><td onclick="pickQuestion(this,'Multiplikation',200)">200</td><td onclick="pickQuestion(this,'Division',200)">200</td><td onclick="pickQuestion(this,'Potenser',200)">200</td><td onclick="pickQuestion(this,'Kvadratrötter',200)">200</td><td onclick="pickQuestion(this,'Grundpotensform',200)">200</td></tr>
+<tr><td onclick="pickQuestion(this,'Addition',300)">300</td><td onclick="pickQuestion(this,'Subtraktion',300)">300</td><td onclick="pickQuestion(this,'Multiplikation',300)">300</td><td onclick="pickQuestion(this,'Division',300)">300</td><td onclick="pickQuestion(this,'Potenser',300)">300</td><td onclick="pickQuestion(this,'Kvadratrötter',300)">300</td><td onclick="pickQuestion(this,'Grundpotensform',300)">300</td></tr>
+<tr><td onclick="pickQuestion(this,'Addition',400)">400</td><td onclick="pickQuestion(this,'Subtraktion',400)">400</td><td onclick="pickQuestion(this,'Multiplikation',400)">400</td><td onclick="pickQuestion(this,'Division',400)">400</td><td onclick="pickQuestion(this,'Potenser',400)">400</td><td onclick="pickQuestion(this,'Kvadratrötter',400)">400</td><td onclick="pickQuestion(this,'Grundpotensform',400)">400</td></tr>
+<tr><td onclick="pickQuestion(this,'Addition',500)">500</td><td onclick="pickQuestion(this,'Subtraktion',500)">500</td><td onclick="pickQuestion(this,'Multiplikation',500)">500</td><td onclick="pickQuestion(this,'Division',500)">500</td><td onclick="pickQuestion(this,'Potenser',500)">500</td><td onclick="pickQuestion(this,'Kvadratrötter',500)">500</td><td onclick="pickQuestion(this,'Grundpotensform',500)">500</td></tr>
+</table></div></div>
+
+<script>
+let currentPoints=0,currentCell=null,timerInterval=null,timeLeft=0;
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a, choice=a=>a[rnd(0,a.length-1)];
+const sv=n=>{n=Math.round((n+Number.EPSILON)*1e8)/1e8;return Number.isInteger(n)?n.toLocaleString('sv-SE'):String(n).replace('.',',')};
+const sup=n=>String(n).replace(/-/g,'⁻').replace(/0/g,'⁰').replace(/1/g,'¹').replace(/2/g,'²').replace(/3/g,'³').replace(/4/g,'⁴').replace(/5/g,'⁵').replace(/6/g,'⁶').replace(/7/g,'⁷').replace(/8/g,'⁸').replace(/9/g,'⁹');
+
+function setTeamCount(){let n=+document.getElementById('teamCount').value;document.querySelectorAll('.team').forEach(t=>t.style.display=(+t.dataset.team<=n?'block':'none'))}
+
+function generate(cat,p){
+ let L=p/100,a,b;
+ if(cat==='Addition'){
+  if(L===1){a=rnd(20,79);b=rnd(11,39)}
+  if(L===2){a=rnd(80,249);b=rnd(40,149)}
+  if(L===3){a=rnd(11,89)/10;b=rnd(11,89)/10}
+  if(L===4){a=rnd(150,699);b=rnd(150,699)}
+  if(L===5){a=rnd(11,99)/10;b=rnd(11,99)/10;let c=rnd(11,99)/10;return [`${sv(a)} + ${sv(b)} + ${sv(c)}`,sv(a+b+c)]}
+  return [`${sv(a)} + ${sv(b)}`,sv(a+b)];
+ }
+ if(cat==='Subtraktion'){
+  if(L===1){a=rnd(60,99);b=rnd(11,49)}
+  if(L===2){a=rnd(120,299);b=rnd(40,119)}
+  if(L===3){a=rnd(50,150)/10;b=rnd(11,49)/10}
+  if(L===4){a=rnd(600,1500);b=rnd(150,a-50)}
+  if(L===5){a=rnd(100,200)/10;b=rnd(21,99)/10}
+  return [`${sv(a)} − ${sv(b)}`,sv(a-b)];
+ }
+ if(cat==='Multiplikation'){
+  if(L===1){a=rnd(3,9);b=rnd(3,9)}
+  if(L===2){a=rnd(11,15);b=rnd(4,9)}
+  if(L===3){a=choice([12,15,20,25]);b=rnd(4,12)}
+  if(L===4){a=choice([16,20,25,40,50]);b=choice([12,16,18,24])}
+  if(L===5){a=choice([.2,.3,.4,.5,.6,.8]);b=choice([.2,.4,.5,.6,.8])}
+  return [`${sv(a)} · ${sv(b)}`,sv(a*b)];
+ }
+ if(cat==='Division'){
+  let d,q;
+  if(L===1){d=rnd(3,9);q=rnd(3,12)}
+  if(L===2){d=choice([6,8,9,12]);q=rnd(8,15)}
+  if(L===3){d=choice([12,15,20,25]);q=rnd(4,15)}
+  if(L===4){d=choice([16,18,20,24,25]);q=rnd(8,20)}
+  if(L===5){d=choice([.2,.4,.5,.6,.8]);q=rnd(4,12)}
+  return [`${sv(d*q)} ÷ ${sv(d)}`,sv(q)];
+ }
+ if(cat==='Potenser'){
+  if(L===1){a=choice([2,3,4,5,10]);b=2}
+  if(L===2){a=choice([2,3,4,5]);b=choice([2,3])}
+  if(L===3){a=10;b=rnd(3,6)}
+  if(L===4){a=choice([2,3,4]);b=choice([3,4])}
+  if(L===5){let x=choice([2,3,4]),e=choice([2,3]),y=choice([2,3,4]);return [`${x}${sup(e)} + ${y}²`,sv(x**e+y**2)]}
+  return [`${a}${sup(b)}`,sv(a**b)];
+ }
+ if(cat==='Kvadratrötter'){
+  let r;
+  if(L===1)r=choice([2,3,4,5,6,7,8,9,10]);
+  if(L===2)r=choice([11,12,13,14,15]);
+  if(L===3)r=choice([16,17,18,19,20]);
+  if(L===4)r=choice([21,22,23,24,25]);
+  if(L===5){r=choice([.2,.3,.4,.5,.6,.7,.8,.9]);return [`√${sv(r*r)}`,sv(r)]}
+  return [`√${r*r}`,sv(r)];
+ }
+ if(cat==='Grundpotensform'){
+  let c,e,n,s;
+  if(L===1){c=rnd(1,9);e=rnd(2,4);n=c*10**e;return [`Skriv ${sv(n)} i grundpotensform`,`${c} · 10${sup(e)}`]}
+  if(L===2){c=rnd(11,99)/10;e=rnd(3,5);n=c*10**e;return [`Skriv ${sv(n)} i grundpotensform`,`${sv(c)} · 10${sup(e)}`]}
+  if(L===3){c=rnd(1,9);e=-rnd(2,4);n=c*10**e;s=n.toFixed(Math.abs(e)).replace('.',',');return [`Skriv ${s} i grundpotensform`,`${c} · 10${sup(e)}`]}
+  if(L===4){c=rnd(11,99)/10;e=-rnd(3,5);n=c*10**e;s=n.toFixed(Math.abs(e)+1).replace('.',',');return [`Skriv ${s} i grundpotensform`,`${sv(c)} · 10${sup(e)}`]}
+  c=rnd(11,99)/10;e=choice([-5,-4,4,5,6]);n=c*10**e;s=e<0?n.toFixed(Math.abs(e)+1).replace('.',','):sv(n);return [`Skriv ${sv(c)} · 10${sup(e)} som vanligt tal`,s];
+ }
+}
+function pickQuestion(cell,cat,p){if(cell.classList.contains('used'))return;let [q,a]=generate(cat,p);currentPoints=p;currentCell=cell;document.getElementById('meta').textContent=cat+' – '+p+' poäng';document.getElementById('questionPrompt').textContent=q;document.getElementById('answerText').textContent=a;document.getElementById('answerBox').style.display='none';document.getElementById('showAnswerBtn').disabled=false;document.getElementById('restartTimerBtn').disabled=false;startTimer()}
+function startTimer(){clearInterval(timerInterval);let lim=+document.getElementById('timeLimit').value,b=document.getElementById('timerBox');if(!lim){b.textContent='Timer: ingen maxtid';b.style.color='var(--gold)';return}timeLeft=lim;b.textContent='Timer: '+timeLeft+' sek';b.style.color='var(--gold)';timerInterval=setInterval(()=>{timeLeft--;b.textContent='Timer: '+timeLeft+' sek';if(timeLeft<=5&&timeLeft>0)b.style.color='var(--warn)';if(timeLeft<=0){clearInterval(timerInterval);b.textContent='Tiden är ute!';b.style.color='var(--bad)'}},1000)}
+function restartTimer(){if(currentPoints)startTimer()}
+function showAnswer(){clearInterval(timerInterval);document.getElementById('answerBox').style.display='block';if(currentCell)currentCell.classList.add('used')}
+function addPoints(t){if(!currentPoints)return;let e=document.getElementById('team'+t);e.textContent=+e.textContent+currentPoints}
+function removePoints(t){if(!currentPoints)return;let e=document.getElementById('team'+t);e.textContent=+e.textContent-currentPoints}
+function resetScores(){for(let i=1;i<=6;i++)document.getElementById('team'+i).textContent='0'}
+function resetBoard(){clearInterval(timerInterval);document.querySelectorAll('td.used').forEach(x=>x.classList.remove('used'));currentPoints=0;currentCell=null;document.getElementById('meta').textContent='Välj en ruta i spelplanen.';document.getElementById('questionPrompt').textContent='—';document.getElementById('answerText').textContent='';document.getElementById('answerBox').style.display='none';document.getElementById('showAnswerBtn').disabled=true;document.getElementById('restartTimerBtn').disabled=true;document.getElementById('timerBox').textContent='Timer: —';document.getElementById('timerBox').style.color='var(--gold)'}
+setTeamCount();
+</script>
+</body>
+</html>
