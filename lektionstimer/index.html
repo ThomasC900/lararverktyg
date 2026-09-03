@@ -45,7 +45,7 @@ h1{margin:0;font-size:clamp(2rem,4vw,3.4rem);letter-spacing:-.04em}
 
 body.fullscreen-mode{background:#08111f;color:#fff;padding:0}
 body.fullscreen-mode .app{width:100%;max-width:none;min-height:100vh;display:flex;flex-direction:column}
-body.fullscreen-mode .back-link,body.fullscreen-mode header,body.fullscreen-mode .setup,body.fullscreen-mode .custom{display:none}
+body.fullscreen-mode .back-link,body.fullscreen-mode header,body.fullscreen-mode .setup,body.fullscreen-mode .custom,body.fullscreen-mode .event-setup{display:none}
 body.fullscreen-mode .panel{flex:1;border:0;border-radius:0;box-shadow:none;background:#08111f;display:flex;flex-direction:column;justify-content:center;padding:2vw 4vw}
 body.fullscreen-mode .time{font-size:clamp(11rem,34vw,29rem);color:#fff;text-shadow:0 8px 32px rgba(0,0,0,.35)}
 body.fullscreen-mode .label,body.fullscreen-mode .end-time,body.fullscreen-mode .status{color:rgba(255,255,255,.78)}
@@ -58,6 +58,10 @@ body.fullscreen-mode.finished .status{color:#ff8b93}
 @media(max-width:600px){
   body{padding:12px}.panel{border-radius:20px}.time{font-size:22vw}.preset,.control-btn{padding:11px 13px}
 }
+
+.event-setup{margin:8px auto 22px;max-width:900px;border-top:1px solid var(--line);padding-top:20px}.event-title{text-align:center;font-weight:900;font-size:1.15rem;margin-bottom:12px}.event-list{display:grid;gap:10px}.event-row{display:grid;grid-template-columns:130px 190px 1fr auto;gap:10px;align-items:end}.event-row input,.event-row select{width:100%;padding:11px 12px;border:2px solid var(--line);border-radius:12px;font-size:1rem;font-weight:800;background:#fff}.target-title{font-size:clamp(1.8rem,4vw,3.2rem);font-weight:950;text-align:center;text-transform:uppercase;margin-bottom:4px}.target-reason{font-size:clamp(1.1rem,2.4vw,1.8rem);font-weight:850;text-align:center;color:var(--muted);margin-bottom:12px;min-height:1.4em}.next-event{text-align:center;color:var(--muted);font-weight:800;margin-top:8px}
+body.theme-activity.fullscreen-mode .panel{background:#0b4f6c}body.theme-end.fullscreen-mode .panel{background:#6b3f00}body.theme-other.fullscreen-mode .panel{background:#3f3f46}body.fullscreen-mode .target-title{font-size:clamp(2.4rem,6vw,5rem)}body.fullscreen-mode .target-reason{font-size:clamp(1.5rem,3.5vw,3rem);color:rgba(255,255,255,.88)}body.theme-activity.fullscreen-mode .target-title{color:#bff4ff}body.theme-end.fullscreen-mode .target-title{color:#ffe08a}
+@media(max-width:800px){.event-row{grid-template-columns:1fr 1fr}.event-label{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -84,7 +88,7 @@ body.fullscreen-mode.finished .status{color:#ff8b93}
         <label for="mode">Ställ timern via</label>
         <select id="mode">
           <option value="countdown" selected>Nedräkningstid</option>
-          <option value="endtime">Sluttid</option>
+          <option value="endtime">Sluttid</option><option value="schedule">Lektionsschema</option>
         </select>
       </div>
 
@@ -97,13 +101,17 @@ body.fullscreen-mode.finished .status{color:#ff8b93}
         <div class="field"><label for="endHour">Sluttid</label><input id="endHour" type="time"></div>
       </div>
 
+      <div id="singleTypeField" class="field"><label for="singleType">Räknar ned till</label><select id="singleType"><option value="activity">Aktivitetsbyte</option><option value="end">Lektionsslut</option><option value="other">Övrigt</option></select></div>
+      <div id="singleOtherField" class="field hidden"><label for="singleOther">Rubrik</label><input id="singleOther" type="text" placeholder="T.ex. eget arbete" style="width:170px"></div>
       <button id="setTime" class="control-btn set-btn" type="button">Ställ in tid</button>
     </div>
-
+    <div id="scheduleFields" class="event-setup hidden"><div class="event-title">Lektionsschema</div><div id="eventList" class="event-list"></div><button id="addEvent" class="control-btn secondary" type="button">+ Lägg till tidpunkt</button> <button id="setSchedule" class="control-btn set-btn" type="button">Starta lektionsschema</button></div>
     <section class="timer-wrap" aria-live="polite">
+      <div id="targetTitle" class="target-title">Aktivitetsbyte</div>
+      <div id="targetReason" class="target-reason"></div>
       <div id="time" class="time">20:00</div>
       <div class="label">Tid kvar</div>
-      <div id="endTime" class="end-time">Sluttid: –</div>
+      <div id="endTime" class="end-time">Måltid: –</div><div id="nextEvent" class="next-event"></div>
     </section>
 
     <div class="progress-shell"><div id="progress" class="progress"></div></div>
@@ -154,7 +162,7 @@ function render(){
   const fraction=initialSeconds>0?remainingSeconds/initialSeconds:0;
   progressEl.style.width=`${clamp(fraction*100,0,100)}%`;
   progressEl.style.background=fraction<=0.1&&remainingSeconds>0?"var(--bad)":fraction<=0.25&&remainingSeconds>0?"var(--warn)":"";
-  endTimeEl.textContent=`Sluttid: ${running?formatClock(targetEnd):"–"}`;
+  endTimeEl.textContent=`${targetClockLabel(currentType)}: ${running?formatClock(targetEnd):"–"}`;
   panelEl.classList.toggle("finished",remainingSeconds<=0);
 }
 function pauseTimer(changeStatus=true){
@@ -234,14 +242,19 @@ document.querySelectorAll(".preset").forEach(btn=>{
   });
 });
 function updateModeUI(){
-  const isCountdown=modeEl.value==="countdown";
-  countdownFields.classList.toggle("hidden",!isCountdown);
-  endtimeFields.classList.toggle("hidden",isCountdown);
+  const m=modeEl.value;
+  countdownFields.classList.toggle("hidden",m!=="countdown");
+  endtimeFields.classList.toggle("hidden",m!=="endtime");
+  scheduleFields.classList.toggle("hidden",m!=="schedule");
+  singleTypeField.classList.toggle("hidden",m==="schedule");
+  document.getElementById("setTime").classList.toggle("hidden",m==="schedule");
+  singleOtherField.classList.toggle("hidden",m==="schedule"||singleTypeEl.value!=="other");
 }
 
 modeEl.addEventListener("change",updateModeUI);
 
 document.getElementById("setTime").addEventListener("click",()=>{
+  scheduleMode=false;setVisualType(singleTypeEl.value,singleOtherEl.value);
   document.querySelectorAll(".preset").forEach(b=>b.classList.remove("active"));
 
   if(modeEl.value==="countdown"){
@@ -294,8 +307,56 @@ document.addEventListener("keydown",e=>{
   if(tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT")return;
   if(e.code==="Space"){e.preventDefault();toggleStartPause()}
 });
+
+const targetTitleEl=document.getElementById("targetTitle"),targetReasonEl=document.getElementById("targetReason"),nextEventEl=document.getElementById("nextEvent"),singleTypeEl=document.getElementById("singleType"),singleOtherEl=document.getElementById("singleOther"),singleOtherField=document.getElementById("singleOtherField"),scheduleFields=document.getElementById("scheduleFields"),singleTypeField=document.getElementById("singleTypeField"),eventList=document.getElementById("eventList");
+let scheduleMode=false,scheduleEvents=[],currentType="activity";
+function typeTitle(type,custom=""){return type==="activity"?"Aktivitetsbyte":type==="end"?"Lektionsslut":custom.trim()||"Övrigt"}
+function setVisualType(type,custom=""){
+  currentType=type;
+  const clean=(custom||"").trim();
+  targetTitleEl.textContent=typeTitle(type,custom);
+  targetReasonEl.textContent=(type==="other")?"":clean;
+  document.body.classList.remove("theme-activity","theme-end","theme-other");
+  document.body.classList.add(type==="activity"?"theme-activity":type==="end"?"theme-end":"theme-other");
+}
+function targetClockLabel(type){return type==="activity"?"Aktivitetsbyte":type==="end"?"Lektionsslut":"Tidpunkt"}
+function addEventRow(time="",type="activity",custom=""){const row=document.createElement("div");row.className="event-row";row.innerHTML=`<div class="field"><label>Tid</label><input class="event-time" type="time" value="${time}"></div><div class="field"><label>Typ</label><select class="event-type"><option value="activity">Aktivitetsbyte</option><option value="end">Lektionsslut</option><option value="other">Övrigt</option></select></div><div class="field event-label"><label>Beskrivning (valfri)</label><input class="event-custom" type="text" value="${custom}" placeholder="T.ex. eget arbete"></div><button class="control-btn danger remove-event" type="button">Ta bort</button>`;row.querySelector(".event-type").value=type;row.querySelector(".remove-event").onclick=()=>row.remove();eventList.appendChild(row)}
+document.getElementById("addEvent").onclick=()=>addEventRow();
+singleTypeEl.onchange=()=>{singleOtherField.classList.toggle("hidden",singleTypeEl.value!=="other");setVisualType(singleTypeEl.value,singleOtherEl.value)};
+singleOtherEl.oninput=()=>setVisualType("other",singleOtherEl.value);
+function startSchedule(){const now=new Date();scheduleEvents=[];eventList.querySelectorAll(".event-row").forEach(row=>{const v=row.querySelector(".event-time").value;if(!v)return;const [h,m]=v.split(":").map(Number),d=new Date(now),type=row.querySelector(".event-type").value,custom=row.querySelector(".event-custom").value;d.setHours(h,m,0,0);if(d>now)scheduleEvents.push({date:d,type,custom})});scheduleEvents.sort((a,b)=>a.date-b.date);if(!scheduleEvents.length){statusEl.textContent="Lägg in minst en framtida tidpunkt.";return}scheduleMode=true;running=true;startPauseBtn.textContent="⏸ Pausa";runScheduleStep();clearInterval(intervalId);intervalId=setInterval(runScheduleStep,250)}
+let activeScheduleTarget=null;
+function runScheduleStep(){
+  const now=new Date();
+  scheduleEvents=scheduleEvents.filter(e=>e.date>now);
+  if(!scheduleEvents.length){
+    clearInterval(intervalId);intervalId=null;running=false;scheduleMode=false;
+    remainingSeconds=0;targetEnd=null;activeScheduleTarget=null;
+    targetTitleEl.textContent="Lektion klar";targetReasonEl.textContent="";
+    timeEl.textContent="0:00";statusEl.textContent="⏰ Lektionsschemat är klart!";
+    nextEventEl.textContent="";progressEl.style.width="0%";return;
+  }
+  const e=scheduleEvents[0];
+  if(activeScheduleTarget!==e.date.getTime()){
+    activeScheduleTarget=e.date.getTime();
+    initialSeconds=Math.max(1,(e.date-now)/1000);
+  }
+  targetEnd=e.date;
+  remainingSeconds=Math.max(0,(e.date-now)/1000);
+  setVisualType(e.type,e.custom);
+  timeEl.textContent=formatTime(remainingSeconds);
+  endTimeEl.textContent=`${targetClockLabel(e.type)}: ${formatClock(e.date)}`;
+  const next=scheduleEvents[1];
+  nextEventEl.textContent=next?`Därefter: ${formatClock(next.date)} – ${typeTitle(next.type,next.custom)}${next.custom&&next.type!=="other"?" ("+next.custom+")":""}`:"";
+  const f=remainingSeconds/initialSeconds;
+  progressEl.style.width=`${clamp(f*100,0,100)}%`;
+}
+document.getElementById("setSchedule").onclick=startSchedule;
+
 const suggestedEnd=new Date(Date.now()+20*60*1000);
 endHourEl.value=`${String(suggestedEnd.getHours()).padStart(2,"0")}:${String(suggestedEnd.getMinutes()).padStart(2,"0")}`;
+addEventRow("13:45","activity");addEventRow("14:00","activity");addEventRow("14:30","end");
+setVisualType("activity");
 updateModeUI();
 render();
 </script>
