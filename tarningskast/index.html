@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tärningskast</title>
+<style>
+:root{
+  --bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;--line:#dce3ee;
+  --accent:#3457d5;--accent2:#6c4de6;--shadow:0 14px 34px rgba(26,39,64,.12);
+  --die:#fff;--pip:#172033
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,ui-rounded,"Segoe UI",Arial,sans-serif}
+body{
+  background:
+    radial-gradient(circle at top left,rgba(52,87,213,.12),transparent 34%),
+    radial-gradient(circle at top right,rgba(108,77,230,.10),transparent 30%),
+    var(--bg);
+  color:var(--text);padding:20px
+}
+.app{width:min(1200px,96vw);margin:0 auto}
+.back-link{
+  display:inline-block;margin-bottom:16px;text-decoration:none;background:rgba(255,255,255,.96);
+  color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:999px;
+  font-weight:800;box-shadow:0 6px 18px rgba(26,39,64,.10)
+}
+header{text-align:center;margin:4px 0 18px}
+h1{margin:0;font-size:clamp(2rem,4vw,3.4rem);letter-spacing:-.04em}
+.subtitle{color:var(--muted);margin:8px 0 0;font-size:1.05rem}
+.panel{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:clamp(18px,3vw,32px)}
+.setup{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;align-items:end;margin-bottom:24px}
+.field label{display:block;font-size:.82rem;font-weight:800;color:var(--muted);margin:0 0 5px 4px}
+.field select{min-width:150px;padding:11px 12px;border:2px solid var(--line);border-radius:12px;font-size:1rem;font-weight:800;background:#fff;color:var(--text)}
+button{border:0;border-radius:14px;padding:13px 18px;font-size:1rem;font-weight:850;cursor:pointer}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.secondary{background:#e9edf7;color:#344054}
+.dark{background:#172033;color:#fff}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+.dice-area{display:flex;justify-content:center;align-items:center;gap:22px;flex-wrap:wrap;min-height:260px;padding:22px}
+.die{
+  width:150px;height:150px;border-radius:24px;background:var(--die);border:3px solid #d8dee9;
+  box-shadow:0 12px 24px rgba(26,39,64,.18);position:relative;display:grid;place-items:center;
+  font-size:4.6rem;font-weight:950;color:var(--text);font-variant-numeric:tabular-nums;
+  transition:transform .16s ease
+}
+.die.rolling{transform:rotate(4deg) scale(.96)}
+.pip{position:absolute;width:22px;height:22px;border-radius:50%;background:var(--pip);transform:translate(-50%,-50%)}
+.p1{left:25%;top:25%}.p2{left:50%;top:25%}.p3{left:75%;top:25%}
+.p4{left:25%;top:50%}.p5{left:50%;top:50%}.p6{left:75%;top:50%}
+.p7{left:25%;top:75%}.p8{left:50%;top:75%}.p9{left:75%;top:75%}
+.summary{text-align:center;font-size:1.2rem;font-weight:850;color:var(--muted);min-height:30px}
+.summary strong{color:var(--text)}
+.hint{text-align:center;color:var(--muted);font-size:.95rem;margin-top:10px}
+
+body.fullscreen-mode{background:#08111f;color:#fff;padding:0}
+body.fullscreen-mode .app{width:100%;max-width:none;min-height:100vh;display:flex;flex-direction:column}
+body.fullscreen-mode .back-link,body.fullscreen-mode header,body.fullscreen-mode .setup,body.fullscreen-mode .hint{display:none}
+body.fullscreen-mode .panel{
+  flex:1;border:0;border-radius:0;box-shadow:none;background:#08111f;
+  display:flex;flex-direction:column;justify-content:center;padding:2vw 4vw
+}
+body.fullscreen-mode .dice-area{gap:2.2vw;min-height:0;flex:1;align-content:center}
+body.fullscreen-mode .die{
+  width:clamp(125px,15vw,230px);height:clamp(125px,15vw,230px);
+  border-radius:clamp(18px,2vw,34px);font-size:clamp(4rem,8vw,8rem);
+  border-width:4px
+}
+body.fullscreen-mode .pip{width:clamp(18px,2.2vw,34px);height:clamp(18px,2.2vw,34px)}
+body.fullscreen-mode .summary{color:rgba(255,255,255,.82);font-size:clamp(1.1rem,2vw,1.8rem)}
+body.fullscreen-mode .summary strong{color:#fff}
+body.fullscreen-mode .controls{margin-top:16px}
+body.fullscreen-mode #roll{font-size:clamp(1.15rem,2vw,1.6rem);padding:16px 28px}
+body.fullscreen-mode .secondary{background:rgba(255,255,255,.14);color:#fff}
+body.fullscreen-mode .dark{background:rgba(255,255,255,.14);color:#fff}
+
+@media(max-width:700px){
+  body{padding:12px}.panel{border-radius:20px}.dice-area{gap:14px}
+  .die{width:110px;height:110px;border-radius:18px;font-size:3.4rem}
+  .pip{width:16px;height:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
+  <header>
+    <h1>Tärningskast 🎲</h1>
+    <p class="subtitle">Välj antal tärningar och hur många sidor de ska ha.</p>
+  </header>
+
+  <main class="panel">
+    <div class="setup">
+      <div class="field">
+        <label for="diceCount">Antal tärningar</label>
+        <select id="diceCount">
+          <option value="1">1 tärning</option>
+          <option value="2" selected>2 tärningar</option>
+          <option value="3">3 tärningar</option>
+          <option value="4">4 tärningar</option>
+          <option value="5">5 tärningar</option>
+          <option value="6">6 tärningar</option>
+          <option value="7">7 tärningar</option>
+          <option value="8">8 tärningar</option>
+          <option value="9">9 tärningar</option>
+          <option value="10">10 tärningar</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="sides">Antal sidor</label>
+        <select id="sides">
+          <option value="4">4 sidor (D4)</option>
+          <option value="6" selected>6 sidor (D6)</option>
+          <option value="8">8 sidor (D8)</option>
+          <option value="10">10 sidor (D10)</option>
+          <option value="12">12 sidor (D12)</option>
+          <option value="20">20 sidor (D20)</option>
+          <option value="100">100 sidor (D100)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="showSum">Visa summa</label>
+        <select id="showSum">
+          <option value="no" selected>Nej</option>
+          <option value="yes">Ja</option>
+        </select>
+      </div>
+    </div>
+
+    <section id="diceArea" class="dice-area" aria-live="polite"></section>
+    <div id="summary" class="summary"></div>
+
+    <div class="controls">
+      <button id="roll" class="primary" type="button">🎲 Kasta tärningarna</button>
+      <button id="fullscreen" class="dark" type="button">⛶ Helskärm</button>
+    </div>
+    <div class="hint">Tips: I helskärmsläge kan du kasta med knappen eller mellanslagstangenten.</div>
+  </main>
+</div>
+
+<script>
+const countEl=document.getElementById("diceCount");
+const sidesEl=document.getElementById("sides");
+const diceArea=document.getElementById("diceArea");
+const summaryEl=document.getElementById("summary");
+const rollBtn=document.getElementById("roll");
+const fullscreenBtn=document.getElementById("fullscreen");
+const showSumEl=document.getElementById("showSum");
+
+let results=[];
+
+const pipMap={
+  1:["p5"],
+  2:["p1","p9"],
+  3:["p1","p5","p9"],
+  4:["p1","p3","p7","p9"],
+  5:["p1","p3","p5","p7","p9"],
+  6:["p1","p3","p4","p6","p7","p9"]
+};
+
+function makeDie(value,sides){
+  const die=document.createElement("div");
+  die.className="die";
+  die.setAttribute("aria-label",`${value} på en ${sides}-sidig tärning`);
+  if(sides===6){
+    pipMap[value].forEach(pos=>{
+      const pip=document.createElement("span");
+      pip.className=`pip ${pos}`;
+      die.appendChild(pip);
+    });
+  }else{
+    die.textContent=value;
+  }
+  return die;
+}
+
+function render(){
+  diceArea.innerHTML="";
+  const sides=Number(sidesEl.value);
+  results.forEach(v=>diceArea.appendChild(makeDie(v,sides)));
+
+  if(results.length){
+    if(showSumEl.value==="yes" && results.length>1){
+      const total=results.reduce((a,b)=>a+b,0);
+      summaryEl.innerHTML=`Summa: <strong>${total}</strong>`;
+    }else if(results.length===1){
+      summaryEl.innerHTML=`Resultat: <strong>${results[0]}</strong>`;
+    }else{
+      summaryEl.textContent="";
+    }
+  }else{
+    summaryEl.textContent="Klicka på Kasta tärningarna.";
+  }
+}
+
+function roll(){
+  const count=Number(countEl.value);
+  const sides=Number(sidesEl.value);
+
+  diceArea.querySelectorAll(".die").forEach(d=>d.classList.add("rolling"));
+
+  setTimeout(()=>{
+    results=Array.from({length:count},()=>Math.floor(Math.random()*sides)+1);
+    render();
+  },120);
+}
+
+function resetForSettings(){
+  results=[];
+  render();
+}
+
+countEl.addEventListener("change",resetForSettings);
+sidesEl.addEventListener("change",resetForSettings);
+showSumEl.addEventListener("change",render);
+rollBtn.addEventListener("click",roll);
+
+async function toggleFullscreen(){
+  try{
+    if(!document.fullscreenElement){
+      await document.documentElement.requestFullscreen();
+    }else{
+      await document.exitFullscreen();
+    }
+  }catch(e){
+    document.body.classList.toggle("fullscreen-mode");
+  }
+}
+
+fullscreenBtn.addEventListener("click",toggleFullscreen);
+
+document.addEventListener("fullscreenchange",()=>{
+  const active=!!document.fullscreenElement;
+  document.body.classList.toggle("fullscreen-mode",active);
+  fullscreenBtn.textContent=active?"⛶ Avsluta helskärm":"⛶ Helskärm";
+});
+
+document.addEventListener("keydown",e=>{
+  const tag=document.activeElement?.tagName;
+  if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA")return;
+  if(e.code==="Space"){
+    e.preventDefault();
+    roll();
+  }
+});
+
+results=[1,6];
+render();
+</script>
+</body>
+</html>
