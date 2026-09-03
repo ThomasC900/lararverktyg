@@ -11,77 +11,143 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:#e7e8e4;font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
-.toolbar{max-width:210mm;margin:16px auto 10px;display:flex;gap:10px;justify-content:flex-end}
+.toolbar{max-width:297mm;margin:16px auto 10px;display:flex;gap:10px;justify-content:flex-end}
 button{border:0;border-radius:999px;padding:10px 16px;background:var(--green);color:#fff;font-weight:700;cursor:pointer}
 button.secondary{background:#fff;color:var(--green);border:1px solid #ccd3ce}
+
 .sheet{
-  width:210mm;height:297mm;margin:auto;background:var(--bg);position:relative;overflow:hidden;
-  padding:12mm 14mm 10mm;box-shadow:0 8px 30px #0002;
+  width:297mm;height:210mm;margin:auto;background:var(--bg);position:relative;overflow:hidden;
+  padding:9mm 12mm 8mm;box-shadow:0 8px 30px #0002;
 }
-.sheet:before{content:"";position:absolute;inset:8mm;border:1.6px solid var(--green);border-radius:5mm;pointer-events:none}
-.decor{position:absolute;font-size:25px;opacity:.92;user-select:none}
-.d1{left:11mm;top:12mm;transform:rotate(-15deg)} .d2{right:12mm;top:13mm;transform:rotate(12deg)}
-.d3{left:12mm;bottom:14mm;transform:rotate(15deg)} .d4{right:13mm;bottom:13mm;transform:rotate(-15deg)}
+.sheet:before{
+  content:"";position:absolute;inset:6mm;border:1.6px solid var(--green);
+  border-radius:5mm;pointer-events:none
+}
+
+.decor{position:absolute;font-size:23px;opacity:.92;user-select:none}
+.d1{left:10mm;top:9mm;transform:rotate(-15deg)}
+.d2{right:11mm;top:9mm;transform:rotate(12deg)}
+.d3{left:10mm;bottom:10mm;transform:rotate(15deg)}
+.d4{right:11mm;bottom:10mm;transform:rotate(-15deg)}
+
 header{text-align:center;position:relative;z-index:1}
-h1{margin:2mm 0 1mm;font-size:25pt;letter-spacing:.4px;color:var(--green)}
-.sub{font-size:11.5pt;font-weight:800;color:var(--terracotta);text-transform:uppercase}
-.rule{width:70%;height:2px;background:var(--gold);margin:3mm auto 4mm}
-.days{display:grid;grid-template-rows:repeat(5,1fr);gap:2.2mm;height:206mm;position:relative;z-index:1}
-.card{background:var(--paper);border:1px solid #d9d5c9;border-radius:4mm;padding:0 5mm 3mm;position:relative;overflow:hidden}
-.dayhead{display:inline-block;margin-left:-5mm;padding:2.7mm 4mm 2.2mm;background:var(--green);color:#fff;font-weight:900;font-size:9.7pt;border-radius:0 0 4mm 0}
+h1{
+  margin:0 0 .8mm;font-size:28pt;letter-spacing:.4px;color:var(--green);
+  line-height:1
+}
+.sub{
+  font-size:13pt;font-weight:800;color:var(--terracotta);
+  text-transform:uppercase
+}
+.rule{width:55%;height:2px;background:var(--gold);margin:2.2mm auto 3.5mm}
+
+.days{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:repeat(3,1fr);
+  gap:2.5mm 3mm;
+  height:145mm;
+  position:relative;
+  z-index:1
+}
+.card{
+  background:var(--paper);border:1px solid #d9d5c9;border-radius:4mm;
+  padding:0 5mm 3.2mm;position:relative;overflow:hidden;min-width:0
+}
+.card:nth-child(1){grid-column:1;grid-row:1}
+.card:nth-child(2){grid-column:1;grid-row:2}
+.card:nth-child(3){grid-column:1;grid-row:3}
+.card:nth-child(4){grid-column:2;grid-row:1}
+.card:nth-child(5){grid-column:2;grid-row:2}
+
+.dayhead{
+  display:inline-block;
+  margin-left:-5mm;
+  padding:2.8mm 4.5mm 2.4mm;
+  background:var(--green);color:#fff;font-weight:900;
+  font-size:11.2pt;
+  border-radius:0 0 4mm 0;
+  line-height:1.05
+}
 .card:nth-child(even) .dayhead{background:var(--green2)}
-.plate{position:absolute;right:5mm;top:3mm;width:8mm;height:8mm;border:2px solid var(--gold);border-radius:50%}
-.plate:after{content:"";position:absolute;inset:1.4mm;border:1px solid var(--gold);border-radius:50%}
-.meal{display:grid;grid-template-columns:23mm 1fr;gap:2mm;align-items:start;margin-top:3.2mm}
-.label{font-size:8.5pt;font-weight:900;color:var(--terracotta)}
+
+.plate{
+  position:absolute;right:4mm;top:3.5mm;width:8mm;height:8mm;
+  border:1.8px solid var(--gold);border-radius:50%
+}
+.plate:after{
+  content:"";position:absolute;inset:1.3mm;border:1px solid var(--gold);border-radius:50%
+}
+
+.meal{
+  display:grid;
+  grid-template-columns:24mm 1fr;
+  gap:3mm;
+  align-items:start;
+  margin-top:3.4mm
+}
+.label{
+  font-size:9.2pt;font-weight:900;color:var(--terracotta)
+}
 .meal.alt .label{color:var(--green2)}
-.food{font-size:10.7pt;line-height:1.17;font-weight:700}
+.food{
+  font-size:15.2pt;
+  line-height:1.14;
+  font-weight:700;
+  overflow-wrap:anywhere;
+  hyphens:auto
+}
 .meal.alt .food{font-weight:400}
-.monthly{height:15mm;margin-top:3mm;position:relative;z-index:1}
-.monthlybox{width:100%;background:#e4ead9;border-radius:4mm;padding:2.6mm 5mm}
-.monthlybox b{color:var(--green);font-size:8.8pt}
-.monthlybox span{display:block;color:var(--green);font-size:11.5pt;font-weight:800;margin-top:1mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-footer{text-align:center;font-size:6.7pt;font-style:italic;color:var(--muted);margin-top:3mm;position:relative;z-index:1}
-.status{position:absolute;right:13mm;bottom:7.7mm;font-size:6pt;color:#7a847e}
+
+.greenbox{
+  grid-column:2;
+  grid-row:3;
+  height:auto;
+  background:#e4ead9;border-radius:4mm;
+  margin-top:0;
+  padding:5mm 6mm;
+  position:relative;z-index:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center
+}
+.greenbox b{
+  color:var(--green);font-size:11pt
+}
+.greenbox span{
+  display:block;color:var(--green);
+  font-size:17pt;font-weight:800;
+  margin-top:2mm;line-height:1.12
+}
+
+footer{
+  text-align:center;font-size:7.4pt;font-style:italic;color:var(--muted);
+  margin-top:2.7mm;position:relative;z-index:1
+}
+.status{
+  position:absolute;right:11mm;bottom:6.6mm;font-size:6.2pt;color:#7a847e
+}
+
 @media print{
-  @page{size:A4;margin:0}
+  @page{size:A4 landscape;margin:0}
   html,body{margin:0;background:#fff}
   .toolbar{display:none}
-  .sheet{margin:0;box-shadow:none;width:210mm;height:297mm;break-after:avoid;page-break-after:avoid}
+  .sheet{
+    margin:0;box-shadow:none;width:297mm;height:210mm;
+    break-after:avoid;page-break-after:avoid
+  }
 }
-@media(max-width:850px){
+
+@media(max-width:1200px){
   .toolbar{padding:0 12px}
   .sheet{transform-origin:top left}
-}.back-button {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 100;
-  padding: 9px 14px;
-  background: #355c4a;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.back-button:hover {
-  background: #29483a;
-}
-
-@media print {
-  .back-button {
-    display: none;
-  }
 }
 </style>
 </head>
 <body>
-  <a href="../" class="back-button">← Till Lärarverktyg</a>
 <div class="toolbar">
   <button class="secondary" onclick="location.reload()">Uppdatera</button>
-  <button onclick="window.print()">🖨️ Skriv ut A4</button>
+  <button onclick="window.print()">🖨️ Skriv ut A4 liggande</button>
 </div>
 
 <main class="sheet">
@@ -93,12 +159,6 @@ footer{text-align:center;font-size:6.7pt;font-style:italic;color:var(--muted);ma
     <div class="rule"></div>
   </header>
   <section id="days" class="days"></section>
-  <section class="monthly">
-    <div class="monthlybox">
-      <b>🥬 MÅNADENS GRÖNSAK</b>
-      <span id="monthlyGreen">–</span>
-    </div>
-  </section>
   <footer>
     Till varje lunch erbjuds mjölk, vatten, bröd, matfett och salladsutbud varierat efter säsong.
     Med reservation för lokala ändringar.
@@ -121,7 +181,6 @@ const fallback = {
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function render(data, source){
   document.getElementById("weekline").textContent=`VECKA ${data.week}  •  ${data.period}`;
-  document.getElementById("monthlyGreen").textContent=data.monthly_green || "–";
   const wrap=document.getElementById("days"); wrap.innerHTML="";
   for(const d of data.days.slice(0,5)){
     const card=document.createElement("article");card.className="card";
@@ -131,6 +190,10 @@ function render(data, source){
       <div class="meal alt"><div class="label">DAGENS 2</div><div class="food">${esc(d.meal2 || "–")}</div></div>`;
     wrap.appendChild(card);
   }
+  const green=document.createElement("section");
+  green.className="greenbox";
+  green.innerHTML=`<b>MÅNADENS GRÖNT</b><span>${esc(data.monthly_green || "Se salladsutbudet i restaurangen")}</span>`;
+  wrap.appendChild(green);
   document.getElementById("status").textContent=source==="live" ? `Uppdaterad ${data.updated || ""}` : "Reservmeny visas";
 }
 fetch("./menu.json",{cache:"no-store"})
