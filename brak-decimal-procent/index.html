@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bråk, decimal och procent</title>
+<style>
+:root{
+  --bg:#f4f7fb;--card:#ffffff;--ink:#182231;--muted:#667085;--line:#dce3ee;
+  --blue:#315a8a;--blue2:#5c7fa8;--gold:#d6a84b;--green:#2f6b50;--red:#a64040;
+  --soft:#eef3f8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;padding:20px;background:var(--bg);color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif
+}
+.app{width:min(980px,96vw);margin:auto}
+.back{
+  display:inline-block;margin-bottom:14px;text-decoration:none;
+  color:var(--blue);font-weight:800
+}
+header{text-align:center;margin-bottom:20px}
+h1{
+  margin:0;color:var(--blue);font-size:clamp(2rem,5vw,3.4rem)
+}
+.subtitle{color:var(--muted);font-size:1.05rem;margin-top:8px}
+.panel{
+  background:var(--card);border:1px solid var(--line);border-radius:24px;
+  padding:clamp(18px,4vw,34px);box-shadow:0 12px 30px #17203316
+}
+.hidden{display:none!important}
+h2{margin-top:0;color:var(--blue)}
+.group{margin:18px 0}
+.group-title{font-weight:900;margin-bottom:9px}
+.choices{display:flex;flex-wrap:wrap;gap:9px}
+.choice{position:relative}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.choice label{
+  display:block;padding:10px 14px;border:2px solid var(--line);
+  border-radius:13px;background:#fff;font-weight:800;cursor:pointer
+}
+.choice input:checked+label{
+  border-color:var(--blue);background:#eaf1f8;color:var(--blue)
+}
+select,input[type=text]{
+  font:inherit;border:2px solid var(--line);border-radius:12px;
+  padding:11px 13px;background:#fff;color:var(--ink)
+}
+button{
+  border:0;border-radius:14px;padding:13px 20px;
+  font-size:1rem;font-weight:900;cursor:pointer
+}
+.primary{background:var(--blue);color:#fff}
+.secondary{background:#e8edf3;color:var(--ink)}
+.startrow,.actions{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:22px
+}
+.question-top{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+  color:var(--muted);font-weight:800
+}
+.progress{
+  height:10px;background:#e7ebf0;border-radius:99px;overflow:hidden;
+  margin:12px 0 24px
+}
+.progress>div{
+  height:100%;background:var(--gold);width:0;transition:width .25s
+}
+.prompt{text-align:center;font-size:1.15rem;font-weight:800;color:var(--muted)}
+.given{
+  display:flex;justify-content:center;align-items:center;min-height:145px;
+  font-size:clamp(3rem,9vw,6rem);font-weight:900;color:var(--blue)
+}
+.frac{
+  display:inline-grid;grid-template-rows:auto auto;text-align:center;line-height:1
+}
+.frac .num{border-bottom:.075em solid currentColor;padding:0 .12em .08em}
+.frac .den{padding:.08em .12em 0}
+.answers{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;max-width:650px;margin:0 auto
+}
+.answerbox{background:var(--soft);border-radius:16px;padding:15px}
+.answerbox label{
+  display:block;font-weight:900;margin-bottom:7px;color:var(--blue)
+}
+.answerbox input{
+  width:100%;font-size:1.35rem;text-align:center;font-weight:800
+}
+.feedback{
+  min-height:52px;margin:18px auto 0;max-width:650px;
+  text-align:center;font-weight:900;font-size:1.05rem;
+  padding:12px;border-radius:14px
+}
+.feedback.ok{background:#e5f3eb;color:var(--green)}
+.feedback.bad{background:#fae8e8;color:var(--red)}
+.stats{
+  display:flex;justify-content:center;gap:22px;flex-wrap:wrap;
+  margin-top:14px;color:var(--muted);font-weight:800
+}
+.result{text-align:center}
+.bigscore{font-size:4rem;font-weight:950;color:var(--blue);margin:12px}
+.note{font-size:.92rem;color:var(--muted);margin-top:8px;line-height:1.35}
+.example{
+  margin-top:12px;padding:12px 14px;background:#f7f9fc;
+  border-radius:12px;color:var(--muted);font-size:.92rem
+}
+@media(max-width:600px){
+  body{padding:10px}.answers{grid-template-columns:1fr}
+  .panel{border-radius:18px}.given{min-height:115px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="back" href="../">← Tillbaka till Lärarverktyg</a>
+
+  <header>
+    <h1>Bråk ↔ Decimal</h1>
+    <div class="subtitle">
+      Träna sambandet mellan bråk, decimaltal och – om du vill – procent.
+    </div>
+  </header>
+
+  <section id="setup" class="panel">
+    <h2>Ställ in träningen</h2>
+
+    <div class="group">
+      <div class="group-title">Vilka bråkfamiljer vill du träna?</div>
+      <div class="choices">
+        <div class="choice"><input id="d2" type="checkbox" value="2" checked><label for="d2">Halvor ½</label></div>
+        <div class="choice"><input id="d3" type="checkbox" value="3" checked><label for="d3">Tredjedelar ⅓</label></div>
+        <div class="choice"><input id="d4" type="checkbox" value="4" checked><label for="d4">Fjärdedelar ¼</label></div>
+        <div class="choice"><input id="d5" type="checkbox" value="5" checked><label for="d5">Femtedelar ⅕</label></div>
+        <div class="choice"><input id="d10" type="checkbox" value="10" checked><label for="d10">Tiondelar ⅒</label></div>
+        <div class="choice"><input id="d100" type="checkbox" value="100"><label for="d100">Hundradelar ¹⁄₁₀₀</label></div>
+      </div>
+      <div class="note">
+        Multiplar ingår automatiskt, till exempel 2/3, 3/4, 4/5 och 7/10.
+        Bråken visas i den valda familjen och förkortas alltså inte automatiskt i uppgiften.
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Träningssätt</div>
+      <div class="choices">
+        <div class="choice"><input name="mode" id="m1" type="radio" value="f2d" checked><label for="m1">Bråk → decimal</label></div>
+        <div class="choice"><input name="mode" id="m2" type="radio" value="d2f"><label for="m2">Decimal → bråk</label></div>
+        <div class="choice"><input name="mode" id="m3" type="radio" value="mixed"><label for="m3">Blandat</label></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Procentform</div>
+      <div class="choices">
+        <div class="choice"><input id="percent" type="checkbox"><label for="percent">Koppla på procent</label></div>
+      </div>
+      <div class="example">
+        Exempel: 3/4 = 0,75 = 75 % &nbsp; • &nbsp; 1/3 ≈ 0,333 = 33,3 %
+      </div>
+    </div>
+
+    <div class="group">
+      <label class="group-title" for="count">Antal uppgifter</label><br>
+      <select id="count">
+        <option>10</option>
+        <option selected>15</option>
+        <option>20</option>
+        <option>30</option>
+      </select>
+    </div>
+
+    <div id="setupMsg" class="feedback hidden"></div>
+    <div class="startrow">
+      <button id="start" class="primary" type="button">Starta träningen →</button>
+    </div>
+  </section>
+
+  <section id="game" class="panel hidden">
+    <div class="question-top">
+      <span id="qnum">Uppgift 1 av 15</span>
+      <span id="streak">Svit: 0</span>
+    </div>
+    <div class="progress"><div id="bar"></div></div>
+
+    <div id="prompt" class="prompt"></div>
+    <div id="given" class="given"></div>
+    <div id="answers" class="answers"></div>
+    <div id="feedback" class="feedback"></div>
+
+    <div class="actions">
+      <button id="check" class="primary" type="button">Rätta</button>
+      <button id="next" class="primary hidden" type="button">Nästa →</button>
+      <button id="quit" class="secondary" type="button">Avsluta</button>
+    </div>
+
+    <div class="stats">
+      <span id="correct">Rätt: 0</span>
+      <span id="attempts">Försök: 0</span>
+    </div>
+  </section>
+
+  <section id="result" class="panel result hidden">
+    <h2>Träningen är klar!</h2>
+    <div id="bigscore" class="bigscore"></div>
+    <div id="resultText"></div>
+    <div class="actions" style="justify-content:center">
+      <button id="again" class="primary" type="button">Träna igen</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+const setup = $("#setup");
+const game = $("#game");
+const result = $("#result");
+
+let pool = [];
+let tasks = [];
+let index = 0;
+let correct = 0;
+let attempts = 0;
+let streak = 0;
+let answered = false;
+let current = null;
+let usePercent = false;
+
+function fmtDecimal(v,d){
+  if(d === 3){
+    return v.toFixed(3).replace(".",",");
+  }
+  if(d === 100){
+    return v.toFixed(2).replace(".",",");
+  }
+  if(d === 10){
+    return v.toFixed(1).replace(".",",");
+  }
+  return String(Number(v.toFixed(2))).replace(".",",");
+}
+
+function fmtPercent(v,d){
+  const p = v * 100;
+  if(d === 3){
+    return p.toFixed(1).replace(".",",");
+  }
+  return String(Number(p.toFixed(2))).replace(".",",");
+}
+
+function fracHTML(n,d){
+  return `<span class="frac"><span class="num">${n}</span><span class="den">${d}</span></span>`;
+}
+
+function parseNumber(text){
+  const cleaned = String(text).trim().replace(/\s/g,"").replace("%","").replace(",",".");
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function parseFraction(text){
+  const match = String(text).trim().match(/^(\d+)\s*\/\s*(\d+)$/);
+  if(!match) return null;
+  const n = Number(match[1]);
+  const d = Number(match[2]);
+  if(!d) return null;
+  return [n,d];
+}
+
+function fractionMatches(text,n,d){
+  const f = parseFraction(text);
+  if(!f) return false;
+  return Math.abs((f[0]/f[1]) - (n/d)) < 1e-10;
+}
+
+function selectedDenoms(){
+  return $$('input[type="checkbox"][id^="d"]:checked').map(el => Number(el.value));
+}
+
+function buildPool(){
+  const arr = [];
+  for(const d of selectedDenoms()){
+    for(let n = 1; n < d; n++){
+      arr.push({n,d,v:n/d});
+    }
+  }
+  return arr;
+}
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function makeTasks(count,mode){
+  const out = [];
+  let bag = shuffle(pool);
+
+  for(let i=0;i<count;i++){
+    if(i > 0 && i % bag.length === 0){
+      bag = shuffle(pool);
+    }
+    const base = bag[i % bag.length];
+    let dir = mode;
+    if(mode === "mixed"){
+      dir = Math.random() < 0.5 ? "f2d" : "d2f";
+    }
+    out.push({...base,dir});
+  }
+  return out;
+}
+
+function start(){
+  pool = buildPool();
+  const msg = $("#setupMsg");
+
+  if(pool.length === 0){
+    msg.textContent = "Välj minst en bråkfamilj.";
+    msg.className = "feedback bad";
+    return;
+  }
+
+  msg.className = "feedback hidden";
+
+  const count = Number($("#count").value);
+  const mode = $('input[name="mode"]:checked').value;
+  usePercent = $("#percent").checked;
+
+  tasks = makeTasks(count,mode);
+  index = 0;
+  correct = 0;
+  attempts = 0;
+  streak = 0;
+
+  setup.classList.add("hidden");
+  result.classList.add("hidden");
+  game.classList.remove("hidden");
+
+  $("#correct").textContent = "Rätt: 0";
+  $("#attempts").textContent = "Försök: 0";
+
+  showTask();
+}
+
+function addInput(id,label,placeholder){
+  const box = document.createElement("div");
+  box.className = "answerbox";
+  box.innerHTML = `
+    <label for="${id}">${label}</label>
+    <input id="${id}" type="text" autocomplete="off" placeholder="${placeholder}">
+  `;
+  $("#answers").appendChild(box);
+}
+
+function showTask(){
+  answered = false;
+  current = tasks[index];
+
+  $("#qnum").textContent = `Uppgift ${index+1} av ${tasks.length}`;
+  $("#streak").textContent = `Svit: ${streak}`;
+  $("#bar").style.width = `${(index/tasks.length)*100}%`;
+  $("#feedback").textContent = "";
+  $("#feedback").className = "feedback";
+  $("#check").classList.remove("hidden");
+  $("#next").classList.add("hidden");
+
+  const answers = $("#answers");
+  answers.innerHTML = "";
+
+  if(current.dir === "f2d"){
+    $("#prompt").textContent = usePercent
+      ? "Skriv talet i decimalform och procentform."
+      : "Skriv bråket i decimalform.";
+
+    $("#given").innerHTML = fracHTML(current.n,current.d);
+
+    addInput("decimal","Decimalform","Till exempel 0,75");
+
+    if(usePercent){
+      addInput("percentAnswer","Procentform","Till exempel 75 %");
+    }
+  }else{
+    $("#prompt").textContent = usePercent
+      ? "Skriv talet i bråkform och procentform."
+      : "Skriv decimaltalet i bråkform.";
+
+    $("#given").textContent = fmtDecimal(current.v,current.d);
+
+    addInput("fraction","Bråkform","Till exempel 3/4");
+
+    if(usePercent){
+      addInput("percentAnswer","Procentform","Till exempel 75 %");
+    }
+  }
+
+  setTimeout(()=>{
+    const first = answers.querySelector("input");
+    if(first) first.focus();
+  },0);
+}
+
+function check(){
+  if(answered) return;
+
+  attempts++;
+  let ok = true;
+
+  if(current.dir === "f2d"){
+    const x = parseNumber($("#decimal").value);
+
+    if(current.d === 3){
+      ok = Number.isFinite(x) && Math.abs(x-current.v) <= 0.0006;
+    }else{
+      ok = Number.isFinite(x) && Math.abs(x-current.v) <= 0.00001;
+    }
+  }else{
+    ok = fractionMatches($("#fraction").value,current.n,current.d);
+  }
+
+  if(usePercent){
+    const p = parseNumber($("#percentAnswer").value);
+    const target = current.v * 100;
+
+    if(current.d === 3){
+      ok = ok && Number.isFinite(p) && Math.abs(p-target) <= 0.06;
+    }else{
+      ok = ok && Number.isFinite(p) && Math.abs(p-target) <= 0.001;
+    }
+  }
+
+  $("#attempts").textContent = `Försök: ${attempts}`;
+
+  if(ok){
+    correct++;
+    streak++;
+    answered = true;
+
+    $("#correct").textContent = `Rätt: ${correct}`;
+    $("#streak").textContent = `Svit: ${streak}`;
+    $("#feedback").textContent = "✓ Rätt!";
+    $("#feedback").className = "feedback ok";
+
+    $("#check").classList.add("hidden");
+    $("#next").classList.remove("hidden");
+    $("#next").focus();
+  }else{
+    streak = 0;
+    $("#streak").textContent = "Svit: 0";
+
+    let answer = `${current.n}/${current.d} = ${fmtDecimal(current.v,current.d)}`;
+    if(usePercent){
+      answer += ` = ${fmtPercent(current.v,current.d)} %`;
+    }
+
+    $("#feedback").textContent = `Inte riktigt. Försök igen. Ledtråd: ${answer}`;
+    $("#feedback").className = "feedback bad";
+  }
+}
+
+function next(){
+  index++;
+  if(index >= tasks.length){
+    finish();
+  }else{
+    showTask();
+  }
+}
+
+function finish(){
+  game.classList.add("hidden");
+  result.classList.remove("hidden");
+
+  $("#bigscore").textContent = `${correct} / ${tasks.length}`;
+  $("#resultText").textContent =
+    `Du klarade ${correct} uppgifter. Totalt gjorde du ${attempts} försök.`;
+}
+
+function quit(){
+  if(confirm("Vill du avsluta träningen?")){
+    game.classList.add("hidden");
+    setup.classList.remove("hidden");
+  }
+}
+
+$("#start").addEventListener("click",start);
+$("#check").addEventListener("click",check);
+$("#next").addEventListener("click",next);
+$("#quit").addEventListener("click",quit);
+$("#again").addEventListener("click",()=>{
+  result.classList.add("hidden");
+  setup.classList.remove("hidden");
+});
+
+document.addEventListener("keydown",e=>{
+  if(game.classList.contains("hidden")) return;
+  if(e.key !== "Enter") return;
+  e.preventDefault();
+
+  if(answered){
+    next();
+  }else{
+    check();
+  }
+});
+</script>
+</body>
+</html>
