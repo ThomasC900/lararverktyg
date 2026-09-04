@@ -137,8 +137,25 @@ button{
         <div class="choice"><input id="d100" type="checkbox" value="100"><label for="d100">Hundradelar ¹⁄₁₀₀</label></div>
       </div>
       <div class="note">
-        Multiplar ingår automatiskt, till exempel 2/3, 3/4, 4/5 och 7/10.
+        Välj nedan om du vill träna enbart stambråken eller även multiplar som 2/3, 3/4, 4/5 och 7/10.
         Bråken visas i den valda familjen och förkortas alltså inte automatiskt i uppgiften.
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Vilka bråk ska ingå?</div>
+      <div class="choices">
+        <div class="choice">
+          <input name="fractionScope" id="scopeUnit" type="radio" value="unit">
+          <label for="scopeUnit">Endast stambråk</label>
+        </div>
+        <div class="choice">
+          <input name="fractionScope" id="scopeAll" type="radio" value="all" checked>
+          <label for="scopeAll">Stambråk + multiplar</label>
+        </div>
+      </div>
+      <div class="note">
+        Med <b>Endast stambråk</b> används bara bråk med täljaren 1, till exempel 1/2, 1/3, 1/4 och 1/10.
       </div>
     </div>
 
@@ -281,9 +298,15 @@ function selectedDenoms(){
 
 function buildPool(){
   const arr = [];
+  const scope = $('input[name="fractionScope"]:checked').value;
+
   for(const d of selectedDenoms()){
-    for(let n = 1; n < d; n++){
-      arr.push({n,d,v:n/d});
+    if(scope === "unit"){
+      arr.push({n:1,d,v:1/d});
+    }else{
+      for(let n = 1; n < d; n++){
+        arr.push({n,d,v:n/d});
+      }
     }
   }
   return arr;
