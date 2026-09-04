@@ -157,7 +157,7 @@ button{
         <div class="choice"><input id="percent" type="checkbox"><label for="percent">Koppla på procent</label></div>
       </div>
       <div class="example">
-        Exempel: 3/4 = 0,75 = 75 % &nbsp; • &nbsp; 1/3 ≈ 0,333 = 33,3 %
+        Exempel: 3/4 = 0,75 = 75 % &nbsp; • &nbsp; 1/3 ≈ 0,33 ≈ 33,3 %
       </div>
     </div>
 
@@ -231,7 +231,7 @@ let usePercent = false;
 
 function fmtDecimal(v,d){
   if(d === 3){
-    return v.toFixed(3).replace(".",",");
+    return v.toFixed(2).replace(".",",");
   }
   if(d === 100){
     return v.toFixed(2).replace(".",",");
@@ -390,7 +390,11 @@ function showTask(){
       ? "Skriv talet i bråkform och procentform."
       : "Skriv decimaltalet i bråkform.";
 
-    $("#given").textContent = fmtDecimal(current.v,current.d);
+    if(current.d === 3){
+      $("#given").textContent = current.n === 1 ? "0,333…" : "0,667…";
+    }else{
+      $("#given").textContent = fmtDecimal(current.v,current.d);
+    }
 
     addInput("fraction","Bråkform","Till exempel 3/4");
 
@@ -415,7 +419,10 @@ function check(){
     const x = parseNumber($("#decimal").value);
 
     if(current.d === 3){
-      ok = Number.isFinite(x) && Math.abs(x-current.v) <= 0.0006;
+      const accepted = current.n === 1
+        ? [0.33, 0.333, 0.3333]
+        : [0.67, 0.667, 0.6667];
+      ok = Number.isFinite(x) && accepted.some(v => Math.abs(x-v) < 0.000001);
     }else{
       ok = Number.isFinite(x) && Math.abs(x-current.v) <= 0.00001;
     }
@@ -453,9 +460,17 @@ function check(){
     streak = 0;
     $("#streak").textContent = "Svit: 0";
 
-    let answer = `${current.n}/${current.d} = ${fmtDecimal(current.v,current.d)}`;
-    if(usePercent){
-      answer += ` = ${fmtPercent(current.v,current.d)} %`;
+    let answer;
+    if(current.d === 3){
+      answer = `${current.n}/${current.d} ≈ ${fmtDecimal(current.v,current.d)}`;
+      if(usePercent){
+        answer += ` ≈ ${fmtPercent(current.v,current.d)} %`;
+      }
+    }else{
+      answer = `${current.n}/${current.d} = ${fmtDecimal(current.v,current.d)}`;
+      if(usePercent){
+        answer += ` = ${fmtPercent(current.v,current.d)} %`;
+      }
     }
 
     $("#feedback").textContent = `Inte riktigt. Försök igen. Ledtråd: ${answer}`;
