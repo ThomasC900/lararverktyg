@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bråkräkning</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#dce3ee;--blue:#315a8a;--gold:#d6a84b;--green:#2f6b50;--red:#a64040;--soft:#eef3f8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--ink);padding:20px}.app{width:min(980px,96vw);margin:auto}.back{display:inline-block;text-decoration:none;color:var(--blue);font-weight:800;margin-bottom:14px}header{text-align:center;margin-bottom:20px}h1{margin:0;color:var(--blue);font-size:clamp(2rem,5vw,3.4rem)}.subtitle{color:var(--muted);margin-top:8px}.panel{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:clamp(18px,4vw,34px);box-shadow:0 12px 30px #17203316}.hidden{display:none!important}h2{margin-top:0;color:var(--blue)}.group{margin:20px 0}.group-title{font-weight:900;margin-bottom:9px}.choices{display:flex;flex-wrap:wrap;gap:9px}.choice{position:relative}.choice input{position:absolute;opacity:0}.choice label{display:block;padding:10px 14px;border:2px solid var(--line);border-radius:13px;background:#fff;font-weight:800;cursor:pointer}.choice input:checked+label{border-color:var(--blue);background:#eaf1f8;color:var(--blue)}select,input[type=text]{font:inherit;border:2px solid var(--line);border-radius:12px;padding:11px 13px;background:#fff}button{border:0;border-radius:14px;padding:13px 20px;font-size:1rem;font-weight:900;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:#e8edf3}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.note{font-size:.92rem;color:var(--muted);margin-top:8px;line-height:1.4}.sub{margin-top:14px;padding:14px;background:#f8fafc;border:1px solid var(--line);border-radius:14px}.question-top{display:flex;justify-content:space-between;color:var(--muted);font-weight:800}.progress{height:10px;background:#e7ebf0;border-radius:99px;overflow:hidden;margin:12px 0 24px}.progress div{height:100%;background:var(--gold)}.prompt{text-align:center;color:var(--muted);font-weight:800}.given{display:flex;justify-content:center;align-items:center;gap:.3em;min-height:150px;font-size:clamp(2.8rem,8vw,5rem);font-weight:900;color:var(--blue);flex-wrap:wrap}.frac{display:inline-grid;grid-template-rows:auto auto;text-align:center;line-height:1;vertical-align:middle}.frac .n{border-bottom:.075em solid;padding:0 .12em .08em}.frac .d{padding:.08em .12em 0}.mixed{display:inline-flex;align-items:center;gap:.12em}.answerbox{max-width:620px;margin:auto;background:var(--soft);border-radius:16px;padding:18px;text-align:center}.answerbox label{display:block;font-weight:900;color:var(--blue);margin-bottom:8px}.answerbox input{font-size:1.35rem;text-align:center;font-weight:800}
+.structured-answer{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:8px}
+.whole-input{width:86px;height:72px}
+.fraction-inputs{display:grid;grid-template-rows:1fr 1fr;width:92px}
+.fraction-inputs input{width:92px;height:58px;border-radius:10px}
+.fraction-inputs .num-input{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:2px solid var(--ink)}
+.fraction-inputs .den-input{border-top-left-radius:0;border-top-right-radius:0;border-top:0}
+.answer-separator{font-size:2rem;font-weight:900;color:var(--muted)}
+.answer-mode-note{text-align:center;color:var(--muted);font-size:.9rem;margin-top:10px}.feedback{min-height:54px;margin:18px auto 0;max-width:700px;text-align:center;font-weight:900;padding:13px;border-radius:14px}.ok{background:#e5f3eb;color:var(--green)}.better{background:#fff4d9;color:#7c5b13}.bad{background:#fae8e8;color:var(--red)}.stats{text-align:center;color:var(--muted);font-weight:800;margin-top:14px}.result{text-align:center}.big{font-size:4rem;font-weight:900;color:var(--blue)}
+</style></head>
+<body><div class="app"><a class="back" href="../">← Tillbaka till Lärarverktyg</a>
+<header><h1>Bråkräkning</h1><div class="subtitle">Träna blandad form, bråkform och de fyra räknesätten.</div></header>
+
+<section id="setup" class="panel"><h2>Ställ in träningen</h2>
+<div class="group"><div class="group-title">Vad vill du träna?</div><div class="choices">
+<div class="choice"><input name="area" id="conv" type="radio" value="convert" checked><label for="conv">Blandad form ↔ bråkform</label></div>
+<div class="choice"><input name="area" id="calc" type="radio" value="calc"><label for="calc">Räkna med bråk</label></div></div></div>
+
+<div id="convertOpts" class="group"><div class="group-title">Riktning</div><div class="choices">
+<div class="choice"><input name="dir" id="d1" type="radio" value="m2f"><label for="d1">Blandad form → bråkform</label></div>
+<div class="choice"><input name="dir" id="d2" type="radio" value="f2m"><label for="d2">Bråkform → blandad form</label></div>
+<div class="choice"><input name="dir" id="d3" type="radio" value="mix" checked><label for="d3">Blandat</label></div></div></div>
+
+<div id="calcOpts" class="group hidden"><div class="group-title">Vilka räknesätt?</div><div class="choices">
+<div class="choice"><input id="add" type="checkbox" checked><label for="add">Addition +</label></div>
+<div class="choice"><input id="sub" type="checkbox" checked><label for="sub">Subtraktion −</label></div>
+<div class="choice"><input id="mul" type="checkbox"><label for="mul">Multiplikation ×</label></div>
+<div class="choice"><input id="div" type="checkbox"><label for="div">Division ÷</label></div></div>
+<div class="sub"><div class="group-title">Addition/subtraktion – nämnare</div><div class="choices">
+<div class="choice"><input name="den" id="same" type="radio" value="same" checked><label for="same">Samma nämnare</label></div>
+<div class="choice"><input name="den" id="diff" type="radio" value="diff"><label for="diff">Olika nämnare</label></div>
+<div class="choice"><input name="den" id="both" type="radio" value="both"><label for="both">Blandat</label></div></div></div>
+<div class="sub"><div class="group-title">Addition/subtraktion – taltyp</div><div class="choices">
+<div class="choice"><input name="numtype" id="onlyfrac" type="radio" value="frac" checked><label for="onlyfrac">Endast bråk</label></div>
+<div class="choice"><input name="numtype" id="withmixed" type="radio" value="mixed"><label for="withmixed">Bråk + blandad form</label></div></div>
+<div class="note">Med blandad form kan ett eller båda talen ha heltalsdel, t.ex. 1 1/2 + 2/3.</div></div></div>
+
+<div class="group"><label class="group-title">Antal uppgifter</label><br><select id="count"><option>10</option><option selected>15</option><option>20</option><option>30</option></select></div>
+<div class="note">Matematiskt korrekta svar godkänns även om de inte är förkortade eller skrivna i blandad form. Då får eleven veta att svaret kan skrivas bättre.</div>
+<div id="setupmsg" class="feedback hidden"></div><div class="actions"><button id="start" class="primary">Starta träningen →</button></div></section>
+
+<section id="game" class="panel hidden"><div class="question-top"><span id="qnum"></span><span id="streak"></span></div><div class="progress"><div id="bar"></div></div><div id="prompt" class="prompt"></div><div id="given" class="given"></div>
+<div class="answerbox">
+<label>Ditt svar</label>
+<div class="structured-answer">
+  <input id="wholeAnswer" class="whole-input" type="text" inputmode="numeric" autocomplete="off" aria-label="Heltalsdel">
+  <div class="fraction-inputs" aria-label="Bråkdel">
+    <input id="numAnswer" class="num-input" type="text" inputmode="numeric" autocomplete="off" aria-label="Täljare">
+    <input id="denAnswer" class="den-input" type="text" inputmode="numeric" autocomplete="off" aria-label="Nämnare">
+  </div>
+</div>
+<div class="answer-mode-note">Lämna heltalsrutan tom om svaret bara är ett bråk.</div>
+</div>
+<div id="feedback" class="feedback"></div><div class="actions"><button id="check" class="primary">Rätta</button><button id="next" class="primary hidden">Nästa →</button><button id="quit" class="secondary">Avsluta</button></div><div id="stats" class="stats"></div></section>
+
+<section id="result" class="panel result hidden"><h2>Träningen är klar!</h2><div id="score" class="big"></div><div id="summary"></div><div class="actions" style="justify-content:center"><button id="again" class="primary">Träna igen</button></div></section>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let tasks=[],i=0,right=0,tries=0,streak=0,done=false,t=null;
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a, pick=a=>a[Math.floor(Math.random()*a.length)];
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a}
+function red(f){let g=gcd(f.n,f.d);return {n:f.n/g,d:f.d/g}}
+function F(n,d){return {n,d}} function V(f){return f.n/f.d}
+function plus(a,b){return F(a.n*b.d+b.n*a.d,a.d*b.d)} function minus(a,b){return F(a.n*b.d-b.n*a.d,a.d*b.d)}
+function times(a,b){return F(a.n*b.n,a.d*b.d)} function divide(a,b){return F(a.n*b.d,a.d*b.n)}
+function fh(n,d){return `<span class="frac"><span class="n">${n}</span><span class="d">${d}</span></span>`}
+function mh(w,n,d){return `<span class="mixed"><span>${w}</span>${fh(n,d)}</span>`}
+function disp(f,allowMixed=false){let n=f.n,d=f.d;if(allowMixed&&n>d){let w=Math.floor(n/d),r=n%d;return r?mh(w,r,d):String(w)}return fh(n,d)}
+function mixedText(f){f=red(f);let n=f.n,d=f.d;if(n%d===0)return String(n/d);if(n>d)return `${Math.floor(n/d)} ${n%d}/${d}`;return `${n}/${d}`}
+function fracText(f){f=red(f);return `${f.n}/${f.d}`}
+function parseStructured(){
+  const wText=$("#wholeAnswer").value.trim();
+  const nText=$("#numAnswer").value.trim();
+  const dText=$("#denAnswer").value.trim();
+
+  const hasWhole=wText!=="";
+  const hasNum=nText!=="";
+  const hasDen=dText!=="";
+
+  if(!hasWhole && !hasNum && !hasDen) return null;
+
+  if(hasWhole && !hasNum && !hasDen){
+    if(!/^-?\d+$/.test(wText)) return null;
+    return {n:Number(wText),d:1,kind:"int"};
+  }
+
+  if(!hasNum || !hasDen) return null;
+  if(!/^\d+$/.test(nText) || !/^\d+$/.test(dText) || Number(dText)===0) return null;
+  if(hasWhole && !/^-?\d+$/.test(wText)) return null;
+
+  const n=Number(nText), d=Number(dText);
+  if(!hasWhole) return {n,d,kind:"frac"};
+
+  const w=Number(wText);
+  const sign=w<0?-1:1;
+  return {n:sign*(Math.abs(w)*d+n),d,kind:"mixed"};
+}
+function equal(a,b){return a&&Math.abs(V(a)-V(b))<1e-12}
+function conversion(){let d=rnd(2,10),w=rnd(1,4),n=rnd(1,d-1),res=F(w*d+n,d),dir=$('input[name=dir]:checked').value;if(dir==="mix")dir=Math.random()<.5?"m2f":"f2m";return {kind:"conv",dir,w,n,d,res}}
+function addsub(op){let mode=$('input[name=den]:checked').value,same=mode==="same"||(mode==="both"&&Math.random()<.5),d1=rnd(2,10),d2=same?d1:rnd(2,10);while(!same&&d2===d1)d2=rnd(2,10);let n1=rnd(1,d1-1),n2=rnd(1,d2-1),w1=0,w2=0;if($('input[name=numtype]:checked').value==="mixed"){if(Math.random()<.55)w1=rnd(1,3);if(Math.random()<.55)w2=rnd(1,3);if(!w1&&!w2)w1=rnd(1,3)}let a=F(w1*d1+n1,d1),b=F(w2*d2+n2,d2);if(op==="sub"&&V(a)<V(b))[a,b]=[b,a];return {kind:"calc",op,a,b,res:op==="add"?plus(a,b):minus(a,b),mixedAllowed:true}}
+function multdiv(op){let a=F(rnd(1,9),rnd(2,10)),b=F(rnd(1,9),rnd(2,10));return {kind:"calc",op,a,b,res:op==="mul"?times(a,b):divide(a,b),mixedAllowed:false}}
+function calculation(){let ops=[];["add","sub","mul","div"].forEach(x=>{if($("#"+x).checked)ops.push(x)});if(!ops.length)return null;let op=pick(ops);return ["add","sub"].includes(op)?addsub(op):multdiv(op)}
+function build(){let a=[],area=$('input[name=area]:checked').value;for(let k=0;k<+$("#count").value;k++){let x=area==="convert"?conversion():calculation();if(!x)return null;a.push(x)}return a}
+function operand(f,useMixed){if(useMixed&&f.n>f.d&&Math.random()<.8)return disp(f,true);return disp(f,false)}
+function show(){done=false;t=tasks[i];$("#qnum").textContent=`Uppgift ${i+1} av ${tasks.length}`;$("#streak").textContent=`Svit: ${streak}`;$("#bar").style.width=`${i/tasks.length*100}%`;$("#feedback").textContent="";$("#feedback").className="feedback";$("#wholeAnswer").value="";$("#numAnswer").value="";$("#denAnswer").value="";$("#check").classList.remove("hidden");$("#next").classList.add("hidden");
+if(t.kind==="conv"){if(t.dir==="m2f"){$("#prompt").textContent="Skriv talet i bråkform.";$("#given").innerHTML=mh(t.w,t.n,t.d)}else{$("#prompt").textContent="Skriv talet i blandad form.";$("#given").innerHTML=fh(t.res.n,t.res.d)}}else{let sym={add:"+",sub:"−",mul:"×",div:"÷"};$("#prompt").textContent="Beräkna.";$("#given").innerHTML=`${operand(t.a,t.mixedAllowed)} <span>${sym[t.op]}</span> ${operand(t.b,t.mixedAllowed)}`}setTimeout(()=>$("#wholeAnswer").focus(),0)}
+function assess(){let a=parseStructured();if(!a)return {ok:false,msg:"Fyll i bråkdelen med täljare och nämnare. Använd heltalsrutan bara när svaret har en heltalsdel."};if(!equal(a,t.res))return {ok:false,msg:"Inte riktigt. Försök igen."};let rr=red(t.res),reducible=a.kind==="frac"&&gcd(a.n,a.d)>1,improper=a.kind==="frac"&&Math.abs(a.n)>a.d;
+if(t.kind==="conv"&&t.dir==="f2m"&&improper)return {ok:true,better:true,msg:`Rätt värde, men uppgiften frågar efter blandad form. Bättre: ${mixedText(t.res)}.`};
+
+if(t.kind==="conv"&&t.dir==="m2f"){
+  if(a.kind==="mixed"){
+    return {ok:true,better:true,msg:`Rätt värde, men uppgiften frågar efter bråkform. Skriv svaret som ${fracText(t.res)}.`};
+  }
+  if(reducible){
+    return {ok:true,better:true,msg:`Rätt svar! Bråket kan förkortas till ${fracText(t.res)}.`};
+  }
+}
+
+if(reducible)return {ok:true,better:true,msg:`Rätt svar! Men bråket kan förkortas. Bättre: ${Math.abs(rr.n)>rr.d?mixedText(rr):fracText(rr)}.`};
+if(t.kind==="calc"&&improper)return {ok:true,better:true,msg:`Rätt svar! Men eftersom svaret är större än 1 kan det skrivas i blandad form: ${mixedText(t.res)}.`};
+return {ok:true,better:false,msg:"✓ Rätt!"}}
+function check(){if(done)return;tries++;let r=assess();if(r.ok){right++;streak++;done=true;$("#feedback").textContent=r.msg;$("#feedback").className="feedback "+(r.better?"better":"ok");$("#check").classList.add("hidden");$("#next").classList.remove("hidden");$("#next").focus()}else{streak=0;$("#feedback").textContent=r.msg;$("#feedback").className="feedback bad"}$("#stats").textContent=`Rätt: ${right}   •   Försök: ${tries}`}
+function next(){if(++i>=tasks.length){$("#game").classList.add("hidden");$("#result").classList.remove("hidden");$("#score").textContent=`${right} / ${tasks.length}`;$("#summary").textContent=`Totalt ${tries} försök.`}else show()}
+function area(){let c=$('input[name=area]:checked').value;$("#convertOpts").classList.toggle("hidden",c!=="convert");$("#calcOpts").classList.toggle("hidden",c!=="calc")}
+$$('input[name=area]').forEach(x=>x.onchange=area);$("#start").onclick=()=>{let b=build();if(!b){$("#setupmsg").textContent="Välj minst ett räknesätt.";$("#setupmsg").className="feedback bad";return}tasks=b;i=right=tries=streak=0;$("#setup").classList.add("hidden");$("#game").classList.remove("hidden");$("#stats").textContent="Rätt: 0   •   Försök: 0";show()};$("#check").onclick=check;$("#next").onclick=next;$("#quit").onclick=()=>{if(confirm("Vill du avsluta träningen?")){$("#game").classList.add("hidden");$("#setup").classList.remove("hidden")}};$("#again").onclick=()=>{$("#result").classList.add("hidden");$("#setup").classList.remove("hidden")};document.addEventListener("keydown",e=>{if(!$("#game").classList.contains("hidden")&&e.key==="Enter"){e.preventDefault();done?next():check()}})
+</script></body></html>
