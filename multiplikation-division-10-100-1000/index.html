@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Multiplikation och division med 10, 100 och 1 000</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#dce3ee;--blue:#315a8a;--gold:#d6a84b;--green:#2f6b50;--red:#a64040;--soft:#eef3f8}
+*{box-sizing:border-box}body{margin:0;padding:20px;background:var(--bg);font-family:Arial,sans-serif;color:var(--ink)}.app{width:min(1000px,96vw);margin:auto}.back{color:var(--blue);font-weight:800;text-decoration:none}.panel{background:#fff;border:1px solid var(--line);border-radius:24px;padding:clamp(18px,4vw,34px);margin:18px 0;box-shadow:0 12px 30px #17203316}.hidden{display:none!important}header{text-align:center}h1,h2,h3{color:var(--blue)}h1{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:6px}.muted,.note{color:var(--muted)}.explain{display:grid;grid-template-columns:1fr 1fr;gap:18px}.rule{background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:20px}.example{text-align:center;font-size:1.8rem;font-weight:900;color:var(--blue);margin:18px 0}.positions{display:grid;grid-template-columns:repeat(3,1fr) 24px repeat(3,1fr);gap:3px;margin:15px 0}.pos{text-align:center}.pos b{display:block;font-size:.72rem;color:var(--muted);min-height:30px}.cell{border:1px solid #aeb9c8;background:#fff;height:46px;padding:10px 2px;font-size:1.2rem;font-weight:900}.commaCol{display:flex;flex-direction:column;justify-content:flex-end;text-align:center}.commaCol b{display:block;min-height:30px}.decimalMark{height:46px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-size:2rem;font-weight:900;color:var(--blue)}.move{text-align:center;color:#9b7424;font-weight:900;margin:8px}.afterLabel{text-align:center;font-weight:900;color:var(--blue);margin:12px 0 6px}.afterCalc{text-align:center;font-size:1.35rem;font-weight:900;color:var(--blue);margin-top:8px}.tip{background:#fff3d5;padding:13px;border-radius:13px;font-weight:800;line-height:1.4}.choices{display:flex;flex-wrap:wrap;gap:9px}.choice{position:relative}.choice input{position:absolute;opacity:0}.choice label{display:block;padding:10px 14px;border:2px solid var(--line);border-radius:13px;font-weight:800;cursor:pointer}.choice input:checked+label{border-color:var(--blue);background:#eaf1f8;color:var(--blue)}.group{margin:22px 0}.group-title{font-weight:900;margin-bottom:9px}select,input[type=text]{font:inherit;border:2px solid var(--line);border-radius:12px;padding:11px 13px}button{border:0;border-radius:14px;padding:13px 20px;font-size:1rem;font-weight:900;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e8edf3}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.top{display:flex;justify-content:space-between;color:var(--muted);font-weight:800}.progress{height:10px;background:#e7ebf0;border-radius:99px;overflow:hidden;margin:12px 0 28px}.progress div{height:100%;background:var(--gold)}.problem{text-align:center;font-size:clamp(2.8rem,8vw,5rem);font-weight:900;color:var(--blue);margin:35px 0}.answer{max-width:420px;margin:auto;background:var(--soft);padding:18px;border-radius:16px;text-align:center}.answer input{width:100%;font-size:1.55rem;text-align:center;font-weight:900}.feedback{min-height:54px;margin:18px auto 0;max-width:650px;padding:13px;border-radius:14px;text-align:center;font-weight:900}.ok{background:#e5f3eb;color:var(--green)}.bad{background:#fae8e8;color:var(--red)}.stats{text-align:center;color:var(--muted);font-weight:800;margin-top:14px}.result{text-align:center}.score{font-size:4rem;color:var(--blue);font-weight:900}@media(max-width:700px){.explain{grid-template-columns:1fr}.positions .pos b{font-size:.58rem}body{padding:10px}}
+</style></head>
+<body><div class="app"><a href="../" class="back">← Tillbaka till Lärarverktyg</a>
+<header><h1>× och ÷ med 10, 100 och 1 000</h1><div class="muted">Förstå platsvärdet – och träna sedan själv.</div></header>
+
+<section id="intro" class="panel"><h2>Så fungerar det</h2><div class="explain">
+<div class="rule"><h3>Multiplikation</h3><p>När du multiplicerar med 10, 100 eller 1 000 blir varje siffra mer värd. Siffrorna flyttar åt <b>vänster</b> i positionssystemet.</p><div class="example">1,23 × 100 = 123</div>
+<div class="positions"><div class="pos"><b>hundratal</b><div class="cell"></div></div><div class="pos"><b>tiotal</b><div class="cell"></div></div><div class="pos"><b>ental</b><div class="cell">1</div></div><div class="commaCol"><b>&nbsp;</b><div class="decimalMark">,</div></div><div class="pos"><b>tiondel</b><div class="cell">2</div></div><div class="pos"><b>hundradel</b><div class="cell">3</div></div><div class="pos"><b>tusendel</b><div class="cell"></div></div></div>
+<div class="move">× 100 → siffrorna flyttar två positioner åt vänster</div>
+<div class="afterLabel">Efter flytten:</div>
+<div class="positions">
+  <div class="pos"><b>hundratal</b><div class="cell">1</div></div>
+  <div class="pos"><b>tiotal</b><div class="cell">2</div></div>
+  <div class="pos"><b>ental</b><div class="cell">3</div></div>
+  <div class="commaCol"><b>&nbsp;</b><div class="decimalMark">,</div></div>
+  <div class="pos"><b>tiondel</b><div class="cell"></div></div>
+  <div class="pos"><b>hundradel</b><div class="cell"></div></div>
+  <div class="pos"><b>tusendel</b><div class="cell"></div></div>
+</div>
+<div class="afterCalc">1,23 × 100 = 123</div></div>
+<div class="rule"><h3>Division</h3><p>När du dividerar med 10, 100 eller 1 000 blir varje siffra mindre värd. Siffrorna flyttar åt <b>höger</b> i positionssystemet.</p><div class="example">32,5 ÷ 10 = 3,25</div>
+<div class="positions"><div class="pos"><b>hundratal</b><div class="cell"></div></div><div class="pos"><b>tiotal</b><div class="cell">3</div></div><div class="pos"><b>ental</b><div class="cell">2</div></div><div class="commaCol"><b>&nbsp;</b><div class="decimalMark">,</div></div><div class="pos"><b>tiondel</b><div class="cell">5</div></div><div class="pos"><b>hundradel</b><div class="cell"></div></div><div class="pos"><b>tusendel</b><div class="cell"></div></div></div>
+<div class="move">÷ 10 → siffrorna flyttar en position åt höger</div>
+<div class="afterLabel">Efter flytten:</div>
+<div class="positions">
+  <div class="pos"><b>hundratal</b><div class="cell"></div></div>
+  <div class="pos"><b>tiotal</b><div class="cell"></div></div>
+  <div class="pos"><b>ental</b><div class="cell">3</div></div>
+  <div class="commaCol"><b>&nbsp;</b><div class="decimalMark">,</div></div>
+  <div class="pos"><b>tiondel</b><div class="cell">2</div></div>
+  <div class="pos"><b>hundradel</b><div class="cell">5</div></div>
+  <div class="pos"><b>tusendel</b><div class="cell"></div></div>
+</div>
+<div class="afterCalc">32,5 ÷ 10 = 3,25</div></div></div>
+<div class="tip">× eller ÷ 10 = 1 position &nbsp; • &nbsp; × eller ÷ 100 = 2 positioner &nbsp; • &nbsp; × eller ÷ 1 000 = 3 positioner</div>
+<div class="actions"><button class="primary" id="setupBtn">Gå vidare till träningen →</button></div></section>
+
+<section id="setup" class="panel hidden"><h2>Ställ in träningen</h2>
+<div class="group"><div class="group-title">Räknesätt</div><div class="choices"><div class="choice"><input name="mode" id="m" type="radio" value="mul"><label for="m">Multiplikation</label></div><div class="choice"><input name="mode" id="d" type="radio" value="div"><label for="d">Division</label></div><div class="choice"><input name="mode" id="b" type="radio" value="both" checked><label for="b">Bägge</label></div></div></div>
+<div class="group"><div class="group-title">Träna med</div><div class="choices"><div class="choice"><input id="p10" type="checkbox" value="10" checked><label for="p10">10</label></div><div class="choice"><input id="p100" type="checkbox" value="100" checked><label for="p100">100</label></div><div class="choice"><input id="p1000" type="checkbox" value="1000" checked><label for="p1000">1 000</label></div></div></div>
+<div class="group"><div class="group-title">Antal uppgifter</div><select id="count"><option>10</option><option selected>15</option><option>20</option><option>30</option></select></div>
+<div class="note">Både decimalcomma och decimalpunkt godkänns.</div><div id="msg" class="feedback hidden"></div><div class="actions"><button class="primary" id="start">Starta träningen →</button><button class="secondary" id="introBtn">← Förklaringen</button></div></section>
+
+<section id="game" class="panel hidden"><div class="top"><span id="q"></span><span id="streak"></span></div><div class="progress"><div id="bar"></div></div><div class="problem" id="problem"></div><div class="answer"><b>Ditt svar</b><br><br><input id="answer" type="text" inputmode="decimal" autocomplete="off"></div><div id="feedback" class="feedback"></div><div class="actions"><button id="check" class="primary">Rätta</button><button id="next" class="primary hidden">Nästa →</button><button id="quit" class="secondary">Avsluta</button></div><div id="stats" class="stats"></div></section>
+<section id="result" class="panel result hidden"><h2>Träningen är klar!</h2><div id="score" class="score"></div><div id="summary"></div><div class="actions" style="justify-content:center"><button id="again" class="primary">Träna igen</button><button id="explain" class="secondary">Visa förklaringen</button></div></section>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let tasks=[],i=0,right=0,tries=0,run=0,done=false;
+const pick=a=>a[Math.floor(Math.random()*a.length)],rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+function fmt(x){return (Math.round(x*1e6)/1e6).toString().replace(".",",")}function parse(s){let n=Number(s.trim().replace(/\s/g,"").replace(",","."));return Number.isFinite(n)?n:null}
+function mulBase(){
+  const r=Math.random();
+  if(r<0.38) return rnd(1,99)/100;      // ofta 0,35
+  if(r<0.62) return rnd(1,999)/1000;    // ofta 0,427
+  if(r<0.82) return rnd(10,999)/100;    // t.ex. 3,75
+  if(r<0.92) return rnd(10,99)/10;      // t.ex. 6,4
+  return rnd(1,99);                     // mer sällan heltal
+}
+
+function divTask(p){
+  // Bygg divisionerna baklänges så svaret får högst tre decimaler.
+  // Exempel: 0,35 ÷ 10 = 0,035, 3,5 ÷ 100 = 0,035, 35 ÷ 1000 = 0,035.
+  const style=Math.random();
+  let res;
+
+  if(style<0.45) res=rnd(1,99)/1000;       // t.ex. 0,035
+  else if(style<0.75) res=rnd(1,99)/100;   // t.ex. 0,35
+  else if(style<0.92) res=rnd(1,99)/10;    // t.ex. 3,5
+  else res=rnd(1,20);                      // ibland heltal
+
+  const x=res*p;
+  return {x,p,op:"div",res};
+}
+
+function build(){
+  let ps=$$('input[id^=p]:checked').map(x=>+x.value);
+  if(!ps.length)return null;
+
+  let mode=$('input[name=mode]:checked').value,a=[];
+  for(let k=0;k<+$("#count").value;k++){
+    let p=pick(ps);
+    let op=mode==="both"?(Math.random()<.5?"mul":"div"):mode;
+
+    if(op==="div"){
+      a.push(divTask(p));
+    }else{
+      let x=mulBase();
+      a.push({x,p,op,res:x*p});
+    }
+  }
+  return a;
+}
+function show(){done=false;let t=tasks[i];$("#q").textContent=`Uppgift ${i+1} av ${tasks.length}`;$("#streak").textContent=`Svit: ${run}`;$("#bar").style.width=`${100*i/tasks.length}%`;$("#problem").textContent=`${fmt(t.x)} ${t.op==="mul"?"×":"÷"} ${t.p===1000?"1 000":t.p} =`;$("#answer").value="";$("#feedback").textContent="";$("#feedback").className="feedback";$("#check").classList.remove("hidden");$("#next").classList.add("hidden");setTimeout(()=>$("#answer").focus(),0)}
+function check(){if(done)return;tries++;let t=tasks[i],a=parse($("#answer").value);if(a!==null&&Math.abs(a-t.res)<1e-9){right++;run++;done=true;$("#feedback").textContent="✓ Rätt!";$("#feedback").className="feedback ok";$("#check").classList.add("hidden");$("#next").classList.remove("hidden");$("#next").focus()}else{run=0;$("#feedback").textContent=`Inte riktigt. Tänk: ${t.p===10?1:t.p===100?2:3} position${t.p===10?"":"er"} åt ${t.op==="mul"?"vänster":"höger"}.`;$("#feedback").className="feedback bad"}$("#streak").textContent=`Svit: ${run}`;$("#stats").textContent=`Rätt: ${right} • Försök: ${tries}`}
+function next(){if(++i>=tasks.length){$("#game").classList.add("hidden");$("#result").classList.remove("hidden");$("#score").textContent=`${right} / ${tasks.length}`;$("#summary").textContent=`Totalt ${tries} försök.`}else show()}
+$("#setupBtn").onclick=()=>{$("#intro").classList.add("hidden");$("#setup").classList.remove("hidden")};$("#introBtn").onclick=()=>{$("#setup").classList.add("hidden");$("#intro").classList.remove("hidden")};$("#start").onclick=()=>{let a=build();if(!a){$("#msg").textContent="Välj minst ett av talen 10, 100 eller 1 000.";$("#msg").className="feedback bad";return}tasks=a;i=right=tries=run=0;$("#setup").classList.add("hidden");$("#game").classList.remove("hidden");$("#stats").textContent="Rätt: 0 • Försök: 0";show()};$("#check").onclick=check;$("#next").onclick=next;$("#quit").onclick=()=>{if(confirm("Vill du avsluta träningen?")){$("#game").classList.add("hidden");$("#setup").classList.remove("hidden")}};$("#again").onclick=()=>{$("#result").classList.add("hidden");$("#setup").classList.remove("hidden")};$("#explain").onclick=()=>{$("#result").classList.add("hidden");$("#intro").classList.remove("hidden")};document.addEventListener("keydown",e=>{if(!$("#game").classList.contains("hidden")&&e.key==="Enter"){e.preventDefault();done?next():check()}});
+</script></body></html>
