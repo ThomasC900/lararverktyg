@@ -2,10 +2,11 @@ name: Uppdatera matsedel
 
 on:
   workflow_dispatch:
-  schedule:
-    # 04:15 UTC = 06:15 svensk sommartid / 05:15 svensk vintertid.
-    - cron: "15 4 * * *"
-
+ schedule:
+  - cron: "17 3 * * 1"
+    timezone: "Europe/Stockholm"
+  - cron: "17 5 * * 1"
+    timezone: "Europe/Stockholm"
 permissions:
   contents: write
 
