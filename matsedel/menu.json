@@ -1,47 +1,47 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-09-07&endDate=2026-09-13&lang=sv",
-  "week": 37,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-09-14&endDate=2026-09-20&lang=sv",
+  "week": 38,
   "year": 2026,
-  "period": "7 september – 11 september 2026",
-  "updated": "2026-09-13",
+  "period": "14 september – 18 september 2026",
+  "updated": "2026-09-14",
   "monthly_green": "Vitkål, tomat & äpple",
   "monthly_fruit": "",
   "days": [
     {
-      "date": "2026-09-07",
+      "date": "2026-09-14",
       "day": "Måndag",
-      "date_label": "7 september",
-      "meal1": "Stroganoff med kycklingkorv och ris",
-      "meal2": "Stroganoff på ärtkorv serveras med ris"
+      "date_label": "14 september",
+      "meal1": "Pasta med tomatsås",
+      "meal2": "Grön ärtsoppa med smak av kokos och lime, bröd & krämigt pålägg"
     },
     {
-      "date": "2026-09-08",
+      "date": "2026-09-15",
       "day": "Tisdag",
-      "date_label": "8 september",
-      "meal1": "Lasagnette serveras med tomatsås",
-      "meal2": "Potatisgratäng med sojafärs och curry"
+      "date_label": "15 september",
+      "meal1": "Pannbiff serveras med potatis och brunsås",
+      "meal2": "Sojabiff med potatis och brunsås"
     },
     {
-      "date": "2026-09-09",
+      "date": "2026-09-16",
       "day": "Onsdag",
-      "date_label": "9 september",
-      "meal1": "Pulled pork med kökets tillbehör",
-      "meal2": "Pulled vego med kökets tillbehör"
+      "date_label": "16 september",
+      "meal1": "Cornflakesfisk serveras med potatismos",
+      "meal2": "Quornfilé med cornflakestäcke & potatismos"
     },
     {
-      "date": "2026-09-10",
+      "date": "2026-09-17",
       "day": "Torsdag",
-      "date_label": "10 september",
-      "meal1": "Kokt lax serveras med dillsås & potatis",
-      "meal2": "Grönsaksbiff serveras med kökets sås & potatis"
+      "date_label": "17 september",
+      "meal1": "Chicken tikka masala serveras med nudlar",
+      "meal2": "Quorn tikka masala serveras med nudlar"
     },
     {
-      "date": "2026-09-11",
+      "date": "2026-09-18",
       "day": "Fredag",
-      "date_label": "11 september",
-      "meal1": "Färsruta serveras med potatis, brunsås & rödbetor",
-      "meal2": "Persiljefärsruta serveras med kokt potatis & brunsås"
+      "date_label": "18 september",
+      "meal1": "Klassiskt dillkött serveras med kokt potatis",
+      "meal2": "Inkokt lax med kokt potatis, kall dillsås & kokta bönor"
     }
   ]
 }
