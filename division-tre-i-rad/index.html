@@ -1,0 +1,63 @@
+<!doctype html><html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Division – tre i rad</title>
+<style>
+:root{--n:#17375e;--g:#e7b93f;--bg:#f4f7fb;--p1:#dbeafe;--p2:#fee2e2;--p3:#dcfce7}*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,sans-serif;background:var(--bg);color:#18202a}header{background:var(--n);color:#fff;padding:18px 22px}header h1{margin:0}header p{margin:5px 0 0}.wrap{max-width:1120px;margin:auto;padding:18px}.panel{background:#fff;border:1px solid #dce3ec;border-radius:16px;padding:16px;margin-bottom:16px}.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.controls select,.controls button,button{font:inherit;padding:10px 13px;border-radius:10px;border:1px solid #bac5d3;background:#fff;cursor:pointer}.primary{background:var(--n);color:#fff}.gold{background:var(--g);font-weight:800}.game{display:grid;grid-template-columns:minmax(260px,.75fr) minmax(420px,1.25fr);gap:16px}@media(max-width:800px){.game{grid-template-columns:1fr}}.numberbox{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.num{padding:12px 5px;border:2px solid #d7dee8;font-size:1.12rem;font-weight:800}.num.selected{border-color:var(--g);background:#fff8df}.calc{display:flex;justify-content:center;gap:9px;align-items:center;flex-wrap:wrap;margin:12px;font-size:1.25rem}.message{min-height:54px;padding:11px;border-radius:10px;background:#f1f5f9}.good{background:#ecfdf5}.bad{background:#fff1f2}.turn{font-weight:850;font-size:1.15rem}.board{display:grid;grid-template-columns:repeat(6,1fr);border-left:2px solid #55606c;border-top:2px solid #55606c}.cell{aspect-ratio:1;border:0;border-right:2px solid #55606c;border-bottom:2px solid #55606c;background:#e7efcf;font-size:clamp(.8rem,2vw,1.2rem);font-weight:850}.p1{background:var(--p1)}.p2{background:var(--p2)}.p3{background:var(--p3)}.cell.chosen{outline:5px solid var(--g);outline-offset:-5px}.mark{display:block;font-size:.65em}.legend{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.tag{padding:6px 10px;border-radius:999px;font-weight:750}.t1{background:var(--p1)}.t2{background:var(--p2)}.t3{background:var(--p3)}.rules,.small{color:#637083;line-height:1.45}.small{font-size:.88rem}
+</style></head><body>
+<header><h1>Division – tre i rad</h1><p>Undersök hur täljare och nämnare påverkar kvotens storlek.</p></header><main class="wrap">
+<section class="panel controls"><label><b>Antal spelare</b><br><select id="players"><option value="2">2 spelare</option><option value="3">3 spelare</option></select></label><button id="new" class="gold">Slumpa ny spelplan</button><button id="restart">Starta om samma plan</button></section>
+<div class="game"><section class="panel"><div id="turn" class="turn"></div><div id="legend" class="legend"></div><p><b>1.</b> Välj två tal. Första talet blir <b>täljare</b>, andra <b>nämnare</b>.</p><div id="numbers" class="numberbox"></div><div class="calc"><strong id="a">?</strong> ÷ <strong id="b">?</strong> = <strong id="q">?</strong></div><button id="swap">Byt plats</button> <button id="calc" class="primary">Räkna ut</button><div id="msg" class="message">Välj två tal och uppskatta gärna först hur stor kvoten borde bli.</div><hr><div class="rules"><b>Så spelar ni</b><br>Om kvoten finns på spelplanen får du markera rutan. Därefter går turen vidare. Varje spelare har högst tre markörer. När tre är utlagda väljer du själv vilken av dina markörer som ska flyttas. Klicka på markören och gör sedan en division vars kvot visar vart den ska flyttas. Först med tre i rad vinner.</div></section>
+<section class="panel"><div id="board" class="board"></div><p class="small">Alla tal på spelplanen är resultat av divisioner mellan de valbara talen. Spelplan och talförråd hör därför alltid ihop.</p></section></div></main>
+<script>
+const $=x=>document.getElementById(x),F=n=>(Math.round(n*1e6)/1e6).toString().replace('.',','),P=[['Spelare 1','p1','t1'],['Spelare 2','p2','t2'],['Spelare 3','p3','t3']];
+let pool=[],targets=[],sel=[],cur=0,marks=[],over=false,moveFrom=null;
+function sh(a){for(let i=a.length-1;i;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function generate(){
+  // Pedagogiskt utvalda talbanker. Varje bank ger minst 30 unika
+  // kvoter som kan skrivas exakt med högst tre decimaler.
+  const sets=[
+    [.08,.2,.4,.8,1.6,2,4,8,10,20],
+    [.05,.1,.2,.4,.5,1,2,4,8,20],
+    [.04,.1,.2,.4,.5,1,2,5,10,20],
+    [.125,.25,.5,1,2,2.5,4,5,8,10]
+  ];
+
+  // Prova talbanker tills vi hittar en som ger minst 30 rena måltal.
+  let candidates=[];
+  for(let tries=0;tries<20;tries++){
+    pool=[...sets[Math.floor(Math.random()*sets.length)]];
+    candidates=[];
+    for(let a of pool) for(let b of pool) if(a!==b){
+      const q=a/b;
+      const rounded=Math.round(q*1000)/1000;
+      if(q>=0.01 && q<=250 && Math.abs(q-rounded)<1e-10){
+        candidates.push(rounded);
+      }
+    }
+    candidates=[...new Map(candidates.map(v=>[v.toFixed(3),v])).values()];
+    if(candidates.length>=30) break;
+  }
+
+  // Säker reservbank om en framtida ändring skulle ge för få resultat.
+  if(candidates.length<30){
+    pool=[.08,.2,.4,.8,1.6,2,4,8,10,20];
+    candidates=[];
+    for(let a of pool) for(let b of pool) if(a!==b){
+      const q=a/b, rounded=Math.round(q*1000)/1000;
+      if(q>=0.01 && q<=250 && Math.abs(q-rounded)<1e-10) candidates.push(rounded);
+    }
+    candidates=[...new Map(candidates.map(v=>[v.toFixed(3),v])).values()];
+  }
+
+  sh(pool);
+  sh(candidates);
+  targets=candidates.slice(0,30);
+  reset();
+}
+function reset(){sel=[];cur=0;marks=Array.from({length:+$('players').value},()=>[]);over=false;moveFrom=null;$('msg').className='message';$('msg').textContent='Välj två tal och uppskatta gärna först hur stor kvoten borde bli.';render()}
+function owner(i){for(let p=0;p<marks.length;p++)if(marks[p].includes(i))return p;return -1}
+function render(){ $('turn').textContent=over?'Spelet är slut':'Tur: '+P[cur][0];$('legend').innerHTML=P.slice(0,marks.length).map(x=>`<span class="tag ${x[2]}">${x[0]}</span>`).join('');$('numbers').innerHTML='';pool.forEach((n,i)=>{let b=document.createElement('button');b.className='num'+(sel.includes(i)?' selected':'');b.textContent=F(n);b.onclick=()=>{if(sel.includes(i))sel=sel.filter(x=>x!==i);else if(sel.length<2)sel.push(i);render()};$('numbers').appendChild(b)});$('a').textContent=sel[0]!=null?F(pool[sel[0]]):'?';$('b').textContent=sel[1]!=null?F(pool[sel[1]]):'?';$('q').textContent='?';$('board').innerHTML='';targets.forEach((n,i)=>{let o=owner(i),b=document.createElement('button');b.className='cell'+(o>=0?' '+P[o][1]:'')+(moveFrom===i?' chosen':'');b.disabled=!(marks[cur].length>=3 && o===cur && !over);b.innerHTML=F(n)+(o>=0?`<span class="mark">${P[o][0]}</span>`:'');b.onclick=()=>{if(marks[cur].length>=3 && o===cur){moveFrom=i;$('msg').className='message';$('msg').textContent='Markerad bricka: '+F(targets[i])+'. Välj nu två tal vars kvot är den ruta du vill flytta till.';render()}};$('board').appendChild(b)})}
+function eq(a,b){return Math.abs(a-b)<1e-6*Math.max(1,Math.abs(a),Math.abs(b))}
+function next(){cur=(cur+1)%marks.length;sel=[];moveFrom=null;render()}
+function win(p){let s=new Set(marks[p]);for(let r=0;r<5;r++)for(let c=0;c<6;c++){let L=[];if(c<4)L.push([r*6+c,r*6+c+1,r*6+c+2]);if(r<3)L.push([r*6+c,(r+1)*6+c,(r+2)*6+c]);if(r<3&&c<4)L.push([r*6+c,(r+1)*6+c+1,(r+2)*6+c+2]);if(r<3&&c>1)L.push([r*6+c,(r+1)*6+c-1,(r+2)*6+c-2]);if(L.some(a=>a.every(x=>s.has(x))))return true}return false}
+$('swap').onclick=()=>{if(sel.length==2){sel.reverse();render()}};$('calc').onclick=()=>{if(over)return;if(sel.length!=2){$('msg').className='message bad';$('msg').textContent='Välj två olika tal först.';return}let a=pool[sel[0]],b=pool[sel[1]],q=a/b,idx=targets.findIndex((v,i)=>eq(v,q)&&owner(i)<0);$('q').textContent=F(q);if(idx<0){$('msg').className='message bad';$('msg').textContent=`${F(a)} ÷ ${F(b)} = ${F(q)}. Kvoten finns inte som ledig ruta. Turen går vidare.`;setTimeout(next,1200);return}if(marks[cur].length>=3){if(moveFrom===null){$('msg').className='message bad';$('msg').textContent='Du har redan tre markörer. Klicka först på den markör på spelplanen som du vill flytta.';render();return}marks[cur]=marks[cur].filter(x=>x!==moveFrom);moveFrom=null}marks[cur].push(idx);let insight=b<1?'Nämnaren är mindre än 1, så kvoten blir större än täljaren.':b>1?'Nämnaren är större än 1, så kvoten blir mindre än täljaren.':'Division med 1 ändrar inte talets storlek.';$('msg').className='message good';$('msg').textContent=`${F(a)} ÷ ${F(b)} = ${F(q)}. ${insight}`;if(win(cur)){over=true;render();$('turn').textContent='🏆 '+P[cur][0]+' vinner!';return}setTimeout(next,1400)};
+$('new').onclick=generate;$('restart').onclick=reset;$('players').onchange=reset;generate();
+</script></body></html>
