@@ -133,8 +133,39 @@ function labPlace(){
 }
 function labMove(dir){
  if(!labDigits.some(Boolean)){alert("Placera först ett tal.");return}
- if(dir<0){if(labDigits[0]&&labDigits[0]!=="0"){alert("Talet ryms inte längre åt vänster.");return}labDigits=labDigits.slice(1).concat("");labShift--}
- else{if(labDigits[8]&&labDigits[8]!=="0"){alert("Talet ryms inte längre åt höger.");return}labDigits=[""].concat(labDigits.slice(0,8));labShift++}
+
+ if(dir<0){
+   if(labDigits[0]&&labDigits[0]!=="0"){alert("Talet ryms inte längre åt vänster.");return}
+   // Alla siffror flyttas vänster. När sista decimalpositionen blir tom
+   // visas en nolla där om den behövs för att tydliggöra positionssystemet.
+   labDigits=labDigits.slice(1).concat("");
+   labShift--;
+ }else{
+   if(labDigits[8]&&labDigits[8]!=="0"){alert("Talet ryms inte längre åt höger.");return}
+   // Alla siffror flyttas höger.
+   labDigits=[""].concat(labDigits.slice(0,8));
+   labShift++;
+ }
+
+ // Fyll nollor där ett nytt tomt platsvärde uppstår mellan talets siffror
+ // och decimaltecknet. Det gör själva positionsförflyttningen synlig.
+ let occupied=labDigits.map((x,i)=>x!==""?i:-1).filter(i=>i>=0);
+ if(occupied.length){
+   let first=Math.min(...occupied), last=Math.max(...occupied);
+
+   // Alla positioner mellan första och sista siffran ska vara synliga.
+   for(let j=first;j<=last;j++) if(labDigits[j]==="") labDigits[j]="0";
+
+   // Om talet helt ligger till vänster om decimaltecknet behöver entalsplatsen
+   // vara 0 när siffrorna har flyttats åt höger förbi den.
+   if(first>=5) labDigits[4]="0";
+
+   // Vid vänsterflyttning: fyll nollor från sista betydande heltalssiffra
+   // fram till entalspositionen.
+   if(last<4){
+     for(let j=last+1;j<=4;j++) labDigits[j]="0";
+   }
+ }
  labRender();
 }
 $("#labBtn").onclick=()=>{$("#intro").classList.add("hidden");$("#lab").classList.remove("hidden")};
