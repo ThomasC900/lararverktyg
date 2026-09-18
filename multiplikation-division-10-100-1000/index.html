@@ -6,6 +6,8 @@
 <style>
 :root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#dce3ee;--blue:#315a8a;--gold:#d6a84b;--green:#2f6b50;--red:#a64040;--soft:#eef3f8}
 *{box-sizing:border-box}body{margin:0;padding:20px;background:var(--bg);font-family:Arial,sans-serif;color:var(--ink)}.app{width:min(1000px,96vw);margin:auto}.back{color:var(--blue);font-weight:800;text-decoration:none}.panel{background:#fff;border:1px solid var(--line);border-radius:24px;padding:clamp(18px,4vw,34px);margin:18px 0;box-shadow:0 12px 30px #17203316}.hidden{display:none!important}header{text-align:center}h1,h2,h3{color:var(--blue)}h1{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:6px}.muted,.note{color:var(--muted)}.explain{display:grid;grid-template-columns:1fr 1fr;gap:18px}.rule{background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:20px}.example{text-align:center;font-size:1.8rem;font-weight:900;color:var(--blue);margin:18px 0}.positions{display:grid;grid-template-columns:repeat(3,1fr) 24px repeat(3,1fr);gap:3px;margin:15px 0}.pos{text-align:center}.pos b{display:block;font-size:.72rem;color:var(--muted);min-height:30px}.cell{border:1px solid #aeb9c8;background:#fff;height:46px;padding:10px 2px;font-size:1.2rem;font-weight:900}.commaCol{display:flex;flex-direction:column;justify-content:flex-end;text-align:center}.commaCol b{display:block;min-height:30px}.decimalMark{height:46px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-size:2rem;font-weight:900;color:var(--blue)}.move{text-align:center;color:#9b7424;font-weight:900;margin:8px}.afterLabel{text-align:center;font-weight:900;color:var(--blue);margin:12px 0 6px}.afterCalc{text-align:center;font-size:1.35rem;font-weight:900;color:var(--blue);margin-top:8px}.tip{background:#fff3d5;padding:13px;border-radius:13px;font-weight:800;line-height:1.4}.choices{display:flex;flex-wrap:wrap;gap:9px}.choice{position:relative}.choice input{position:absolute;opacity:0}.choice label{display:block;padding:10px 14px;border:2px solid var(--line);border-radius:13px;font-weight:800;cursor:pointer}.choice input:checked+label{border-color:var(--blue);background:#eaf1f8;color:var(--blue)}.group{margin:22px 0}.group-title{font-weight:900;margin-bottom:9px}select,input[type=text]{font:inherit;border:2px solid var(--line);border-radius:12px;padding:11px 13px}button{border:0;border-radius:14px;padding:13px 20px;font-size:1rem;font-weight:900;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e8edf3}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.top{display:flex;justify-content:space-between;color:var(--muted);font-weight:800}.progress{height:10px;background:#e7ebf0;border-radius:99px;overflow:hidden;margin:12px 0 28px}.progress div{height:100%;background:var(--gold)}.problem{text-align:center;font-size:clamp(2.8rem,8vw,5rem);font-weight:900;color:var(--blue);margin:35px 0}.answer{max-width:420px;margin:auto;background:var(--soft);padding:18px;border-radius:16px;text-align:center}.answer input{width:100%;font-size:1.55rem;text-align:center;font-weight:900}.feedback{min-height:54px;margin:18px auto 0;max-width:650px;padding:13px;border-radius:14px;text-align:center;font-weight:900}.ok{background:#e5f3eb;color:var(--green)}.bad{background:#fae8e8;color:var(--red)}.stats{text-align:center;color:var(--muted);font-weight:800;margin-top:14px}.result{text-align:center}.score{font-size:4rem;color:var(--blue);font-weight:900}@media(max-width:700px){.explain{grid-template-columns:1fr}.positions .pos b{font-size:.58rem}body{padding:10px}}
+
+.labIntro{text-align:center;max-width:780px;margin:0 auto 20px;line-height:1.5}.labInput,.labControls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:20px 0}.labInput input{width:min(320px,90vw);font-size:1.3rem;text-align:center;font-weight:900}.labPositions{display:grid;grid-template-columns:repeat(5,minmax(65px,1fr)) 26px repeat(4,minmax(65px,1fr));gap:4px;margin:20px 0;align-items:end}.labPos{text-align:center}.labPos b{display:block;font-size:.68rem;color:var(--muted);min-height:34px}.labCell{height:62px;border:2px solid #aeb9c8;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:900;color:var(--blue)}.labComma{height:62px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;font-size:2.3rem;font-weight:900;color:var(--blue)}.labValue{text-align:center;font-size:1.7rem;font-weight:900;color:var(--blue);min-height:42px}.labSteps{text-align:center;color:#9b7424;font-weight:900;min-height:28px}.labNote{background:#fff3d5;padding:13px;border-radius:13px;line-height:1.45;margin-top:18px}@media(max-width:900px){.labPositions{overflow-x:auto;grid-template-columns:repeat(5,72px) 26px repeat(4,72px);padding-bottom:8px}}
 </style></head>
 <body><div class="app"><a href="../" class="back">← Tillbaka till Lärarverktyg</a>
 <header><h1>× och ÷ med 10, 100 och 1 000</h1><div class="muted">Förstå platsvärdet – och träna sedan själv.</div></header>
@@ -40,8 +42,18 @@
 </div>
 <div class="afterCalc">32,5 ÷ 10 = 3,25</div></div></div>
 <div class="tip">× eller ÷ 10 = 1 position &nbsp; • &nbsp; × eller ÷ 100 = 2 positioner &nbsp; • &nbsp; × eller ÷ 1 000 = 3 positioner</div>
-<div class="actions"><button class="primary" id="setupBtn">Gå vidare till träningen →</button></div></section>
+<div class="actions"><button class="primary" id="setupBtn">Gå vidare till träningen →</button><button class="secondary" id="labBtn">Laborera i positionssystemet →</button></div></section>
 
+<section id="lab" class="panel hidden"><h2>Laborera i positionssystemet</h2>
+<p class="labIntro">Skriv in ett tal och se hur siffrorna placeras från <b>tiotusental</b> till <b>tiotusendel</b>. Flytta sedan själv alla siffror åt vänster eller höger. Decimaltecknet ligger kvar på samma plats.</p>
+<div class="labInput"><input id="labNumber" type="text" inputmode="decimal" placeholder="Skriv ett tal, t.ex. 34,072"><button class="primary" id="placeNumber">Placera talet</button></div>
+<div class="labPositions">
+<div class="labPos"><b>tiotusental</b><div class="labCell" data-lab="0"></div></div><div class="labPos"><b>tusental</b><div class="labCell" data-lab="1"></div></div><div class="labPos"><b>hundratal</b><div class="labCell" data-lab="2"></div></div><div class="labPos"><b>tiotal</b><div class="labCell" data-lab="3"></div></div><div class="labPos"><b>ental</b><div class="labCell" data-lab="4"></div></div><div class="labPos"><b>&nbsp;</b><div class="labComma">,</div></div><div class="labPos"><b>tiondel</b><div class="labCell" data-lab="5"></div></div><div class="labPos"><b>hundradel</b><div class="labCell" data-lab="6"></div></div><div class="labPos"><b>tusendel</b><div class="labCell" data-lab="7"></div></div><div class="labPos"><b>tiotusendel</b><div class="labCell" data-lab="8"></div></div>
+</div>
+<div id="labValue" class="labValue"></div><div id="labSteps" class="labSteps"></div>
+<div class="labControls"><button class="secondary" id="moveLeft">← Flytta 1 position</button><button class="secondary" id="moveRight">Flytta 1 position →</button><button class="secondary" id="resetLab">Återställ</button></div>
+<div class="labNote"><b>Upptäck:</b> En position åt vänster gör talet 10 gånger så stort. En position åt höger gör talet 10 gånger så litet. Två positioner motsvarar 100 och tre positioner 1 000.</div>
+<div class="actions"><button class="primary" id="labToSetup">Gå till träningen →</button><button class="secondary" id="labToIntro">← Förklaringen</button></div></section>
 <section id="setup" class="panel hidden"><h2>Ställ in träningen</h2>
 <div class="group"><div class="group-title">Räknesätt</div><div class="choices"><div class="choice"><input name="mode" id="m" type="radio" value="mul"><label for="m">Multiplikation</label></div><div class="choice"><input name="mode" id="d" type="radio" value="div"><label for="d">Division</label></div><div class="choice"><input name="mode" id="b" type="radio" value="both" checked><label for="b">Bägge</label></div></div></div>
 <div class="group"><div class="group-title">Träna med</div><div class="choices"><div class="choice"><input id="p10" type="checkbox" value="10" checked><label for="p10">10</label></div><div class="choice"><input id="p100" type="checkbox" value="100" checked><label for="p100">100</label></div><div class="choice"><input id="p1000" type="checkbox" value="1000" checked><label for="p1000">1 000</label></div></div></div>
@@ -101,4 +113,34 @@ function show(){done=false;let t=tasks[i];$("#q").textContent=`Uppgift ${i+1} av
 function check(){if(done)return;tries++;let t=tasks[i],a=parse($("#answer").value);if(a!==null&&Math.abs(a-t.res)<1e-9){right++;run++;done=true;$("#feedback").textContent="✓ Rätt!";$("#feedback").className="feedback ok";$("#check").classList.add("hidden");$("#next").classList.remove("hidden");$("#next").focus()}else{run=0;$("#feedback").textContent=`Inte riktigt. Tänk: ${t.p===10?1:t.p===100?2:3} position${t.p===10?"":"er"} åt ${t.op==="mul"?"vänster":"höger"}.`;$("#feedback").className="feedback bad"}$("#streak").textContent=`Svit: ${run}`;$("#stats").textContent=`Rätt: ${right} • Försök: ${tries}`}
 function next(){if(++i>=tasks.length){$("#game").classList.add("hidden");$("#result").classList.remove("hidden");$("#score").textContent=`${right} / ${tasks.length}`;$("#summary").textContent=`Totalt ${tries} försök.`}else show()}
 $("#setupBtn").onclick=()=>{$("#intro").classList.add("hidden");$("#setup").classList.remove("hidden")};$("#introBtn").onclick=()=>{$("#setup").classList.add("hidden");$("#intro").classList.remove("hidden")};$("#start").onclick=()=>{let a=build();if(!a){$("#msg").textContent="Välj minst ett av talen 10, 100 eller 1 000.";$("#msg").className="feedback bad";return}tasks=a;i=right=tries=run=0;$("#setup").classList.add("hidden");$("#game").classList.remove("hidden");$("#stats").textContent="Rätt: 0 • Försök: 0";show()};$("#check").onclick=check;$("#next").onclick=next;$("#quit").onclick=()=>{if(confirm("Vill du avsluta träningen?")){$("#game").classList.add("hidden");$("#setup").classList.remove("hidden")}};$("#again").onclick=()=>{$("#result").classList.add("hidden");$("#setup").classList.remove("hidden")};$("#explain").onclick=()=>{$("#result").classList.add("hidden");$("#intro").classList.remove("hidden")};document.addEventListener("keydown",e=>{if(!$("#game").classList.contains("hidden")&&e.key==="Enter"){e.preventDefault();done?next():check()}});
+
+let labDigits=Array(9).fill(""),labOriginal=Array(9).fill(""),labShift=0;
+function labRender(){
+ $$("[data-lab]").forEach((el,n)=>el.textContent=labDigits[n]||"");
+ let w=labDigits.slice(0,5).map(x=>x||"0").join("").replace(/^0+(?=\d)/,"")||"0";
+ let d=labDigits.slice(5).map(x=>x||"0").join("");
+ let shown=w;if(d&&/[1-9]/.test(d))shown+=","+d.replace(/0+$/,"");
+ $("#labValue").textContent="Talet är: "+shown;
+ $("#labSteps").textContent=labShift===0?"Utgångsläge":`Siffrorna har flyttats ${Math.abs(labShift)} position${Math.abs(labShift)===1?"":"er"} åt ${labShift<0?"vänster":"höger"}.`;
+}
+function labPlace(){
+ let raw=$("#labNumber").value.trim().replace(/\s/g,"").replace(".",",");
+ if(!/^\d+(,\d+)?$/.test(raw)){alert("Skriv ett vanligt tal med siffror och eventuellt decimalcomma.");return}
+ let [w,d=""]=raw.split(",");w=w.replace(/^0+(?=\d)/,"");
+ if(w.length>5||d.length>4){alert("Talet måste rymmas mellan tiotusental och tiotusendelar.");return}
+ labDigits=Array(9).fill("");let st=5-w.length;[...w].forEach((x,j)=>labDigits[st+j]=x);[...d].forEach((x,j)=>labDigits[5+j]=x);
+ labOriginal=[...labDigits];labShift=0;labRender();
+}
+function labMove(dir){
+ if(!labDigits.some(Boolean)){alert("Placera först ett tal.");return}
+ if(dir<0){if(labDigits[0]&&labDigits[0]!=="0"){alert("Talet ryms inte längre åt vänster.");return}labDigits=labDigits.slice(1).concat("");labShift--}
+ else{if(labDigits[8]&&labDigits[8]!=="0"){alert("Talet ryms inte längre åt höger.");return}labDigits=[""].concat(labDigits.slice(0,8));labShift++}
+ labRender();
+}
+$("#labBtn").onclick=()=>{$("#intro").classList.add("hidden");$("#lab").classList.remove("hidden")};
+$("#labToIntro").onclick=()=>{$("#lab").classList.add("hidden");$("#intro").classList.remove("hidden")};
+$("#labToSetup").onclick=()=>{$("#lab").classList.add("hidden");$("#setup").classList.remove("hidden")};
+$("#placeNumber").onclick=labPlace;$("#moveLeft").onclick=()=>labMove(-1);$("#moveRight").onclick=()=>labMove(1);
+$("#resetLab").onclick=()=>{labDigits=[...labOriginal];labShift=0;labRender()};
+$("#labNumber").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();labPlace()}});
 </script></body></html>
