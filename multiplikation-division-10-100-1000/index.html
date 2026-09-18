@@ -52,7 +52,20 @@
 </div>
 <div id="labValue" class="labValue"></div><div id="labSteps" class="labSteps"></div>
 <div class="labControls"><button class="secondary" id="moveLeft">← Flytta 1 position</button><button class="secondary" id="moveRight">Flytta 1 position →</button><button class="secondary" id="resetLab">Återställ</button></div>
-<div class="labNote"><b>Upptäck:</b> En position åt vänster gör talet 10 gånger så stort. En position åt höger gör talet 10 gånger så litet. Två positioner motsvarar 100 och tre positioner 1 000.</div>
+<div class="labNote">
+  <b>Så kan du tänka vid multiplikation:</b><br><br>
+  Börja med att räkna med siffrorna utan att tänka på deras platsvärde. 
+  Om du till exempel ska räkna <b>400 × 0,2</b>, börjar du med <b>4 × 2 = 8</b> och placerar in siffran 8 i positionssystemet.<br><br>
+  Sedan tittar du på platsvärdena:
+  <ul style="margin:10px 0 10px 24px;line-height:1.55">
+    <li>De <b>två nollorna i 400</b> visar att 4:an har flyttats två positioner åt vänster jämfört med entalspositionen. Flytta därför 8:an <b>två steg åt vänster</b>.</li>
+    <li>I <b>0,2</b> står 2:an en position till höger om entalspositionen. Det gör att du sedan flyttar 8:an <b>ett steg åt höger</b>.</li>
+  </ul>
+  Du har alltså flyttat två steg åt vänster och ett steg åt höger. Totalt blir det <b>ett steg åt vänster</b>.<br><br>
+  <div style="text-align:center;font-size:1.25rem;color:var(--blue);font-weight:900">4 × 2 = 8 &nbsp; → &nbsp; 400 × 0,2 = 80</div>
+  <br>
+  <b>Upptäck:</b> Det är siffrornas <b>platsvärde</b> som avgör var svaret hamnar. Decimaltecknet ligger kvar på samma plats i positionssystemet – det är siffrorna som flyttar.
+</div>
 <div class="actions"><button class="primary" id="labToSetup">Gå till träningen →</button><button class="secondary" id="labToIntro">← Förklaringen</button></div></section>
 <section id="setup" class="panel hidden"><h2>Ställ in träningen</h2>
 <div class="group"><div class="group-title">Räknesätt</div><div class="choices"><div class="choice"><input name="mode" id="m" type="radio" value="mul"><label for="m">Multiplikation</label></div><div class="choice"><input name="mode" id="d" type="radio" value="div"><label for="d">Division</label></div><div class="choice"><input name="mode" id="b" type="radio" value="both" checked><label for="b">Bägge</label></div></div></div>
