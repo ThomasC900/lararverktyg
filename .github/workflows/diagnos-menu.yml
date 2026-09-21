@@ -1,0 +1,31 @@
+name: Diagnos Matilda matsedel
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose-menu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Hämta repository
+        uses: actions/checkout@v7
+
+      - name: Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Hämta och analysera Matildas svar
+        run: python matsedel/fetch-menu-diagnos.py
+
+      - name: Spara Matildas råa svar som artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: matilda-diagnos
+          path: matsedel/matilda-diagnos.html
+          if-no-files-found: warn
