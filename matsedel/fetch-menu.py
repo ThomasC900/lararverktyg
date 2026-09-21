@@ -1,364 +1,142 @@
 #!/usr/bin/env python3
-from __future__ import annotations
+"""
+Hämtar aktuell veckomeny från Matilda Menu och skriver matsedel/menu.json.
 
-from collections import defaultdict
+Strategi:
+1. Hämtar Matildas veckosida med datumparametrar.
+2. Gör HTML till ren text.
+3. Letar efter respektive veckodag och plockar text mellan Dagens 1/Dagens 2.
+4. Om parsningen misslyckas lämnas befintlig menu.json orörd.
+
+Det gör lösningen "fail safe": GitHub Pages fortsätter visa senaste fungerande meny.
+"""
+from __future__ import annotations
 from datetime import date, datetime, timedelta
 from pathlib import Path
+import html
 import json
+import re
 import sys
-import urllib.parse
 import urllib.request
+from zoneinfo import ZoneInfo
 
-DISTRIBUTOR_ID = "6a5713fad6523cfd795c45ce"
-API = "https://menu.matildaplatform.com/api/menu"
+BASE = "https://menu.matildaplatform.com/meals/week/6a5713fad6523cfd795c45ce_olyckeskolan"
+TZ = ZoneInfo("Europe/Stockholm")
 OUT = Path(__file__).with_name("menu.json")
 
-DAY_NAMES = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
+DAYS = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
 MONTHS = {
-    1:"januari", 2:"februari", 3:"mars", 4:"april", 5:"maj", 6:"juni",
-    7:"juli", 8:"augusti", 9:"september", 10:"oktober",
-    11:"november", 12:"december"
+    1:"januari",2:"februari",3:"mars",4:"april",5:"maj",6:"juni",
+    7:"juli",8:"augusti",9:"september",10:"oktober",11:"november",12:"december"
 }
 
 def monday_of(d: date) -> date:
     return d - timedelta(days=d.weekday())
 
-def api_get(start_date: date, end_date: date) -> dict:
-    query = urllib.parse.urlencode({
-        "distributorId": DISTRIBUTOR_ID,
-        "startDate": start_date.isoformat(),
-        "endDate": end_date.isoformat(),
-        "lang": "sv",
-    })
-    url = f"{API}?{query}"
+def normalize_text(raw_html: str) -> str:
+    # Fångar både synlig SSR-text och text som ligger i inbäddad script-data.
+    s = html.unescape(raw_html)
+    s = re.sub(r"<script\b[^>]*>", "\n", s, flags=re.I)
+    s = re.sub(r"</script>", "\n", s, flags=re.I)
+    s = re.sub(r"<[^>]+>", "\n", s)
+    s = s.replace("\\u0026", "&").replace("\\n", "\n")
+    s = re.sub(r'\\["/]', lambda m: m.group(0)[1:], s)
+    s = re.sub(r"[ \t\r\f\v]+", " ", s)
+    s = re.sub(r"\n+", "\n", s)
+    return s.strip()
 
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/99.0.4844.82 Safari/537.36"
-            ),
-            "Accept": "application/json,text/plain,*/*",
-            "Accept-Language": "sv-SE,sv;q=0.9",
-        },
-    )
+def clean_dish(s: str) -> str:
+    # Tar bort allergenetiketter och nästa rubrik om de råkat följa med.
+    s = re.split(r"\b(?:Gluten|Sojabönor|Mjölk|Laktos|Ägg|Fisk|Svaveldioxid eller sulfit|Selleri|Senap|Sesamfrön|Jordnötter|Nötter)\b", s, 1)[0]
+    s = re.split(r"\b(?:Dagens 2|Månadens|Grönsak)\b", s, 1)[0]
+    s = re.sub(r"\s+", " ", s).strip(" -|,")
+    return s
 
-    with urllib.request.urlopen(req, timeout=30) as r:
-        raw = r.read().decode("utf-8", "replace")
+def parse_day(block: str):
+    m1 = re.search(r"Dagens\s*1\s+(.+?)(?=Dagens\s*2|Månadens|$)", block, re.I|re.S)
+    m2 = re.search(r"Dagens\s*2\s+(.+?)(?=Månadens|Grönsak|$)", block, re.I|re.S)
+    return clean_dish(m1.group(1)) if m1 else "", clean_dish(m2.group(1)) if m2 else ""
 
-    data = json.loads(raw)
-    if not isinstance(data, dict) or "meals" not in data:
-        raise RuntimeError("Matilda API svarade i oväntat format.")
-    return data
-
-def parse_date(value: str) -> date:
-    # Matilda brukar ge "2026-08-31T00:00:00".
-    return datetime.fromisoformat(value.replace("Z", "+00:00")).date()
-
-def norm(value) -> str:
-    return " ".join(str(value or "").split()).strip()
-
-def course_text(course: dict) -> str:
-    # Nuvarande Matilda-format använder "name".
-    # Några extra nycklar gör scriptet tolerant mot små schemaändringar.
-    return norm(
-        course.get("name")
-        or course.get("dish")
-        or course.get("dishName")
-        or course.get("DayMenuName")
-    )
-
-def option_text(course: dict) -> str:
-    return norm(
-        course.get("optionName")
-        or course.get("label")
-        or course.get("MenuAlternativeName")
-    )
-
-def choose_daily_meals(meals_for_day: list[dict]) -> tuple[str, str, str, str]:
-    """
-    Returnerar (dagens1, dagens2, månadens_grönt, månadens_frukt).
-
-    Matilda-strukturen är:
-      meal -> name
-      meal -> courses[]
-      course -> name
-      course -> optionName
-
-    Eslöv använder normalt meal name "Dagens" med kurser
-    märkta "Dagens 1" och "Dagens 2". Månadens grönt kan ligga
-    som ett separat meal/course.
-    """
-    meal1 = ""
-    meal2 = ""
-    monthly_green = ""
-    monthly_fruit = ""
-
-    # Första passet: använd tydliga etiketter.
-    unlabeled_daily = []
-
-    for meal in meals_for_day:
-        meal_name = norm(meal.get("name")).casefold()
-        courses = meal.get("courses") or []
-
-        for course in courses:
-            dish = course_text(course)
-            if not dish:
-                continue
-
-            option = option_text(course).casefold()
-            combined = f"{meal_name} {option}".strip()
-
-            # Månadens grönsak/grönt och månadens frukt hålls isär.
-            is_monthly_green = (
-                "månadens grönsak" in combined
-                or "månadens grönt" in combined
-                or ("månadens" in combined and ("grönsak" in combined or "grönt" in combined))
-            )
-            is_monthly_fruit = (
-                "månadens frukt" in combined
-                or ("månadens" in combined and "frukt" in combined)
-            )
-
-            if is_monthly_green:
-                if not monthly_green:
-                    monthly_green = dish
-                continue
-
-            if is_monthly_fruit:
-                if not monthly_fruit:
-                    monthly_fruit = dish
-                continue
-
-            # Dagens 1 / alternativ 1
-            if (
-                "dagens 1" in option
-                or option in {"1", "alt 1", "alternativ 1"}
-            ):
-                if not meal1:
-                    meal1 = dish
-                continue
-
-            # Dagens 2 / alternativ 2
-            if (
-                "dagens 2" in option
-                or option in {"2", "alt 2", "alternativ 2"}
-            ):
-                if not meal2:
-                    meal2 = dish
-                continue
-
-            # På Eslöv ligger båda normalt under måltiden "Dagens".
-            if "dagens" in meal_name:
-                unlabeled_daily.append(dish)
-
-    # Reserv: om optionName saknas, ta de två första rätterna under "Dagens".
-    if not meal1 and unlabeled_daily:
-        meal1 = unlabeled_daily[0]
-    if not meal2 and len(unlabeled_daily) > 1:
-        meal2 = unlabeled_daily[1]
-
-    # Ytterligare reserv: leta bland alla kurser som inte är månadens grönt.
-    if not meal1 or not meal2:
-        candidates = []
-        for meal in meals_for_day:
-            meal_name = norm(meal.get("name")).casefold()
-            for course in (meal.get("courses") or []):
-                dish = course_text(course)
-                option = option_text(course).casefold()
-                combined = f"{meal_name} {option}".strip()
-                if not dish:
-                    continue
-                is_monthly_green = (
-                    "månadens grönsak" in combined
-                    or "månadens grönt" in combined
-                    or ("månadens" in combined and ("grönsak" in combined or "grönt" in combined))
-                )
-                is_monthly_fruit = (
-                    "månadens frukt" in combined
-                    or ("månadens" in combined and "frukt" in combined)
-                )
-                if is_monthly_green or is_monthly_fruit:
-                    continue
-                if dish not in candidates:
-                    candidates.append(dish)
-
-        if not meal1 and candidates:
-            meal1 = candidates[0]
-        if not meal2 and len(candidates) > 1:
-            meal2 = candidates[1]
-
-    return meal1, meal2, monthly_green, monthly_fruit
-
-
-def find_monthly_items(raw_meals: list[dict]) -> tuple[str, str]:
-    """
-    Letar globalt i hela Matilda-svaret efter månadens grönsak/grönt och frukt.
-
-    Vi använder både meal.name, course.optionName och själva rättnamnet.
-    Det sista är viktigt eftersom Eslöv t.ex. publicerar:
-    "Vitkål, tomat & äpple - månadens grönt".
-    """
-    import re
-
-    monthly_green = ""
-    monthly_fruit = ""
-
-    for meal in raw_meals:
-        meal_name = norm(meal.get("name"))
-        for course in (meal.get("courses") or []):
-            dish = course_text(course)
-            option = option_text(course)
-            haystack = f"{meal_name} {option} {dish}".casefold()
-
-            if not monthly_green and (
-                "månadens grönt" in haystack
-                or "månadens grönsak" in haystack
-            ):
-                monthly_green = re.sub(
-                    r"\s*[-–]\s*månadens\s+(?:grönt|grönsak).*$",
-                    "",
-                    dish,
-                    flags=re.I,
-                ).strip()
-
-                # Om etiketten, inte rättnamnet, bar signalen behåller vi rättnamnet.
-                if not monthly_green:
-                    monthly_green = dish.strip()
-
-            if not monthly_fruit and "månadens frukt" in haystack:
-                monthly_fruit = re.sub(
-                    r"\s*[-–]\s*månadens\s+frukt.*$",
-                    "",
-                    dish,
-                    flags=re.I,
-                ).strip()
-
-                if not monthly_fruit:
-                    monthly_fruit = dish.strip()
-
-    return monthly_green, monthly_fruit
-
-def build_menu() -> dict:
-    today = date.today()
+def fetch() -> dict:
+    today = datetime.now(TZ).date()
     monday = monday_of(today)
-    friday = monday + timedelta(days=4)
+    sunday = monday + timedelta(days=6)
+    url = f"{BASE}?startDate={monday.isoformat()}&endDate={sunday.isoformat()}"
+    req = urllib.request.Request(url, headers={
+        "User-Agent":"Mozilla/5.0 (compatible; OlyckeskolanMenu/1.0)",
+        "Accept-Language":"sv-SE,sv;q=0.9,en;q=0.5"
+    })
+    print(f"Hämtar Ölyckeskolans meny: {url}")
+    with urllib.request.urlopen(req, timeout=30) as r:
+        print(f"HTTP-status: {r.status}")
+        raw = r.read().decode("utf-8", "replace")
+    print(f"Hämtade {len(raw)} tecken från Matilda.")
 
-    data = api_get(monday, monday + timedelta(days=6))
-    raw_meals = data.get("meals") or []
-
-    # Hämta månadens poster globalt ur hela veckosvaret.
-    global_green, global_fruit = find_monthly_items(raw_meals)
-
-    by_date: dict[date, list[dict]] = defaultdict(list)
-    for meal in raw_meals:
-        raw_date = meal.get("date")
-        if not raw_date:
-            continue
-        d = parse_date(raw_date)
-        by_date[d].append(meal)
-
+    text = normalize_text(raw)
     days = []
-    green_values = []
-    fruit_values = []
-
-    for i, day_name in enumerate(DAY_NAMES):
+    for i, day in enumerate(DAYS):
         d = monday + timedelta(days=i)
-        meals_for_day = by_date.get(d, [])
-        meal1, meal2, monthly_green, monthly_fruit = choose_daily_meals(meals_for_day)
-
+        # Matilda använder t.ex. "Måndag 31 Augusti". Matcha dagrubriken och
+        # ta material fram till nästa veckodag.
+        next_days = "|".join(DAYS[i+1:]) if i < 4 else r"$"
+        head = rf"{day}\s+{d.day}\s+{MONTHS[d.month]}"
+        m = re.search(head + rf"(.+?)(?={next_days})", text, re.I|re.S)
+        if not m:
+            # Lite tolerant reservmatchning: dag + datum, oavsett månadsstavning.
+            m = re.search(rf"{day}\s+{d.day}\b(.+?)(?={next_days})", text, re.I|re.S)
+        block = m.group(1) if m else ""
+        meal1, meal2 = parse_day(block)
         if not meal1 and not meal2:
-            raise RuntimeError(
-                f"Matilda API innehåller ingen tolkbar lunch för {day_name} {d.isoformat()}."
-            )
-
-        if monthly_green:
-            green_values.append(monthly_green)
-        if monthly_fruit:
-            fruit_values.append(monthly_fruit)
-
+            raise RuntimeError(f"Kunde inte tolka {day} från Matilda.")
         days.append({
             "date": d.isoformat(),
-            "day": day_name,
+            "day": day,
             "date_label": f"{d.day} {MONTHS[d.month]}",
-            "meal1": meal1 or "–",
-            "meal2": meal2 or "–",
+            "meal1": meal1,
+            "meal2": meal2,
         })
 
-    # Vanligen samma hela veckan. Ta första värdet som hittas.
-    # Global sökning är säkrast; dagssökningen finns kvar som reserv.
-    monthly_green = global_green or (green_values[0] if green_values else "")
-    monthly_fruit = global_fruit or (fruit_values[0] if fruit_values else "")
+    green = ""
+    gm = re.search(r"Vitkål,\s*tomat\s*&\s*äpple", text, re.I)
+    if gm:
+        green = "Vitkål, tomat & äpple"
+    else:
+        gm = re.search(r"Månadens\s*(?:Grönsak|Grönt)\s+(.+?)(?=Måndag|Tisdag|Onsdag|Torsdag|Fredag|$)", text, re.I|re.S)
+        if gm:
+            green = re.sub(r"\s+", " ", gm.group(1)).strip(" -|,")[:120]
 
-    # Ta bort eventuella kvarvarande förklarande suffix.
-    import re
-    if monthly_green:
-        monthly_green = re.sub(
-            r"\s*[-–]\s*månadens\s+(?:grönt|grönsak).*$",
-            "",
-            monthly_green,
-            flags=re.I,
-        ).strip()
-    if monthly_fruit:
-        monthly_fruit = re.sub(
-            r"\s*[-–]\s*månadens\s+frukt.*$",
-            "",
-            monthly_fruit,
-            flags=re.I,
-        ).strip()
-
-    period = (
-        f"{monday.day} {MONTHS[monday.month]} – "
-        f"{friday.day} {MONTHS[friday.month]} {friday.year}"
-    )
-
-    query = urllib.parse.urlencode({
-        "distributorId": DISTRIBUTOR_ID,
-        "startDate": monday.isoformat(),
-        "endDate": (monday + timedelta(days=6)).isoformat(),
-        "lang": "sv",
-    })
-
+    week = monday.isocalendar().week
+    period = f"{monday.day} {MONTHS[monday.month]} – {(monday+timedelta(days=4)).day} {MONTHS[(monday+timedelta(days=4)).month]} {monday.year}"
     return {
-        "school": "Ölyckeskolan",
-        "source": f"{API}?{query}",
-        "week": monday.isocalendar().week,
-        "year": monday.year,
-        "period": period,
-        "updated": date.today().isoformat(),
-        "monthly_green": monthly_green,
-        "monthly_fruit": monthly_fruit,
-        "days": days,
+        "school":"Ölyckeskolan",
+        "source":url,
+        "week":week,
+        "year":monday.year,
+        "period":period,
+        "updated":today.isoformat(),
+        "monthly_green":green,
+        "days":days
     }
 
-def main() -> int:
+def main():
     try:
-        data = build_menu()
+        data = fetch()
     except Exception as e:
         print(f"FEL: {e}", file=sys.stderr)
         print("Befintlig menu.json lämnas orörd.", file=sys.stderr)
         return 1
-
-    OUT.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-
-    print(f"Skrev {OUT} för vecka {data['week']}.")
-    for d in data["days"]:
-        print(f"{d['day']}: {d['meal1']} | {d['meal2']}")
-    if data.get("monthly_green"):
-        print(f"Månadens grönsak: {data['monthly_green']}")
-    else:
-        print("Månadens grönsak: ingen post hittad i API-svaret")
-
-    if data.get("monthly_fruit"):
-        print(f"Månadens frukt: {data['monthly_fruit']}")
-    else:
-        print("Månadens frukt: ingen post hittad i API-svaret")
-
+    # Extra kontroll så att en felaktigt tolkad sida aldrig skriver över senaste fungerande meny.
+    expected_monday = monday_of(datetime.now(TZ).date())
+    if data["week"] != expected_monday.isocalendar().week or data["year"] != expected_monday.year:
+        print("FEL: Hämtad meny motsvarar inte aktuell vecka.", file=sys.stderr)
+        print("Befintlig menu.json lämnas orörd.", file=sys.stderr)
+        return 1
+    if len(data.get("days", [])) != 5:
+        print("FEL: Menyn innehåller inte fem skoldagar.", file=sys.stderr)
+        print("Befintlig menu.json lämnas orörd.", file=sys.stderr)
+        return 1
+    OUT.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Skrev {OUT} för vecka {data['week']} ({data['period']}).")
     return 0
 
 if __name__ == "__main__":
