@@ -1,47 +1,46 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-09-14&endDate=2026-09-20&lang=sv",
-  "week": 38,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-09-21&endDate=2026-09-27&lang=sv",
+  "week": 39,
   "year": 2026,
-  "period": "14 september – 18 september 2026",
-  "updated": "2026-09-15",
+  "period": "21 september – 25 september 2026",
+  "updated": "2026-09-21",
   "monthly_green": "Vitkål, tomat & äpple",
-  "monthly_fruit": "",
   "days": [
     {
-      "date": "2026-09-14",
+      "date": "2026-09-21",
       "day": "Måndag",
-      "date_label": "14 september",
-      "meal1": "Pasta med tomatsås",
-      "meal2": "Grön ärtsoppa med smak av kokos och lime, bröd & krämigt pålägg"
+      "date_label": "21 september",
+      "meal1": "Spaghetti med köttfärssås",
+      "meal2": "Spaghetti med färssås"
     },
     {
-      "date": "2026-09-15",
+      "date": "2026-09-22",
       "day": "Tisdag",
-      "date_label": "15 september",
-      "meal1": "Pannbiff serveras med potatis och brunsås",
-      "meal2": "Sojabiff med potatis och brunsås"
+      "date_label": "22 september",
+      "meal1": "Västkustburgare med kökets tillbehör",
+      "meal2": "Sojaburgare med bröd & potatismos"
     },
     {
-      "date": "2026-09-16",
+      "date": "2026-09-23",
       "day": "Onsdag",
-      "date_label": "16 september",
-      "meal1": "Cornflakesfisk serveras med potatismos",
-      "meal2": "Quornfilé med cornflakestäcke & potatismos"
+      "date_label": "23 september",
+      "meal1": "Asiatisk nudelwok",
+      "meal2": "Pasta Alfredo"
     },
     {
-      "date": "2026-09-17",
+      "date": "2026-09-24",
       "day": "Torsdag",
-      "date_label": "17 september",
-      "meal1": "Chicken tikka masala serveras med nudlar",
-      "meal2": "Quorn tikka masala serveras med nudlar"
+      "date_label": "24 september",
+      "meal1": "Falukorv med stuvade makaroner och tillbehör",
+      "meal2": "Sojakorv med stuvade makaroner"
     },
     {
-      "date": "2026-09-18",
+      "date": "2026-09-25",
       "day": "Fredag",
-      "date_label": "18 september",
-      "meal1": "Klassiskt dillkött serveras med kokt potatis",
-      "meal2": "Inkokt lax med kokt potatis, kall dillsås & kokta bönor"
+      "date_label": "25 september",
+      "meal1": "Kyckling i chili- och ananassås serveras med bulgur",
+      "meal2": "Ananasgryta med sojabitar serveras med ris"
     }
   ]
 }
