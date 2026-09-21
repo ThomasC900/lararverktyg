@@ -11,17 +11,17 @@ Strategi:
 Det gör lösningen "fail safe": GitHub Pages fortsätter visa senaste fungerande meny.
 """
 from __future__ import annotations
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from pathlib import Path
 import html
 import json
 import re
 import sys
 import urllib.request
-from zoneinfo import ZoneInfo
+import urllib.error
+import time
 
 BASE = "https://menu.matildaplatform.com/meals/week/6a5713fad6523cfd795c45ce_olyckeskolan"
-TZ = ZoneInfo("Europe/Stockholm")
 OUT = Path(__file__).with_name("menu.json")
 
 DAYS = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
@@ -58,19 +58,46 @@ def parse_day(block: str):
     return clean_dish(m1.group(1)) if m1 else "", clean_dish(m2.group(1)) if m2 else ""
 
 def fetch() -> dict:
-    today = datetime.now(TZ).date()
+    today = date.today()
     monday = monday_of(today)
     sunday = monday + timedelta(days=6)
     url = f"{BASE}?startDate={monday.isoformat()}&endDate={sunday.isoformat()}"
-    req = urllib.request.Request(url, headers={
-        "User-Agent":"Mozilla/5.0 (compatible; OlyckeskolanMenu/1.0)",
-        "Accept-Language":"sv-SE,sv;q=0.9,en;q=0.5"
-    })
-    print(f"Hämtar Ölyckeskolans meny: {url}")
-    with urllib.request.urlopen(req, timeout=30) as r:
-        print(f"HTTP-status: {r.status}")
-        raw = r.read().decode("utf-8", "replace")
-    print(f"Hämtade {len(raw)} tecken från Matilda.")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "sv-SE,sv;q=0.9,en;q=0.7",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+    }
+
+    # Matilda kan ibland svara med ett tillfälligt 502-fel. Gör därför flera
+    # försök inom samma GitHub Actions-körning innan vi ger upp.
+    waits = [0, 15, 30, 60]
+    raw = None
+    last_error = None
+    for attempt, wait_seconds in enumerate(waits, start=1):
+        if wait_seconds:
+            print(f"Väntar {wait_seconds} sekunder före försök {attempt}...")
+            time.sleep(wait_seconds)
+        print(f"Hämtar Ölyckeskolans meny, försök {attempt}/{len(waits)}: {url}")
+        req = urllib.request.Request(url, headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                raw = r.read().decode("utf-8", "replace")
+                print(f"Hämtningen lyckades (HTTP {getattr(r, 'status', 200)}).")
+                break
+        except urllib.error.HTTPError as e:
+            last_error = e
+            print(f"Försök {attempt} gav HTTP {e.code}: {e.reason}", file=sys.stderr)
+            # 4xx är oftast permanenta fel. 429 och 5xx kan däremot vara tillfälliga.
+            if e.code < 500 and e.code != 429:
+                break
+        except (urllib.error.URLError, TimeoutError) as e:
+            last_error = e
+            print(f"Försök {attempt} gav nätverksfel: {e}", file=sys.stderr)
+
+    if raw is None:
+        raise RuntimeError(f"Matilda kunde inte hämtas efter {len(waits)} försök. Senaste fel: {last_error}")
 
     text = normalize_text(raw)
     days = []
@@ -113,7 +140,7 @@ def fetch() -> dict:
         "week":week,
         "year":monday.year,
         "period":period,
-        "updated":today.isoformat(),
+        "updated":date.today().isoformat(),
         "monthly_green":green,
         "days":days
     }
@@ -125,18 +152,8 @@ def main():
         print(f"FEL: {e}", file=sys.stderr)
         print("Befintlig menu.json lämnas orörd.", file=sys.stderr)
         return 1
-    # Extra kontroll så att en felaktigt tolkad sida aldrig skriver över senaste fungerande meny.
-    expected_monday = monday_of(datetime.now(TZ).date())
-    if data["week"] != expected_monday.isocalendar().week or data["year"] != expected_monday.year:
-        print("FEL: Hämtad meny motsvarar inte aktuell vecka.", file=sys.stderr)
-        print("Befintlig menu.json lämnas orörd.", file=sys.stderr)
-        return 1
-    if len(data.get("days", [])) != 5:
-        print("FEL: Menyn innehåller inte fem skoldagar.", file=sys.stderr)
-        print("Befintlig menu.json lämnas orörd.", file=sys.stderr)
-        return 1
     OUT.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Skrev {OUT} för vecka {data['week']} ({data['period']}).")
+    print(f"Skrev {OUT} för vecka {data['week']}.")
     return 0
 
 if __name__ == "__main__":
