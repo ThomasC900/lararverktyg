@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Uhr – klockan på tyska</title>
+<style>
+:root{--blue:#163f5b;--gold:#e5ad36;--light:#f5f7f8;--green:#2f7a55;--red:#b94b4b;--ink:#17232b}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:#eef2f4}
+.wrap{max-width:1050px;margin:auto;padding:20px}.back{display:inline-block;color:var(--blue);font-weight:700;text-decoration:none;margin-bottom:14px}
+.panel{background:white;border-radius:20px;padding:24px;box-shadow:0 8px 28px #0001;margin-bottom:18px}
+h1,h2{color:var(--blue);margin-top:0}h1{text-align:center;font-size:clamp(30px,5vw,50px);margin-bottom:5px}.sub{text-align:center;color:#596870;margin-bottom:24px}
+.introgrid,.gamegrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.example{background:#f8f4e8;border-left:6px solid var(--gold);padding:15px;border-radius:12px;line-height:1.55}
+.levels,.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.level,.btn,.answer{border:2px solid #ccd5da;background:white;border-radius:12px;padding:12px 16px;font-size:16px;cursor:pointer}
+.level.active,.btn.primary{background:var(--blue);color:white;border-color:var(--blue)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.clockbox{display:flex;justify-content:center;align-items:center}.clock{width:min(330px,80vw)}
+.answers{display:grid;gap:10px}.answer{text-align:left;line-height:1.3}.answer:hover{border-color:var(--gold)}.answer.correct{border-color:var(--green);background:#eaf5ef}.answer.wrong{border-color:var(--red);background:#faeeee}
+.question{font-size:25px;font-weight:800;color:var(--blue);margin-bottom:16px}.feedback{min-height:48px;font-size:18px;font-weight:700;margin:14px 0}.score{display:flex;gap:28px;margin:14px 0;font-size:18px}.score b{font-size:25px;color:var(--blue)}
+.tip{margin-top:18px;background:#edf3f6;border-radius:14px;padding:16px;line-height:1.55}.small{font-size:14px;color:#68777e}
+@media(max-width:750px){.introgrid,.gamegrid{grid-template-columns:1fr}.panel{padding:17px}.question{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../">← Tillbaka till Lärarverktyg</a>
+
+<section class="panel">
+<h1>🕒 Die Uhr</h1>
+<div class="sub">Träna på att säga klockan på tyska • anpassat för årskurs 7</div>
+<div class="introgrid">
+<div class="example"><b>Så säger du tiden</b><br>
+7:00 → <b>Es ist sieben Uhr.</b><br>
+7:15 → <b>Es ist Viertel nach sieben.</b><br>
+7:30 → <b>Es ist halb acht.</b><br>
+7:45 → <b>Es ist Viertel vor acht.</b></div>
+<div class="example"><b>Viktigt!</b><br>
+På tyska säger man <b>halb acht</b> när klockan är 7:30. Man tänker alltså att det är halvvägs <i>till</i> åtta.<br><br>
+<b>nach</b> = över &nbsp; • &nbsp; <b>vor</b> = i/före</div>
+</div>
+<div class="tip"><b>Femminutersintervall:</b> 7:10 → <b>zehn nach sieben</b> &nbsp; • &nbsp; 7:50 → <b>zehn vor acht</b></div>
+</section>
+
+<section class="panel">
+<h2 style="text-align:center">Välj nivå</h2>
+<div class="levels">
+<button class="level active" data-level="1">Nivå 1<br><span class="small">Hel & halv</span></button>
+<button class="level" data-level="2">Nivå 2<br><span class="small">+ kvart</span></button>
+<button class="level" data-level="3">Nivå 3<br><span class="small">5-minutersintervall</span></button>
+</div>
+</section>
+
+<section class="panel">
+<div class="gamegrid">
+<div class="clockbox">
+<svg class="clock" id="clock" viewBox="0 0 240 240" aria-label="Analog klocka">
+<circle cx="120" cy="120" r="105" fill="#fffdf8" stroke="#163f5b" stroke-width="5"/>
+<g id="ticks"></g><g id="numbers"></g>
+<line id="hourHand" x1="120" y1="120" x2="120" y2="65" stroke="#163f5b" stroke-width="9" stroke-linecap="round"/>
+<line id="minuteHand" x1="120" y1="120" x2="120" y2="35" stroke="#e5ad36" stroke-width="6" stroke-linecap="round"/>
+<circle cx="120" cy="120" r="8" fill="#163f5b"/>
+</svg>
+</div>
+<div>
+<div class="small">Nivå <span id="levelLabel">1</span></div>
+<div class="question">Vad är klockan på tyska?</div>
+<div id="answers" class="answers"></div>
+<div id="feedback" class="feedback" aria-live="polite"></div>
+<div class="score"><div>Rätt<br><b id="score">0</b></div><div>Försök<br><b id="tries">0</b></div><div>Rätt i rad<br><b id="streak">0</b></div></div>
+<div class="actions">
+<button id="next" class="btn primary" disabled>Nästa klockslag →</button>
+<button id="reset" class="btn">Nollställ</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<script>
+const ticks=document.getElementById("ticks"), nums=document.getElementById("numbers");
+for(let i=0;i<60;i++){let a=i*6*Math.PI/180, major=i%5===0;let r1=major?91:97,r2=102;
+ let l=document.createElementNS("http://www.w3.org/2000/svg","line");
+ l.setAttribute("x1",120+r1*Math.sin(a));l.setAttribute("y1",120-r1*Math.cos(a));
+ l.setAttribute("x2",120+r2*Math.sin(a));l.setAttribute("y2",120-r2*Math.cos(a));
+ l.setAttribute("stroke","#163f5b");l.setAttribute("stroke-width",major?3:1);ticks.appendChild(l)}
+for(let n=1;n<=12;n++){let a=n*30*Math.PI/180,t=document.createElementNS("http://www.w3.org/2000/svg","text");
+ t.setAttribute("x",120+76*Math.sin(a));t.setAttribute("y",125-76*Math.cos(a));t.setAttribute("text-anchor","middle");
+ t.setAttribute("font-size","18");t.setAttribute("font-weight","700");t.setAttribute("fill","#163f5b");t.textContent=n;nums.appendChild(t)}
+let level=1,score=0,tries=0,streak=0,current,locked=false;
+const word={1:"eins",2:"zwei",3:"drei",4:"vier",5:"fünf",6:"sechs",7:"sieben",8:"acht",9:"neun",10:"zehn",11:"elf",12:"zwölf"};
+const minword={5:"fünf",10:"zehn",20:"zwanzig",25:"fünfundzwanzig"};
+function de(h,m){let cur=h%12||12,next=cur===12?1:cur+1;if(m===0)return `Es ist ${word[cur]} Uhr.`;if(m===15)return `Es ist Viertel nach ${word[cur]}.`;if(m===30)return `Es ist halb ${word[next]}.`;if(m===45)return `Es ist Viertel vor ${word[next]}.`;if(m<30)return `Es ist ${minword[m]} nach ${word[cur]}.`;return `Es ist ${minword[60-m]} vor ${word[next]}.`}
+function choices(){return level===1?[0,30]:level===2?[0,15,30,45]:[0,5,10,15,20,25,30,35,40,45,50,55]}
+function draw(h,m){document.getElementById("minuteHand").setAttribute("transform",`rotate(${m*6} 120 120)`);document.getElementById("hourHand").setAttribute("transform",`rotate(${(h%12)*30+m*.5} 120 120)`)}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function newQ(){locked=false;document.getElementById("next").disabled=true;document.getElementById("feedback").textContent="";let ms=choices(),h=1+Math.floor(Math.random()*12),m=ms[Math.floor(Math.random()*ms.length)];current={h,m,ans:de(h,m)};draw(h,m);
+ let set=new Set([current.ans]);while(set.size<4){let hh=1+Math.floor(Math.random()*12),mm=ms[Math.floor(Math.random()*ms.length)];set.add(de(hh,mm))}
+ let box=document.getElementById("answers");box.innerHTML="";shuffle([...set]).forEach(txt=>{let b=document.createElement("button");b.className="answer";b.textContent=txt;b.onclick=()=>check(b,txt);box.appendChild(b)})}
+function check(b,txt){if(locked)return;locked=true;tries++;if(txt===current.ans){score++;streak++;b.classList.add("correct");document.getElementById("feedback").textContent="✓ Rätt! Sehr gut!"}else{streak=0;b.classList.add("wrong");document.getElementById("feedback").textContent="Inte riktigt. Rätt svar är: "+current.ans;[...document.querySelectorAll(".answer")].forEach(x=>{if(x.textContent===current.ans)x.classList.add("correct")})}update();document.getElementById("next").disabled=false}
+function update(){scoreEl.textContent=score;triesEl.textContent=tries;streakEl.textContent=streak}
+const scoreEl=document.getElementById("score"),triesEl=document.getElementById("tries"),streakEl=document.getElementById("streak");
+document.getElementById("next").onclick=newQ;document.getElementById("reset").onclick=()=>{score=tries=streak=0;update();newQ()};
+document.querySelectorAll(".level").forEach(b=>b.onclick=()=>{level=+b.dataset.level;document.querySelectorAll(".level").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("levelLabel").textContent=level;newQ()});
+newQ();
+</script>
+</body>
+</html>
