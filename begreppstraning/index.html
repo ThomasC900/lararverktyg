@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Begreppsträning NO/SO</title>
+<style>
+:root{
+  --navy:#17365d; --gold:#e4b23c; --bg:#f4f7fb; --card:#fff;
+  --text:#172033; --muted:#667085; --green:#238636; --red:#c62828; --orange:#b26a00;
+  --border:#d9e1ec;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--navy);color:white;padding:22px 18px;border-bottom:6px solid var(--gold)}
+.header-inner{max-width:1050px;margin:auto}
+h1{margin:0;font-size:clamp(1.7rem,4vw,2.5rem)}
+.subtitle{margin:.35rem 0 0;opacity:.9}
+main{max-width:1050px;margin:24px auto;padding:0 16px 40px}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 5px 18px rgba(23,54,93,.08);margin-bottom:18px}
+h2{color:var(--navy);margin-top:0}
+textarea,input{width:100%;font:inherit;border:2px solid var(--border);border-radius:12px;padding:12px;background:#fff}
+textarea{min-height:210px;resize:vertical}
+button,.btn{border:0;border-radius:12px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.primary{background:var(--navy);color:#fff}.gold{background:var(--gold);color:#182338}
+.secondary{background:#e8eef6;color:var(--navy)}.danger{background:#fce8e8;color:#8d1f1f}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.hint{color:var(--muted);line-height:1.5;font-size:.95rem}
+.example{background:#f7f8fa;border-radius:10px;padding:10px 12px;font-family:ui-monospace,Consolas,monospace;font-size:.88rem;white-space:pre-wrap}
+.hidden{display:none!important}
+.preview{width:100%;border-collapse:collapse;margin-top:14px}
+.preview th,.preview td{border-bottom:1px solid var(--border);padding:10px;text-align:left;vertical-align:top}
+.preview th{color:var(--navy)}
+.mode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.mode{background:#fff;border:2px solid var(--border);border-radius:16px;padding:17px;text-align:left}
+.mode:hover{border-color:var(--gold)}
+.mode strong{display:block;color:var(--navy);font-size:1.05rem;margin-bottom:5px}
+.train-card{text-align:center;padding:30px 22px}
+.label{text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;color:var(--muted);font-weight:800}
+.prompt{font-size:clamp(1.35rem,4vw,2rem);font-weight:750;margin:14px auto 22px;max-width:800px;line-height:1.3}
+.answer-box{background:#f4f7fb;border:2px solid var(--border);border-radius:15px;padding:18px;margin:15px 0;text-align:left}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.stat{background:#e8eef6;border-radius:999px;padding:7px 12px;font-size:.9rem;font-weight:700;color:var(--navy)}
+.choice-grid{display:grid;gap:10px;margin-top:15px}
+.choice{border:2px solid var(--border);background:white;text-align:left}
+.choice.correct{border-color:var(--green);background:#eaf7ed}
+.choice.wrong{border-color:var(--red);background:#fdeeee}
+.feedback{font-weight:750;margin-top:14px}
+.good{color:var(--green)}.bad{color:var(--red)}.almost{color:var(--orange)}
+.flash{min-height:270px;display:flex;align-items:center;justify-content:center;cursor:pointer;perspective:900px}
+.flash-inner{width:100%;min-height:250px;position:relative;transition:transform .5s;transform-style:preserve-3d}
+.flash.flipped .flash-inner{transform:rotateY(180deg)}
+.flash-face{position:absolute;inset:0;backface-visibility:hidden;border:2px solid var(--border);border-radius:18px;display:flex;align-items:center;justify-content:center;padding:25px;background:white;font-size:1.5rem;font-weight:700}
+.flash-back{transform:rotateY(180deg);background:#fffaf0}
+.back{margin-bottom:14px}
+footer{text-align:center;color:var(--muted);padding:10px}
+@media(max-width:600px){.panel{padding:16px}.preview{font-size:.9rem}.preview th,.preview td{padding:7px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="header-inner">
+   <h1>Begreppsträning NO/SO</h1>
+   <p class="subtitle">Klistra in dina begrepp och träna på flera olika sätt.</p>
+ </div>
+</header>
+
+<main>
+<a class="btn secondary back" href="../">← Tillbaka till lärarverktyg</a>
+
+<section id="setup" class="panel">
+ <h2>1. Lägg in dina begrepp</h2>
+ <p class="hint">Klistra in direkt från exempelvis Google Kalkyl, Excel, Word eller Google Dokument. Ett begrepp per rad.</p>
+ <div class="example">Fotosyntes    Växternas process för att omvandla ljusenergi till kemisk energi
+Atom - Minsta delen av ett grundämne
+Demokrati: Ett styrelseskick där folket har möjlighet att påverka</div>
+ <textarea id="source" placeholder="Klistra in begrepp och förklaringar här..."></textarea>
+ <div class="actions">
+   <button class="primary" onclick="parseTerms()">Läs in begrepp</button>
+   <button class="secondary" onclick="loadExample()">Testa med exempel</button>
+   <button class="danger" onclick="clearAll()">Rensa</button>
+ </div>
+ <p id="parseMsg" class="hint"></p>
+</section>
+
+<section id="previewPanel" class="panel hidden">
+ <h2>2. Kontrollera listan</h2>
+ <p id="countText"></p>
+ <div style="overflow:auto">
+  <table class="preview">
+   <thead><tr><th>Begrepp</th><th>Förklaring</th></tr></thead>
+   <tbody id="previewBody"></tbody>
+  </table>
+ </div>
+ <div class="actions">
+  <button class="gold" onclick="showModes()">Listan ser bra ut →</button>
+ </div>
+</section>
+
+<section id="modes" class="panel hidden">
+ <h2>3. Hur vill du träna?</h2>
+ <div class="mode-grid">
+  <button class="mode" onclick="startMode('learn')"><strong>📖 Lär dig först</strong>Gå igenom begreppen i lugn och ro.</button>
+  <button class="mode" onclick="startMode('flash')"><strong>🃏 Flashcards</strong>Vänd kortet och bedöm om du kunde det.</button>
+  <button class="mode" onclick="startMode('def2term')"><strong>✍️ Förklaring → begrepp</strong>Skriv vilket begrepp som passar.</button>
+  <button class="mode" onclick="startMode('term2def')"><strong>💭 Begrepp → förklaring</strong>Skriv med egna ord och jämför med facit.</button>
+  <button class="mode" onclick="startMode('multi')"><strong>🎯 Flervalsfrågor</strong>Välj rätt begrepp till förklaringen.</button>
+  <button id="weakMode" class="mode" onclick="startWeak()"><strong>🔁 Träna det jag inte kan</strong>Repetera sådant du markerat eller svarat fel på.</button>
+ </div>
+</section>
+
+<section id="training" class="panel hidden">
+ <div class="stats">
+  <span id="progress" class="stat"></span>
+  <span id="knownStat" class="stat">Kan: 0</span>
+  <span id="weakStat" class="stat">Behöver träna: 0</span>
+ </div>
+ <div id="trainingContent"></div>
+ <div class="actions">
+  <button class="secondary" onclick="showModes()">← Byt träningssätt</button>
+ </div>
+</section>
+</main>
+<footer>Begreppsträning NO/SO</footer>
+
+<script>
+let terms=[], queue=[], index=0, mode='', weak=new Set(), known=0, answered=false;
+
+function splitLine(line){
+  line=line.trim();
+  if(!line) return null;
+  if(line.includes('\t')){
+    let p=line.split(/\t+/); return [p.shift().trim(),p.join(' ').trim()];
+  }
+  let m=line.match(/^(.+?)\s+[–—-]\s+(.+)$/);
+  if(m) return [m[1].trim(),m[2].trim()];
+  let c=line.indexOf(':');
+  if(c>0) return [line.slice(0,c).trim(),line.slice(c+1).trim()];
+  return null;
+}
+function parseTerms(){
+  const lines=document.getElementById('source').value.split(/\r?\n/);
+  terms=lines.map(splitLine).filter(x=>x&&x[0]&&x[1]).map((x,i)=>({id:i,term:x[0],def:x[1]}));
+  const msg=document.getElementById('parseMsg');
+  if(!terms.length){msg.textContent='Jag kunde inte hitta några kompletta par. Kontrollera att varje rad innehåller både begrepp och förklaring.';return;}
+  msg.textContent='';
+  renderPreview();
+}
+function renderPreview(){
+  document.getElementById('previewPanel').classList.remove('hidden');
+  document.getElementById('countText').textContent=`Vi hittade ${terms.length} begrepp. Kontrollera att allt hamnat rätt.`;
+  document.getElementById('previewBody').innerHTML=terms.map(t=>`<tr><td>${esc(t.term)}</td><td>${esc(t.def)}</td></tr>`).join('');
+  document.getElementById('previewPanel').scrollIntoView({behavior:'smooth'});
+}
+function showModes(){
+  if(!terms.length)return;
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('previewPanel').classList.add('hidden');
+  document.getElementById('training').classList.add('hidden');
+  document.getElementById('modes').classList.remove('hidden');
+  document.getElementById('modes').scrollIntoView({behavior:'smooth'});
+  updateStats();
+}
+function startMode(m, custom=null){
+  mode=m; index=0; known=0; answered=false;
+  queue=(custom||terms).slice();
+  if(m!=='learn') shuffle(queue);
+  document.getElementById('modes').classList.add('hidden');
+  document.getElementById('training').classList.remove('hidden');
+  renderQuestion();
+}
+function startWeak(){
+  let list=terms.filter(t=>weak.has(t.id));
+  if(!list.length){alert('Du har ännu inga begrepp markerade som behöver tränas mer.');return;}
+  startMode('flash',list);
+}
+function renderQuestion(){
+  answered=false; updateStats();
+  if(index>=queue.length){renderFinish();return;}
+  let t=queue[index], box=document.getElementById('trainingContent');
+  if(mode==='learn'){
+    box.innerHTML=`<div class="train-card"><div class="label">Begrepp</div><div class="prompt">${esc(t.term)}</div><div class="answer-box"><strong>Förklaring</strong><br>${esc(t.def)}</div><div class="actions" style="justify-content:center"><button class="primary" onclick="next()">Nästa →</button></div></div>`;
+  } else if(mode==='flash'){
+    box.innerHTML=`<div class="train-card"><div class="label">Klicka på kortet för att vända</div>
+    <div class="flash" id="flashcard" onclick="this.classList.toggle('flipped')"><div class="flash-inner">
+      <div class="flash-face">${esc(t.term)}</div><div class="flash-face flash-back">${esc(t.def)}</div>
+    </div></div>
+    <div class="actions" style="justify-content:center"><button class="primary" onclick="rate(true)">✓ Kan</button><button class="danger" onclick="rate(false)">× Behöver träna</button></div></div>`;
+  } else if(mode==='def2term'){
+    box.innerHTML=`<div class="train-card"><div class="label">Vilket begrepp beskrivs?</div><div class="prompt">${esc(t.def)}</div>
+    <input id="answer" autocomplete="off" placeholder="Skriv begreppet..." onkeydown="if(event.key==='Enter')checkTerm()">
+    <div class="actions" style="justify-content:center"><button class="primary" onclick="checkTerm()">Rätta</button></div><div id="feedback"></div></div>`;
+    setTimeout(()=>document.getElementById('answer')?.focus(),50);
+  } else if(mode==='term2def'){
+    box.innerHTML=`<div class="train-card"><div class="label">Förklara begreppet med egna ord</div><div class="prompt">${esc(t.term)}</div>
+    <textarea id="answer" style="min-height:110px" placeholder="Skriv din förklaring..."></textarea>
+    <div class="actions" style="justify-content:center"><button class="primary" onclick="showDefinition()">Jämför med facit</button></div><div id="feedback"></div></div>`;
+  } else if(mode==='multi'){
+    let options=makeOptions(t);
+    box.innerHTML=`<div class="train-card"><div class="label">Välj rätt begrepp</div><div class="prompt">${esc(t.def)}</div>
+    <div class="choice-grid">${options.map(o=>`<button class="choice" data-id="${o.id}" onclick="choose(${o.id},this)">${esc(o.term)}</button>`).join('')}</div><div id="feedback"></div></div>`;
+  }
+}
+function checkTerm(){
+  if(answered)return;
+  let t=queue[index], val=document.getElementById('answer').value.trim();
+  if(!val)return;
+  answered=true;
+  let ok=norm(val)===norm(t.term);
+  if(ok){known++; weak.delete(t.id);}
+  else weak.add(t.id);
+  document.getElementById('feedback').innerHTML=`<p class="feedback ${ok?'good':'bad'}">${ok?'Rätt!':'Inte riktigt. Rätt svar är: '+esc(t.term)}</p><button class="gold" onclick="next()">Nästa →</button>`;
+  updateStats();
+}
+function showDefinition(){
+  if(answered)return;
+  answered=true; let t=queue[index];
+  document.getElementById('feedback').innerHTML=`<div class="answer-box"><strong>Facit:</strong><br>${esc(t.def)}</div>
+  <p class="hint">Jämför med din egen förklaring.</p>
+  <div class="actions" style="justify-content:center">
+   <button class="primary" onclick="selfRate(2)">✓ Rätt</button>
+   <button class="secondary" onclick="selfRate(1)">≈ Nästan</button>
+   <button class="danger" onclick="selfRate(0)">× Behöver träna</button>
+  </div>`;
+}
+function selfRate(v){
+  let t=queue[index];
+  if(v===2){known++;weak.delete(t.id)} else weak.add(t.id);
+  next();
+}
+function choose(id,btn){
+  if(answered)return; answered=true;
+  let t=queue[index], ok=id===t.id;
+  document.querySelectorAll('.choice').forEach(b=>{
+    if(+b.dataset.id===t.id)b.classList.add('correct');
+  });
+  if(!ok){btn.classList.add('wrong');weak.add(t.id)} else {known++;weak.delete(t.id)}
+  document.getElementById('feedback').innerHTML=`<p class="feedback ${ok?'good':'bad'}">${ok?'Rätt!':'Rätt svar är '+esc(t.term)+'.'}</p><button class="gold" onclick="next()">Nästa →</button>`;
+  updateStats();
+}
+function rate(ok){
+  let t=queue[index];
+  if(ok){known++;weak.delete(t.id)} else weak.add(t.id);
+  next();
+}
+function next(){index++;renderQuestion()}
+function renderFinish(){
+  updateStats();
+  document.getElementById('trainingContent').innerHTML=`<div class="train-card"><div class="prompt">Bra jobbat!</div>
+  <p>Du har gått igenom den här omgången.</p>
+  <div class="actions" style="justify-content:center">
+    <button class="primary" onclick="startMode('${mode==='learn'?'learn':mode}')">Kör en gång till</button>
+    ${weak.size?'<button class="gold" onclick="startWeak()">Träna det jag inte kan</button>':''}
+    <button class="secondary" onclick="showModes()">Välj annat träningssätt</button>
+  </div></div>`;
+}
+function makeOptions(correct){
+  let pool=terms.filter(t=>t.id!==correct.id).slice(); shuffle(pool);
+  let opts=[correct,...pool.slice(0,Math.min(3,pool.length))]; shuffle(opts); return opts;
+}
+function updateStats(){
+  document.getElementById('progress').textContent=queue.length?`Begrepp ${Math.min(index+1,queue.length)} av ${queue.length}`:`${terms.length} begrepp`;
+  document.getElementById('knownStat').textContent=`Kan: ${known}`;
+  document.getElementById('weakStat').textContent=`Behöver träna: ${weak.size}`;
+}
+function loadExample(){
+ document.getElementById('source').value=`Fotosyntes\tProcessen där växter med hjälp av ljus bildar druvsocker och syre.
+Atom\tEn mycket liten byggsten som all materia är uppbyggd av.
+Ekosystem\tAlla levande organismer och deras miljö inom ett område.
+Demokrati\tEtt styrelseskick där folket har möjlighet att påverka hur landet styrs.
+Inflation\tEn allmän ökning av prisnivån som gör att pengarnas köpkraft minskar.
+Riksdag\tSveriges folkvalda församling som bland annat beslutar om lagar.`;
+ parseTerms();
+}
+function clearAll(){
+ document.getElementById('source').value=''; terms=[]; queue=[]; weak.clear(); known=0;
+ document.getElementById('previewPanel').classList.add('hidden');document.getElementById('modes').classList.add('hidden');document.getElementById('training').classList.add('hidden');document.getElementById('setup').classList.remove('hidden');document.getElementById('parseMsg').textContent='';
+}
+function norm(s){return s.toLocaleLowerCase('sv-SE').trim().replace(/[.!?]/g,'').replace(/\s+/g,' ')}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+</script>
+</body>
+</html>
