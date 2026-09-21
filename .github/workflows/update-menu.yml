@@ -3,12 +3,10 @@ name: Uppdatera matsedel
 on:
   workflow_dispatch:
   schedule:
-    # Måndag 02:17 UTC
-    # = 04:17 svensk sommartid / 03:17 svensk vintertid
+    # Två försök varje måndag före skoldagens start.
+    # 02:17 UTC = 04:17 svensk sommartid / 03:17 svensk vintertid.
     - cron: "17 2 * * 1"
-
-    # Reservkörning måndag 04:17 UTC
-    # = 06:17 svensk sommartid / 05:17 svensk vintertid
+    # 04:17 UTC = 06:17 svensk sommartid / 05:17 svensk vintertid.
     - cron: "17 4 * * 1"
 
 permissions:
@@ -17,18 +15,31 @@ permissions:
 jobs:
   update-menu:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Hämta repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
-      - name: Hämta aktuell meny från Matilda
+      - name: Hämta aktuell meny från Ölyckeskolan i Matilda
         run: python matsedel/fetch-menu.py
+
+      - name: Visa vilken vecka som hämtades
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path("matsedel/menu.json").read_text(encoding="utf-8"))
+          print(f"Vecka: {data.get('week')}")
+          print(f"Period: {data.get('period')}")
+          print(f"Uppdaterad: {data.get('updated')}")
+          print(f"Källa: {data.get('source')}")
+          PY
 
       - name: Spara ändrad meny
         run: |
