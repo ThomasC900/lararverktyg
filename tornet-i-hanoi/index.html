@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tornet i Hanoi – Lärarverktyg</title>
+<style>
+:root{--blue:#17365d;--gold:#e6b84a;--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#68758a;--green:#2f855a;--red:#b83232}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--blue);color:white;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}header h1{margin:0;font-size:clamp(1.5rem,3vw,2.2rem)}
+.back{color:white;text-decoration:none;border:1px solid rgba(255,255,255,.5);border-radius:10px;padding:9px 13px;font-weight:700}.back:hover{background:rgba(255,255,255,.1)}
+main{max-width:1100px;margin:auto;padding:22px}.panel{background:var(--card);border-radius:16px;padding:18px;box-shadow:0 4px 18px rgba(20,40,70,.08);margin-bottom:18px}
+.controls{display:flex;gap:14px;align-items:end;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:6px;font-weight:700}.field select{font:inherit;padding:10px 12px;border:1px solid #bcc7d6;border-radius:10px;background:white}
+button{font:inherit;font-weight:800;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;background:var(--blue);color:white}button.secondary{background:#e8edf4;color:var(--blue)}button:focus-visible,.tower:focus-visible,.back:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin-left:auto}.stat{background:#eef2f7;border-radius:12px;padding:9px 14px;min-width:125px}.stat span{display:block;color:var(--muted);font-size:.78rem;text-transform:uppercase;font-weight:800}.stat strong{font-size:1.25rem}
+.message{min-height:28px;text-align:center;font-weight:800;margin:4px 0 12px;color:var(--blue)}
+.game{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:end;min-height:430px;padding:10px 0 0}.tower{position:relative;height:390px;border:0;background:transparent;color:inherit;padding:0 8px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;cursor:pointer;border-radius:14px}.tower:hover{background:#f7f9fc}.tower.selected{background:#fff7df;box-shadow:inset 0 0 0 3px var(--gold)}
+.peg{position:absolute;bottom:42px;width:12px;height:300px;background:#8793a5;border-radius:8px 8px 0 0;z-index:0}.base{position:absolute;bottom:32px;width:92%;height:14px;background:#68758a;border-radius:8px;z-index:0}.rings{width:100%;display:flex;flex-direction:column-reverse;align-items:center;z-index:1;margin-bottom:46px}.ring{height:25px;border-radius:8px;border:2px solid rgba(0,0,0,.15);margin-top:2px;box-shadow:0 2px 3px rgba(0,0,0,.15);background:var(--blue)}.ring.top{box-shadow:0 0 0 3px var(--gold),0 2px 3px rgba(0,0,0,.15)}.tower-label{position:absolute;bottom:0;font-weight:900;color:var(--blue)}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:18px}.rules h2{font-size:1.05rem;margin:0 0 8px;color:var(--blue)}.rules p,.rules ol{margin:0;color:#445269;line-height:1.55}.best{font-weight:800;color:var(--green)}
+@media(max-width:700px){main{padding:12px}.stats{margin-left:0}.game{gap:4px;min-height:350px}.tower{height:320px;padding:0 3px}.peg{height:235px}.ring{height:22px}.rules{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>Tornet i Hanoi</h1><a class="back" href="../">← Tillbaka till lärarverktyg</a></header>
+<main>
+<section class="panel controls">
+<label class="field">Antal ringar<select id="ringCount"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
+<button id="newGame">Nytt spel</button><button id="reset" class="secondary">Börja om</button>
+<div class="stats"><div class="stat"><span>Drag</span><strong id="moves">0</strong></div><div class="stat"><span>Minimum</span><strong id="minimum">31</strong></div><div class="stat"><span>Bästa</span><strong id="best">–</strong></div></div>
+</section>
+<section class="panel">
+<div id="message" class="message" aria-live="polite">Flytta alla ringar från torn A till torn C.</div>
+<div class="game" id="game">
+<button class="tower" data-tower="0" aria-label="Torn A"><span class="peg"></span><span class="base"></span><span class="rings"></span><span class="tower-label">A</span></button>
+<button class="tower" data-tower="1" aria-label="Torn B"><span class="peg"></span><span class="base"></span><span class="rings"></span><span class="tower-label">B</span></button>
+<button class="tower" data-tower="2" aria-label="Torn C"><span class="peg"></span><span class="base"></span><span class="rings"></span><span class="tower-label">C</span></button>
+</div>
+</section>
+<section class="panel rules"><div><h2>Så spelar du</h2><ol><li>Klicka på tornet du vill flytta från.</li><li>Klicka sedan på tornet du vill flytta till.</li><li>Försök lösa uppgiften med så få drag som möjligt.</li></ol></div><div><h2>Regler</h2><p>Du får bara flytta en ring åt gången. Endast den översta ringen får flyttas och en större ring får aldrig placeras ovanpå en mindre.</p><p id="bestText" class="best" style="margin-top:8px"></p></div></section>
+</main>
+<script>
+(()=>{const root=document;const select=root.querySelector('#ringCount'),movesEl=root.querySelector('#moves'),minEl=root.querySelector('#minimum'),bestEl=root.querySelector('#best'),msg=root.querySelector('#message'),bestText=root.querySelector('#bestText'),towers=[...root.querySelectorAll('.tower')];let stacks=[],moves=0,selected=null,n=5;const best={};
+function start(){n=Number(select.value);stacks=[Array.from({length:n},(_,i)=>n-i),[],[]];moves=0;selected=null;minEl.textContent=2**n-1;msg.textContent='Flytta alla ringar från torn A till torn C.';render()}
+function render(){movesEl.textContent=moves;bestEl.textContent=best[n]??'–';bestText.textContent=best[n]?`Ditt bästa resultat med ${n} ringar är ${best[n]} drag.`:'';towers.forEach((t,i)=>{t.classList.toggle('selected',selected===i);const box=t.querySelector('.rings');box.innerHTML='';stacks[i].forEach((size,idx)=>{const r=document.createElement('span');r.className='ring'+(idx===stacks[i].length-1&&selected===i?' top':'');r.style.width=(24+(size/n)*68)+'%';r.style.background=`hsl(${205+(size*24)%140} 55% ${42+(size%3)*7}%)`;r.setAttribute('aria-hidden','true');box.appendChild(r)})})}
+function clickTower(i){if(selected===null){if(!stacks[i].length){msg.textContent='Det tornet är tomt. Välj ett torn med en ring.';return}selected=i;msg.textContent=`Torn ${'ABC'[i]} valt. Välj vart ringen ska flyttas.`;render();return}if(selected===i){selected=null;msg.textContent='Valet avbröts.';render();return}const ring=stacks[selected][stacks[selected].length-1],target=stacks[i][stacks[i].length-1];if(target!==undefined&&target<ring){msg.textContent='Inte tillåtet – en större ring får inte ligga på en mindre.';selected=null;render();return}stacks[selected].pop();stacks[i].push(ring);moves++;selected=null;if(stacks[2].length===n){const minimum=2**n-1;if(best[n]===undefined||moves<best[n])best[n]=moves;msg.textContent=moves===minimum?`Perfekt! Löst på ${moves} drag – minsta möjliga!`:`Löst på ${moves} drag! Minimum är ${minimum}.`;render();return}msg.textContent='Bra! Fortsätt.';render()}
+towers.forEach((t,i)=>t.addEventListener('click',()=>clickTower(i)));root.querySelector('#newGame').addEventListener('click',start);root.querySelector('#reset').addEventListener('click',start);select.addEventListener('change',start);start();})();
+</script>
+</body></html>
