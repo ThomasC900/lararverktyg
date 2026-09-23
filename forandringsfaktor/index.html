@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Förändringsfaktor</title>
+<style>
+:root{--blue:#17365d;--gold:#e6b84a;--bg:#f4f7fb;--green:#237a43;--red:#b53b3b}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#17202a}
+header{background:var(--blue);color:white;padding:18px 22px;display:flex;align-items:center;gap:18px}
+header a{color:white;text-decoration:none;border:1px solid #ffffff70;border-radius:9px;padding:9px 12px} header h1{margin:0;font-size:1.6rem}
+main{max-width:900px;margin:28px auto;padding:0 18px}.panel{background:white;border-radius:16px;padding:24px;box-shadow:0 4px 18px #00000012;margin-bottom:18px}
+h2{margin-top:0;color:var(--blue)}.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+fieldset{border:1px solid #d8dee8;border-radius:12px;padding:14px}legend{font-weight:bold;color:var(--blue)}
+label{display:block;margin:9px 0;cursor:pointer}.start,.primary{background:var(--gold);border:0;border-radius:10px;padding:12px 20px;font-size:1rem;font-weight:bold;cursor:pointer}
+.center{text-align:center}.task{font-size:1.45rem;line-height:1.5;margin:20px 0}.answer{font-size:1.2rem;padding:10px;width:min(260px,90%);border:2px solid #aab4c2;border-radius:9px;text-align:center}
+.feedback{min-height:76px;margin:18px auto 0;max-width:650px;padding:13px;border-radius:10px;line-height:1.45}
+.good{background:#e8f5ec;color:#185b31}.bad{background:#fff0ef;color:#8d2929}.hint{background:#fff7dc;color:#66500b}
+.stats{display:flex;justify-content:center;gap:28px;font-weight:bold;margin-top:18px}.hidden{display:none}
+.small{font-size:.92rem;color:#586474}.formula{font-size:1.1rem;font-weight:bold}
+@media(max-width:600px){header{align-items:flex-start;flex-direction:column}.task{font-size:1.25rem}}
+</style>
+</head>
+<body>
+<header>
+<a href="../">← Tillbaka till lärarverktyg</a>
+<h1>Förändringsfaktor</h1>
+</header>
+<main>
+<section id="setup" class="panel">
+<h2>Välj träning</h2>
+<div class="choices">
+<fieldset><legend>Förändring</legend>
+<label><input type="radio" name="direction" value="up"> Höjning</label>
+<label><input type="radio" name="direction" value="down"> Sänkning</label>
+<label><input type="radio" name="direction" value="mixed" checked> Blandat</label>
+</fieldset>
+<fieldset><legend>Uppgiftstyp</legend>
+<label><input type="radio" name="type" value="factor"> Endast förändringsfaktor</label>
+<label><input type="radio" name="type" value="new"> Beräkna nytt värde</label>
+<label><input type="radio" name="type" value="mixed" checked> Blandade uppgifter</label>
+</fieldset>
+</div>
+<p class="small">Skriv decimaler med komma eller punkt. Exempel: 1,15.</p>
+<button class="start" onclick="start()">Starta träningen</button>
+</section>
+
+<section id="game" class="panel hidden center">
+<div id="kind" class="small"></div>
+<div id="task" class="task"></div>
+<input id="answer" class="answer" inputmode="decimal" autocomplete="off" placeholder="Ditt svar">
+<div style="margin-top:14px"><button id="check" class="primary" onclick="check()">Rätta</button></div>
+<div id="feedback" class="feedback"></div>
+<div class="stats"><span>Rätt: <b id="correct">0</b></span><span>Rätt i rad: <b id="streak">0</b></span></div>
+<p><button onclick="back()" style="border:0;background:none;text-decoration:underline;cursor:pointer">Ändra inställningar</button></p>
+</section>
+</main>
+<script>
+let q={}, tries=0, correct=0, streak=0;
+const $=id=>document.getElementById(id);
+function picked(name){return document.querySelector(`input[name="${name}"]:checked`).value}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function start(){$('setup').classList.add('hidden');$('game').classList.remove('hidden');correct=streak=0;update();newQ()}
+function back(){$('game').classList.add('hidden');$('setup').classList.remove('hidden')}
+function newQ(){
+ tries=0;$('answer').value='';$('answer').disabled=false;$('check').disabled=false;$('check').textContent='Rätta';$('feedback').className='feedback';$('feedback').innerHTML='';
+ let d=picked('direction'); if(d==='mixed') d=Math.random()<.5?'up':'down';
+ let t=picked('type'); if(t==='mixed') t=Math.random()<.5?'factor':'new';
+ const easy=[5,10,15,20,25,30,40,50], other=[7,8,12,18,22,24,28,32,35,45];
+ let pct=(Math.random()<.6?easy:other)[rand(0,(Math.random()<.6?easy:other).length-1)];
+ // reselect safely because the expression above can choose different arrays
+ let arr=Math.random()<.6?easy:other;pct=arr[rand(0,arr.length-1)];
+ let factor=d==='up'?1+pct/100:1-pct/100;
+ let bases=[100,120,150,200,240,250,300,400,500,600,800,1000,1200,1500,2000,2400,3000,4000,5000];
+ let base=bases[rand(0,bases.length-1)], value=base*factor;
+ q={d,t,pct,factor,base,value};
+ $('kind').textContent=t==='factor'?'Bestäm förändringsfaktorn':'Beräkna det nya värdet';
+ if(t==='factor'){
+   $('task').innerHTML=`Ett värde <b>${d==='up'?'höjs':'sänks'} med ${pct} %</b>.<br>Vilken är förändringsfaktorn?`;
+ }else{
+   $('task').innerHTML=`Ett värde är <b>${fmt(base)}</b> och ${d==='up'?'höjs':'sänks'} med <b>${pct} %</b>.<br>Vilket blir det nya värdet?`;
+ }
+ $('answer').focus();
+}
+function fmt(n){return Number.isInteger(n)?String(n):String(Math.round(n*100)/100).replace('.',',')}
+function parse(s){return Number(s.trim().replace(',','.'))}
+function check(){
+ if($('check').textContent==='Ny uppgift'){newQ();return}
+ let a=parse($('answer').value);if(!Number.isFinite(a))return;
+ let target=q.t==='factor'?q.factor:q.value;
+ if(Math.abs(a-target)<0.005){
+   correct++;streak++;update();$('feedback').className='feedback good';
+   $('feedback').innerHTML='<b>Rätt!</b> Bra jobbat.';$('answer').disabled=true;$('check').textContent='Ny uppgift';$('answer').blur();return;
+ }
+ tries++;streak=0;update();
+ if(tries===1){
+   $('feedback').className='feedback hint';
+   if(q.t==='factor') $('feedback').innerHTML=q.d==='up'
+    ?'<b>Försök igen.</b><br>Det är en höjning. Ska förändringsfaktorn vara större eller mindre än 1?'
+    :'<b>Försök igen.</b><br>Det är en sänkning. Ska förändringsfaktorn vara större eller mindre än 1?';
+   else $('feedback').innerHTML=`<b>Försök igen.</b><br>Börja med förändringsfaktorn. Vid en ${q.d==='up'?'höjning':'sänkning'} med ${q.pct} %, vilken blir den?`;
+   $('answer').select();
+ }else{
+   $('feedback').className='feedback bad';
+   let percent=q.d==='up'?100+q.pct:100-q.pct;
+   if(q.t==='factor'){
+     $('feedback').innerHTML=`Rätt svar är <b>${fmt(q.factor)}</b>.<br>${q.d==='up'?'100 % +':'100 % −'} ${q.pct} % = ${percent} %<br><span class="formula">${percent} % = ${fmt(q.factor)}</span>`;
+   }else{
+     $('feedback').innerHTML=`Rätt svar är <b>${fmt(q.value)}</b>.<br>${q.d==='up'?'100 % +':'100 % −'} ${q.pct} % = ${percent} % → förändringsfaktor <b>${fmt(q.factor)}</b><br><span class="formula">${fmt(q.base)} · ${fmt(q.factor)} = ${fmt(q.value)}</span>`;
+   }
+   $('answer').disabled=true;$('check').textContent='Ny uppgift';
+ }
+}
+function update(){$('correct').textContent=correct;$('streak').textContent=streak}
+$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')check()});
+</script>
+</body>
+</html>
