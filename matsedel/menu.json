@@ -1,46 +1,46 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-09-21&endDate=2026-09-27&lang=sv",
-  "week": 39,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-09-28&endDate=2026-10-04&lang=sv",
+  "week": 40,
   "year": 2026,
-  "period": "21 september – 25 september 2026",
-  "updated": "2026-09-21",
+  "period": "28 september – 2 oktober 2026",
+  "updated": "2026-09-28",
   "monthly_green": "Vitkål, tomat & äpple",
   "days": [
     {
-      "date": "2026-09-21",
+      "date": "2026-09-28",
       "day": "Måndag",
-      "date_label": "21 september",
+      "date_label": "28 september",
+      "meal1": "Kökets gröna maträtt",
+      "meal2": "Kökets gröna maträtt"
+    },
+    {
+      "date": "2026-09-29",
+      "day": "Tisdag",
+      "date_label": "29 september",
+      "meal1": "Skånsk kalops med kokt potatis och betor",
+      "meal2": "Kalops på quorn serveras med kokt potatis & betor"
+    },
+    {
+      "date": "2026-09-30",
+      "day": "Onsdag",
+      "date_label": "30 september",
+      "meal1": "Panerad fisk serveras med potatis & remouladsås",
+      "meal2": "Panerad filé serveras med potatis & remouladsås"
+    },
+    {
+      "date": "2026-10-01",
+      "day": "Torsdag",
+      "date_label": "1 oktober",
       "meal1": "Spaghetti med köttfärssås",
       "meal2": "Spaghetti med färssås"
     },
     {
-      "date": "2026-09-22",
-      "day": "Tisdag",
-      "date_label": "22 september",
-      "meal1": "Västkustburgare med kökets tillbehör",
-      "meal2": "Sojaburgare med bröd & potatismos"
-    },
-    {
-      "date": "2026-09-23",
-      "day": "Onsdag",
-      "date_label": "23 september",
-      "meal1": "Asiatisk nudelwok",
-      "meal2": "Pasta Alfredo"
-    },
-    {
-      "date": "2026-09-24",
-      "day": "Torsdag",
-      "date_label": "24 september",
-      "meal1": "Falukorv med stuvade makaroner och tillbehör",
-      "meal2": "Sojakorv med stuvade makaroner"
-    },
-    {
-      "date": "2026-09-25",
+      "date": "2026-10-02",
       "day": "Fredag",
-      "date_label": "25 september",
-      "meal1": "Kyckling i chili- och ananassås serveras med bulgur",
-      "meal2": "Ananasgryta med sojabitar serveras med ris"
+      "date_label": "2 oktober",
+      "meal1": "Hamburgare med bröd, dressing",
+      "meal2": "Burgare, veg (g)"
     }
   ]
 }
