@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Räta linjens ekvation – Lärarverktyg</title>
+<style>
+:root{
+  --blue:#123b5d; --blue2:#1d5b86; --gold:#e4b33d; --bg:#f3f6f8;
+  --card:#fff; --text:#17212b; --muted:#66727d; --grid:#dbe3e8;
+  --green:#2d7d59; --red:#b84444;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--blue);color:#fff;padding:16px 20px;border-bottom:5px solid var(--gold)}
+.header-inner{max-width:1200px;margin:auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.back{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.6);border-radius:8px;padding:9px 12px;font-weight:700}
+.back:hover{background:rgba(255,255,255,.1)}
+h1{font-size:clamp(1.35rem,3vw,2rem);margin:0}
+.subtitle{opacity:.88;font-size:.95rem}
+main{max-width:1200px;margin:auto;padding:20px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tab{border:2px solid var(--blue);background:#fff;color:var(--blue);padding:11px 16px;border-radius:10px;font-weight:700;cursor:pointer;font-size:1rem}
+.tab.active{background:var(--blue);color:#fff}
+.layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,.75fr);gap:20px;align-items:start}
+.card{background:var(--card);border-radius:14px;border:1px solid #d8e0e5;padding:18px;box-shadow:0 2px 7px rgba(0,0,0,.06)}
+.graph-card{padding:10px}
+svg{width:100%;height:auto;display:block;background:#fff;border-radius:9px}
+.mode-title{font-size:1.35rem;color:var(--blue);font-weight:800;margin:0 0 5px}
+.instruction{color:var(--muted);line-height:1.45;margin:0 0 14px}
+.equation{text-align:center;background:#eef4f8;border:2px solid #c9d9e4;border-radius:12px;padding:13px;font-size:2rem;font-weight:800;margin:12px 0 18px}
+.control{margin:15px 0}
+.control-head{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.value{font-size:1.2rem;color:var(--blue)}
+input[type=range]{width:100%;height:38px;accent-color:var(--blue)}
+.support{border-top:1px solid #dde4e8;padding-top:10px;margin-top:12px}
+.check{display:flex;align-items:center;gap:9px;min-height:38px}
+.check input{width:18px;height:18px;accent-color:var(--blue)}
+.think{margin-top:16px;border-left:5px solid var(--gold);background:#fff9e8}
+.think strong{color:var(--blue)}
+.hidden{display:none!important}
+.disabled{opacity:.45}
+.train-inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label.small{font-weight:700}
+input[type=number]{width:100%;font-size:1.1rem;padding:10px;border:2px solid #bdcbd4;border-radius:8px;margin-top:5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button.action{border:0;border-radius:9px;padding:11px 15px;font-size:1rem;font-weight:700;cursor:pointer;background:var(--blue);color:#fff}
+button.secondary{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+.feedback{font-weight:700;min-height:24px;margin:12px 0 0}
+.help{font-size:.9rem;color:var(--muted);margin-top:10px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.card{padding:14px}main{padding:12px}.tab{flex:1 1 45%}.equation{font-size:1.65rem}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="back" href="../index.html">← Tillbaka till lärarverktyg</a>
+    <div>
+      <h1>Räta linjens ekvation</h1>
+      <div class="subtitle">Upptäck, laborera och träna på y = kx + m</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-mode="m">1. Upptäck m</button>
+    <button class="tab" data-mode="k">2. Upptäck k</button>
+    <button class="tab" data-mode="free">3. Laborera fritt</button>
+    <button class="tab" data-mode="train">4. Träna</button>
+  </div>
+
+  <div class="layout">
+    <div class="card graph-card">
+      <svg id="graph" viewBox="0 0 650 650" aria-label="Koordinatsystem med graf"></svg>
+    </div>
+
+    <div>
+      <div class="card">
+        <div id="modeTitle" class="mode-title">Upptäck m-värdet</div>
+        <p id="instruction" class="instruction"></p>
+        <div id="equation" class="equation">y = x</div>
+
+        <div id="kControl" class="control disabled">
+          <div class="control-head"><label for="kRange">k-värde</label><span id="kVal" class="value">1</span></div>
+          <input id="kRange" type="range" min="-3" max="3" step="0.5" value="1" disabled>
+        </div>
+        <div id="mControl" class="control">
+          <div class="control-head"><label for="mRange">m-värde</label><span id="mVal" class="value">0</span></div>
+          <input id="mRange" type="range" min="-5" max="5" step="1" value="0">
+        </div>
+
+        <div id="support" class="support">
+          <label class="check"><input id="showM" type="checkbox" checked> Visa skärning med y-axeln</label>
+          <label class="check"><input id="showK" type="checkbox"> Visa k-triangel</label>
+          <label class="check"><input id="showCoords" type="checkbox"> Visa koordinater</label>
+          <label class="check"><input id="showTrace" type="checkbox" checked> Visa föregående linje</label>
+        </div>
+      </div>
+
+      <div id="think" class="card think">
+        <strong>Fundera</strong>
+        <p id="question"></p>
+      </div>
+
+      <div id="trainPanel" class="card hidden" style="margin-top:16px">
+        <div class="mode-title">Läs av grafen</div>
+        <p class="instruction">Bestäm först var linjen skär y-axeln. Undersök sedan hur mycket y förändras när x ökar med 1.</p>
+        <div class="train-inputs">
+          <label class="small">k = <input id="answerK" type="number" step="0.5"></label>
+          <label class="small">m = <input id="answerM" type="number" step="1"></label>
+        </div>
+        <div class="actions">
+          <button id="check" class="action">Kontrollera</button>
+          <button id="newTask" class="action secondary">Ny uppgift</button>
+          <button id="hint" class="action secondary">Ledtråd</button>
+        </div>
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const svg=document.getElementById("graph");
+const kRange=document.getElementById("kRange"),mRange=document.getElementById("mRange");
+const kVal=document.getElementById("kVal"),mVal=document.getElementById("mVal");
+const equation=document.getElementById("equation"), modeTitle=document.getElementById("modeTitle");
+const instruction=document.getElementById("instruction"), question=document.getElementById("question");
+const kControl=document.getElementById("kControl"),mControl=document.getElementById("mControl");
+const think=document.getElementById("think"),trainPanel=document.getElementById("trainPanel");
+const showM=document.getElementById("showM"),showK=document.getElementById("showK");
+const showCoords=document.getElementById("showCoords"),showTrace=document.getElementById("showTrace");
+const NS="http://www.w3.org/2000/svg";
+let mode="m",k=1,m=0,previous=null,target={k:1,m:0},hintStep=0;
+const center=325, scale=50, X=x=>center+x*scale, Y=y=>center-y*scale;
+
+function sEl(name,attrs={}){
+ const e=document.createElementNS(NS,name);
+ for(const [a,v] of Object.entries(attrs))e.setAttribute(a,v);
+ return e;
+}
+function addLine(x1,y1,x2,y2,stroke,width=1,dash=""){
+ const e=sEl("line",{x1,y1,x2,y2,stroke,"stroke-width":width});
+ if(dash)e.setAttribute("stroke-dasharray",dash);svg.appendChild(e);
+}
+function addText(x,y,t,anchor="middle",size=15,fill="#334"){
+ const e=sEl("text",{x,y,"text-anchor":anchor,"font-size":size,fill,"font-family":"Arial, sans-serif"});
+ e.textContent=t;svg.appendChild(e);
+}
+function addCircle(x,y,r,fill){
+ svg.appendChild(sEl("circle",{cx:x,cy:y,r,fill}));
+}
+function graphLine(kk,mm,color,width=4,dash=""){
+ addLine(X(-7),Y(kk*(-7)+mm),X(7),Y(kk*7+mm),color,width,dash);
+}
+function formatNum(n){return Number.isInteger(n)?String(n):String(n).replace(".",",")}
+function formatEquation(a,b){
+ if(a===0)return "y = "+formatNum(b);
+ let part=a===1?"":a===-1?"−":formatNum(a);
+ let out="y = "+part+"x";
+ if(b>0)out+=" + "+formatNum(b);
+ if(b<0)out+=" − "+formatNum(Math.abs(b));
+ return out;
+}
+function draw(){
+ svg.innerHTML="";
+ for(let i=-6;i<=6;i++){
+   addLine(X(i),25,X(i),625,"#dce5ea",1);
+   addLine(25,Y(i),625,Y(i),"#dce5ea",1);
+ }
+ addLine(25,center,625,center,"#253846",2);
+ addLine(center,25,center,625,"#253846",2);
+ // arrowheads
+ svg.appendChild(sEl("polygon",{points:"625,325 613,319 613,331",fill:"#253846"}));
+ svg.appendChild(sEl("polygon",{points:"325,25 319,37 331,37",fill:"#253846"}));
+ for(let i=-5;i<=5;i++)if(i!==0){
+   addText(X(i),center+22,String(i));
+   addText(center-11,Y(i)+5,String(i),"end");
+ }
+ addText(614,center-12,"x","end",18);
+ addText(center+13,42,"y","start",18);
+ addText(center-10,center+20,"0","end",14);
+
+ if(previous&&showTrace.checked&&mode!=="train")graphLine(previous.k,previous.m,"#9baab4",2,"8 7");
+ graphLine(k,m,"#176a9b",4);
+
+ if(showM.checked){
+   addCircle(X(0),Y(m),7,"#d39a18");
+   addText(X(0)+13,Y(m)-12,"m = "+formatNum(m),"start",15,"#8a6410");
+ }
+ if(showK.checked){
+   const x0=0,y0=m,x1=1,y1=m,x2=1,y2=m+k;
+   addLine(X(x0),Y(y0),X(x1),Y(y1),"#2d7d59",4);
+   addLine(X(x1),Y(y1),X(x2),Y(y2),"#2d7d59",4);
+   addText((X(x0)+X(x1))/2,Y(y0)+20,"1", "middle",15,"#226044");
+   if(k!==0)addText(X(x1)+14,(Y(y1)+Y(y2))/2+5,""+formatNum(k),"start",15,"#226044");
+ }
+ if(showCoords.checked){
+   [[0,m],[1,m+k]].forEach(([a,b])=>{
+     addCircle(X(a),Y(b),5,"#7b4e9c");
+     addText(X(a)+12,Y(b)-10,"("+formatNum(a)+", "+formatNum(b)+")","start",14,"#613a7e");
+   });
+ }
+ kVal.textContent=formatNum(k);mVal.textContent=formatNum(m);equation.textContent=formatEquation(k,m);
+}
+function remember(){previous={k,m}}
+function setControls(kEnabled,mEnabled){
+ kRange.disabled=!kEnabled;mRange.disabled=!mEnabled;
+ kControl.classList.toggle("disabled",!kEnabled);mControl.classList.toggle("disabled",!mEnabled);
+}
+function setMode(next){
+ mode=next;previous=null;
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+ trainPanel.classList.toggle("hidden",mode!=="train");
+ think.classList.toggle("hidden",mode==="train");
+ kControl.classList.remove("hidden");mControl.classList.remove("hidden");
+ if(mode==="m"){
+   k=1;m=0;kRange.value=k;mRange.value=m;setControls(false,true);
+   modeTitle.textContent="Upptäck m-värdet";
+   instruction.textContent="Ändra m-värdet. Försök först förutsäga vad som kommer att hända med grafen.";
+   question.textContent="Vad verkar m-värdet bestämma? Vad händer med linjen när m blir större eller mindre?";
+   showM.checked=true;showK.checked=false;
+ } else if(mode==="k"){
+   k=1;m=0;kRange.value=k;mRange.value=m;setControls(true,false);
+   modeTitle.textContent="Upptäck k-värdet";
+   instruction.textContent="Ändra k-värdet och undersök hur linjens lutning förändras.";
+   question.textContent="Vad händer när k är positivt, negativt eller 0? Hur ser du att ett större |k| ger en brantare linje?";
+   showM.checked=true;showK.checked=true;
+ } else if(mode==="free"){
+   setControls(true,true);
+   modeTitle.textContent="Laborera fritt";
+   instruction.textContent="Ändra både k och m. Försök förutsäga grafens förändring innan du flyttar reglagen.";
+   question.textContent="Kan du skapa två parallella linjer? Vad måste vara lika? Kan du få linjen att gå genom origo?";
+ } else {
+   setControls(false,false);kControl.classList.add("hidden");mControl.classList.add("hidden");
+   modeTitle.textContent="Träna";
+   instruction.textContent="Läs av grafen och bestäm k och m.";
+   showM.checked=false;showK.checked=false;showCoords.checked=false;showTrace.checked=false;
+   newTask();return;
+ }
+ draw();
+}
+function newTask(){
+ const ks=[-3,-2,-1,-0.5,0.5,1,2,3];
+ target.k=ks[Math.floor(Math.random()*ks.length)];
+ target.m=Math.floor(Math.random()*9)-4;
+ k=target.k;m=target.m;hintStep=0;
+ document.getElementById("answerK").value="";document.getElementById("answerM").value="";
+ document.getElementById("feedback").textContent="";
+ showM.checked=false;showK.checked=false;showCoords.checked=false;draw();
+}
+function checkAnswer(){
+ const ka=document.getElementById("answerK"),ma=document.getElementById("answerM"),f=document.getElementById("feedback");
+ if(ka.value===""||ma.value===""){f.textContent="Fyll i både k och m.";f.style.color="#b84444";return}
+ const okK=Number(ka.value)===target.k,okM=Number(ma.value)===target.m;
+ if(okK&&okM){f.textContent="Rätt! "+formatEquation(target.k,target.m);f.style.color="#2d7d59"}
+ else if(!okM){f.textContent="Inte riktigt. Börja med m: var skär linjen y-axeln?";f.style.color="#b84444"}
+ else {f.textContent="m är rätt. Titta nu på hur mycket y ändras när x ökar med 1.";f.style.color="#b84444"}
+}
+function hint(){
+ hintStep++;const f=document.getElementById("feedback");f.style.color="#1d5b86";
+ if(hintStep===1){showM.checked=true;f.textContent="Ledtråd 1: Den markerade punkten visar var linjen skär y-axeln. Där hittar du m.";draw()}
+ else if(hintStep===2){showK.checked=true;f.textContent="Ledtråd 2: Följ den gröna markeringen: 1 steg åt höger. Hur många steg går linjen upp eller ner?";draw()}
+ else {showCoords.checked=true;f.textContent="Ledtråd 3: Använd de markerade koordinaterna för att läsa av förändringen.";draw()}
+}
+kRange.addEventListener("input",()=>{remember();k=Number(kRange.value);draw()});
+mRange.addEventListener("input",()=>{remember();m=Number(mRange.value);draw()});
+[showM,showK,showCoords,showTrace].forEach(c=>c.addEventListener("change",draw));
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+document.getElementById("check").addEventListener("click",checkAnswer);
+document.getElementById("newTask").addEventListener("click",newTask);
+document.getElementById("hint").addEventListener("click",hint);
+setMode("m");
+</script>
+</body>
+</html>
