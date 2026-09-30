@@ -253,6 +253,12 @@ function makeQuestion(step){
     value = raw/scale;
   }
 
+  // Säkerställ att uppgiften verkligen kräver avrundning.
+  // Tal som redan ligger exakt på vald avrundningsnivå genereras om.
+  if (Math.abs(value / step - Math.round(value / step)) < 1e-9) {
+    return makeQuestion(step);
+  }
+
   const answer = roundTo(value,step);
   return {step,value,answer,shown:formatSv(value,6)};
 }
