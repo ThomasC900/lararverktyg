@@ -2,7 +2,7 @@ name: Uppdatera matsedel
 
 on:
   workflow_dispatch:
-    schedule:
+  schedule:
     # Kontrollera matsedeln varje morgon svensk tid
     - cron: "23 6 * * *"
       timezone: "Europe/Stockholm"
