@@ -40,6 +40,12 @@ input[type=range]{width:100%;height:38px;accent-color:var(--blue)}
 .think strong{color:var(--blue)}
 .hidden{display:none!important}
 .disabled{opacity:.45}
+.train-settings{background:#f6f9fb;border:1px solid #d8e3e9;border-radius:10px;padding:12px;margin:0 0 15px}
+.train-settings-title{font-weight:800;color:var(--blue);margin-bottom:8px}
+.setting-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:7px 0}
+.setting-label{font-weight:700;min-width:72px}
+.choice{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid #c9d6de;border-radius:8px;padding:7px 9px;cursor:pointer}
+.choice input{accent-color:var(--blue)}
 .train-inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 label.small{font-weight:700}
 input[type=number]{width:100%;font-size:1.1rem;padding:10px;border:2px solid #bdcbd4;border-radius:8px;margin-top:5px}
@@ -106,9 +112,23 @@ button.secondary{background:#fff;color:var(--blue);border:2px solid var(--blue)}
       <div id="trainPanel" class="card hidden" style="margin-top:16px">
         <div class="mode-title">Läs av grafen</div>
         <p class="instruction">Bestäm först var linjen skär y-axeln. Undersök sedan hur mycket y förändras när x ökar med 1.</p>
+        <div class="train-settings">
+          <div class="train-settings-title">Inställningar för nya uppgifter</div>
+          <div class="setting-row">
+            <span class="setting-label">k-värde:</span>
+            <label class="choice"><input type="radio" name="kSign" value="both" checked> Båda</label>
+            <label class="choice"><input type="radio" name="kSign" value="positive"> Positiva</label>
+            <label class="choice"><input type="radio" name="kSign" value="negative"> Negativa</label>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">m-värde:</span>
+            <label class="choice"><input type="radio" name="mType" value="integer" checked> Heltal</label>
+            <label class="choice"><input type="radio" name="mType" value="halves"> Tillåt halvor</label>
+          </div>
+        </div>
         <div class="train-inputs">
           <label class="small">k = <input id="answerK" type="number" step="0.5"></label>
-          <label class="small">m = <input id="answerM" type="number" step="1"></label>
+          <label class="small">m = <input id="answerM" type="number" step="0.5"></label>
         </div>
         <div class="actions">
           <button id="check" class="action">Kontrollera</button>
@@ -189,17 +209,29 @@ function draw(){
    addCircle(X(0),Y(m),7,"#d39a18");
    addText(X(0)+13,Y(m)-12,"m = "+formatNum(m),"start",15,"#8a6410");
  }
+ // Hjälptriangeln väljer den riktning som håller hela triangeln i koordinatsystemet.
+ let helperDir=1;
+ if(m+k>5.5 || m+k<-5.5) helperDir=-1;
+ if(m-k>5.5 || m-k<-5.5) helperDir=1;
  if(showK.checked){
-   const x0=0,y0=m,x1=1,y1=m,x2=1,y2=m+k;
+   const x0=0,y0=m,x1=helperDir,y1=m,x2=helperDir,y2=m+k*helperDir;
    addLine(X(x0),Y(y0),X(x1),Y(y1),"#2d7d59",4);
    addLine(X(x1),Y(y1),X(x2),Y(y2),"#2d7d59",4);
-   addText((X(x0)+X(x1))/2,Y(y0)+20,"1", "middle",15,"#226044");
-   if(k!==0)addText(X(x1)+14,(Y(y1)+Y(y2))/2+5,""+formatNum(k),"start",15,"#226044");
+   const dxLabel=helperDir===1 ? "1" : "−1";
+   addText((X(x0)+X(x1))/2,Y(y0)+20,dxLabel,"middle",15,"#226044");
+   if(k!==0){
+     const dy=k*helperDir;
+     const textX=helperDir===1 ? X(x1)+14 : X(x1)-14;
+     const anchor=helperDir===1 ? "start" : "end";
+     addText(textX,(Y(y1)+Y(y2))/2+5,formatNum(dy),anchor,15,"#226044");
+   }
  }
  if(showCoords.checked){
-   [[0,m],[1,m+k]].forEach(([a,b])=>{
+   const secondX=helperDir, secondY=m+k*helperDir;
+   [[0,m],[secondX,secondY]].forEach(([a,b])=>{
      addCircle(X(a),Y(b),5,"#7b4e9c");
-     addText(X(a)+12,Y(b)-10,"("+formatNum(a)+", "+formatNum(b)+")","start",14,"#613a7e");
+     const tx=a<0?X(a)-12:X(a)+12, anchor=a<0?"end":"start";
+     addText(tx,Y(b)-10,"("+formatNum(a)+", "+formatNum(b)+")",anchor,14,"#613a7e");
    });
  }
  kVal.textContent=formatNum(k);mVal.textContent=formatNum(m);equation.textContent=formatEquation(k,m);
@@ -242,9 +274,36 @@ function setMode(next){
  draw();
 }
 function newTask(){
- const ks=[-3,-2,-1,-0.5,0.5,1,2,3];
- target.k=ks[Math.floor(Math.random()*ks.length)];
- target.m=Math.floor(Math.random()*9)-4;
+ const sign=document.querySelector('input[name="kSign"]:checked').value;
+ const mType=document.querySelector('input[name="mType"]:checked').value;
+
+ let ks;
+ if(sign==="positive") ks=[0.5,1,2,3];
+ else if(sign==="negative") ks=[-3,-2,-1,-0.5];
+ else ks=[-3,-2,-1,-0.5,0.5,1,2,3];
+
+ // m hålls en bit från kanten så att avläsning och hjälpgrafik blir tydlig.
+ let ms=[];
+ if(mType==="integer"){
+   for(let v=-4;v<=4;v++) ms.push(v);
+ } else {
+   for(let v=-4;v<=4.001;v+=0.5) ms.push(Number(v.toFixed(1)));
+ }
+
+ // Välj en kombination där minst en enhetsförflyttning från (0,m)
+ // ryms tydligt åt höger eller vänster.
+ let candidates=[];
+ for(const kk of ks){
+   for(const mm of ms){
+     const right=mm+kk;
+     const left=mm-kk;
+     if((right>=-5.5&&right<=5.5)||(left>=-5.5&&left<=5.5)){
+       candidates.push({k:kk,m:mm});
+     }
+   }
+ }
+ const pick=candidates[Math.floor(Math.random()*candidates.length)];
+ target.k=pick.k;target.m=pick.m;
  k=target.k;m=target.m;hintStep=0;
  document.getElementById("answerK").value="";document.getElementById("answerM").value="";
  document.getElementById("feedback").textContent="";
@@ -261,7 +320,7 @@ function checkAnswer(){
 function hint(){
  hintStep++;const f=document.getElementById("feedback");f.style.color="#1d5b86";
  if(hintStep===1){showM.checked=true;f.textContent="Ledtråd 1: Den markerade punkten visar var linjen skär y-axeln. Där hittar du m.";draw()}
- else if(hintStep===2){showK.checked=true;f.textContent="Ledtråd 2: Följ den gröna markeringen: 1 steg åt höger. Hur många steg går linjen upp eller ner?";draw()}
+ else if(hintStep===2){showK.checked=true;f.textContent="Ledtråd 2: Följ den gröna markeringen. Jämför förändringen i y med förändringen i x för att hitta k.";draw()}
  else {showCoords.checked=true;f.textContent="Ledtråd 3: Använd de markerade koordinaterna för att läsa av förändringen.";draw()}
 }
 kRange.addEventListener("input",()=>{remember();k=Number(kRange.value);draw()});
@@ -271,6 +330,9 @@ document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setM
 document.getElementById("check").addEventListener("click",checkAnswer);
 document.getElementById("newTask").addEventListener("click",newTask);
 document.getElementById("hint").addEventListener("click",hint);
+document.querySelectorAll('input[name="kSign"], input[name="mType"]').forEach(r=>{
+ r.addEventListener("change",()=>{if(mode==="train")newTask()});
+});
 setMode("m");
 </script>
 </body>
