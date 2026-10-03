@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Räta linjens ekvation – Lärarverktyg</title>
+<link rel="stylesheet" href="../assets/lararverktyg.css">
 <style>
 :root{
   --blue:#123b5d; --blue2:#1d5b86; --gold:#e4b33d; --bg:#f3f6f8;
@@ -55,20 +56,32 @@ button.secondary{background:#fff;color:var(--blue);border:2px solid var(--blue)}
 .feedback{font-weight:700;min-height:24px;margin:12px 0 0}
 .help{font-size:.9rem;color:var(--muted);margin-top:10px}
 @media(max-width:800px){.layout{grid-template-columns:1fr}.card{padding:14px}main{padding:12px}.tab{flex:1 1 45%}.equation{font-size:1.65rem}}
+
+/* Design-test: synkronisering med gemensam Lärarverktyg-standard */
+body.lv-page{background:var(--lv-bg);color:var(--lv-text)}
+main.lv-main{max-width:1200px}
+.card{border-color:var(--lv-border)}
+.tab.active{box-shadow:inset 0 -4px 0 var(--lv-gold)}
+.choice:has(input:checked){border-color:var(--lv-blue);background:#eef4f8;box-shadow:inset 0 -3px 0 var(--lv-gold)}
+input[type=number]:focus{border-color:var(--lv-blue);outline:none;box-shadow:0 0 0 4px rgba(18,59,93,.10)}
+.think{border-left:5px solid var(--lv-gold);background:#fff9e8}
+button.action{background:var(--lv-blue)}
+button.action:hover{background:var(--lv-blue-2)}
+button.secondary{background:#e9eef2;color:var(--lv-blue);border:0}
 </style>
 </head>
-<body>
-<header>
-  <div class="header-inner">
-    <a class="back" href="../index.html">← Tillbaka till lärarverktyg</a>
-    <div>
-      <h1>Räta linjens ekvation</h1>
-      <div class="subtitle">Upptäck, laborera och träna på y = kx + m</div>
+<body class="lv-page">
+<header class="lv-header">
+  <div class="lv-header-inner">
+    <a class="lv-back" href="../index.html">← Tillbaka till lärarverktyg</a>
+    <div class="lv-title-block">
+      <h1 class="lv-title">Räta linjens ekvation</h1>
+      <p class="lv-subtitle">Upptäck, laborera och träna på y = kx + m</p>
     </div>
   </div>
 </header>
 
-<main>
+<main class="lv-main">
   <div class="tabs" role="tablist">
     <button class="tab active" data-mode="m">1. Upptäck m</button>
     <button class="tab" data-mode="k">2. Upptäck k</button>
