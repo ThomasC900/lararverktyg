@@ -17,7 +17,7 @@ body.lv-page{
   font-family:Arial,Helvetica,sans-serif;
   background:var(--lv-bg);
 }
-.app.lv-main{width:min(1150px,100%);padding-top:28px}
+.app.lv-main{width:min(1000px,100%);padding-top:28px}
 .card{
   background:var(--lv-card);
   border:1px solid var(--lv-border);
@@ -31,10 +31,10 @@ body.lv-page{
   border-radius:10px;
 }
 .table-choice input:checked+label{
-  background:var(--lv-blue);
-  color:#fff;
-  border-color:var(--lv-blue);
-  box-shadow:none;
+  background:var(--lv-blue)!important;
+  color:#fff!important;
+  border-color:var(--lv-blue)!important;
+  box-shadow:inset 0 -4px 0 var(--lv-gold)!important;
 }
 .small-btn,.count-btn,.secondary{
   background:#e9eef2;
@@ -47,9 +47,10 @@ body.lv-page{
 }
 .count-input,.answer{border-color:var(--lv-border);border-radius:9px}
 .primary,.check{
-  background:var(--lv-blue);
+  background:var(--lv-blue)!important;
   color:#fff;
   border-radius:9px;
+  box-shadow:none;
 }
 .primary:hover,.check:hover{background:var(--lv-blue-2)}
 .answer:focus{
