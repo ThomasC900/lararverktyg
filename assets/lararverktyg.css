@@ -1,0 +1,97 @@
+/* Lärarverktyg – gemensam design, testversion 0.1
+   Referens: Räta linjens ekvation
+   Denna fil påverkar bara sidor som uttryckligen länkar till den. */
+
+:root{
+  --lv-blue:#123b5d;
+  --lv-blue-2:#1d5b86;
+  --lv-gold:#e4b33d;
+  --lv-bg:#f3f6f8;
+  --lv-card:#ffffff;
+  --lv-text:#17212b;
+  --lv-muted:#66727d;
+  --lv-border:#d8e0e5;
+  --lv-green:#2d7d59;
+  --lv-red:#b84444;
+}
+
+.lv-page{
+  margin:0;
+  background:var(--lv-bg);
+  color:var(--lv-text);
+}
+
+.lv-header{
+  width:100%;
+  background:var(--lv-blue);
+  color:#fff;
+  border-bottom:5px solid var(--lv-gold);
+  padding:16px 20px;
+}
+
+.lv-header-inner{
+  width:min(1200px,100%);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.lv-back{
+  flex:0 0 auto;
+  color:#fff;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:8px;
+  padding:9px 12px;
+  font-weight:700;
+  line-height:1.2;
+}
+
+.lv-back:hover,
+.lv-back:focus-visible{
+  background:rgba(255,255,255,.1);
+}
+
+.lv-title-block{
+  min-width:0;
+}
+
+.lv-title{
+  margin:0;
+  color:#fff;
+  font-size:clamp(1.35rem,3vw,2rem);
+  font-weight:700;
+  line-height:1.15;
+  letter-spacing:normal;
+}
+
+.lv-subtitle{
+  margin:4px 0 0;
+  color:#fff;
+  opacity:.88;
+  font-size:.95rem;
+  line-height:1.35;
+}
+
+.lv-main{
+  width:min(1200px,100%);
+  margin:0 auto;
+  padding:20px;
+}
+
+.lv-card{
+  background:var(--lv-card);
+  border:1px solid var(--lv-border);
+  border-radius:14px;
+  box-shadow:0 2px 7px rgba(0,0,0,.06);
+}
+
+@media(max-width:700px){
+  .lv-header{padding:14px 12px}
+  .lv-header-inner{align-items:flex-start;gap:10px}
+  .lv-back{width:max-content}
+  .lv-title-block{flex-basis:100%}
+  .lv-main{padding:12px}
+}
