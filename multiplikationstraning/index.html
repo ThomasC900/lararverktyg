@@ -11,6 +11,58 @@
 .practice-top{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}.stat,.result-box{background:#f5f7fb;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center}.stat span,.result-box span{display:block;color:var(--muted);font-size:.78rem;font-weight:900;text-transform:uppercase}.stat strong,.result-box strong{display:block;margin-top:3px;font-size:1.55rem;font-variant-numeric:tabular-nums}.exercise{text-align:center;padding:18px 0}.expression{font-size:clamp(4rem,13vw,9rem);font-weight:950;line-height:1.1;letter-spacing:-.04em;margin:12px 0 24px}.answer-row{justify-content:center}.answer{width:190px;padding:14px;border:3px solid var(--line);border-radius:16px;font-size:1.6rem;font-weight:900;text-align:center;outline:none}.answer:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(52,87,213,.11)}.feedback{min-height:74px;margin:20px auto 0;max-width:650px}.feedback-box{border-radius:18px;padding:16px 18px;font-weight:800;font-size:1.05rem}.feedback-box.good{background:#18864b17;border:2px solid #18864b40;color:var(--good)}.feedback-box.bad{background:#c43b4514;border:2px solid #c43b4538;color:var(--bad)}.progress-shell{height:18px;background:#e5e9f2;border-radius:999px;overflow:hidden;margin:18px 0 6px}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .2s}.practice-controls,.result-actions{justify-content:center;margin-top:16px}
 .results{text-align:center}.results h2{font-size:2rem;margin:0 0 8px}.big-time{font-size:clamp(3rem,9vw,6.5rem);font-weight:950;letter-spacing:-.04em;color:var(--accent)}.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}.best{display:none;margin:18px auto 0;max-width:620px;padding:16px 18px;border-radius:18px;background:#fff8dc;border:2px solid #efd78a;color:#7a5800;font-weight:850}.best.show{display:block}
 @media(max-width:850px){.table-grid{grid-template-columns:repeat(5,1fr)}.practice-top,.result-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){body{padding:12px}.table-grid{gap:6px}.table-choice label{min-height:50px}.expression{font-size:22vw}}
+
+/* Design-test: gemensam Lärarverktyg-palett för Multiplikationsträning */
+body.lv-page{
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--lv-bg);
+}
+.app.lv-main{width:min(1150px,100%);padding-top:28px}
+.card{
+  background:var(--lv-card);
+  border:1px solid var(--lv-border);
+  border-radius:14px;
+  box-shadow:0 2px 7px rgba(0,0,0,.06);
+}
+.setup h2,.tables-title,.count-title,.results h2{color:var(--lv-blue)}
+.table-choice label{
+  background:#fff;
+  border-color:var(--lv-border);
+  border-radius:10px;
+}
+.table-choice input:checked+label{
+  background:var(--lv-blue);
+  color:#fff;
+  border-color:var(--lv-blue);
+  box-shadow:none;
+}
+.small-btn,.count-btn,.secondary{
+  background:#e9eef2;
+  color:var(--lv-blue);
+  border-radius:9px;
+}
+.count-btn.active{
+  background:var(--lv-blue);
+  color:#fff;
+}
+.count-input,.answer{border-color:var(--lv-border);border-radius:9px}
+.primary,.check{
+  background:var(--lv-blue);
+  color:#fff;
+  border-radius:9px;
+}
+.primary:hover,.check:hover{background:var(--lv-blue-2)}
+.answer:focus{
+  border-color:var(--lv-blue);
+  box-shadow:0 0 0 4px rgba(18,59,93,.10);
+}
+.progress-shell{background:#e1e7eb}
+.progress{background:var(--lv-gold)}
+.stat,.result-box{background:#f6f9fb;border-color:var(--lv-border);border-radius:10px}
+.big-time{color:var(--lv-blue)}
+.best{border-color:var(--lv-gold);background:#fff9e8;color:#6d5310}
+@media(max-width:700px){.app.lv-main{padding-top:16px}}
+
 </style></head>
 <body class="lv-page">
 <header class="lv-header">
