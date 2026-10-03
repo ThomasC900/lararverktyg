@@ -95,3 +95,31 @@
   .lv-title-block{flex-basis:100%}
   .lv-main{padding:12px}
 }
+
+
+/* Återanvändbara komponenter – design-test v0.2 */
+.lv-content-narrow{max-width:1000px;margin-left:auto;margin-right:auto}
+.lv-btn-primary{
+  background:var(--lv-blue);color:#fff;border:0;border-radius:9px;
+  padding:11px 18px;font-weight:700;cursor:pointer;
+}
+.lv-btn-primary:hover,.lv-btn-primary:focus-visible{background:var(--lv-blue-2)}
+.lv-btn-secondary{
+  background:#e9eef2;color:var(--lv-blue);border:0;border-radius:9px;
+  padding:9px 12px;font-weight:700;cursor:pointer;
+}
+.lv-choice-selected{
+  background:var(--lv-blue)!important;color:#fff!important;
+  border-color:var(--lv-blue)!important;
+  box-shadow:inset 0 -4px 0 var(--lv-gold)!important;
+}
+.lv-input{
+  background:#fff;border:2px solid var(--lv-border);border-radius:9px;
+}
+.lv-input:focus{border-color:var(--lv-blue);outline:none;box-shadow:0 0 0 4px rgba(18,59,93,.10)}
+.lv-feedback-good{color:var(--lv-green)}
+.lv-feedback-bad{color:var(--lv-red)}
+.lv-brand{
+  margin-left:auto;opacity:.82;font-size:.8rem;font-weight:700;
+  white-space:nowrap;color:#fff;
+}
