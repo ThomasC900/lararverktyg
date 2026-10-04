@@ -3,8 +3,8 @@ name: Uppdatera matsedel
 on:
   workflow_dispatch:
   schedule:
-    # Kontrollera matsedeln varje morgon svensk tid
-    - cron: "23 6 * * *"
+    # Kör strax efter midnatt svensk tid så att rätt dags/veckas matsedel hämtas
+    - cron: "1 0 * * *"
       timezone: "Europe/Stockholm"
 permissions:
   contents: write
