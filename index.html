@@ -4,208 +4,71 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Lärarverktyg</title>
+  <title>Thomas Lärverktyg</title>
 
   <style>
-    :root {
-      --bg: #f4f7f5;
-      --surface: #ffffff;
-      --text: #1f2933;
-      --muted: #64748b;
-      --accent: #2f6f5e;
-      --accent-dark: #245548;
-      --border: #dce5e1;
-      --shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    header {
-      background: linear-gradient(135deg, #2f6f5e, #4f8b78);
-      color: white;
-      padding: 60px 24px 50px;
-    }
-
-    .header-content {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      margin: 0 0 12px;
-      font-size: clamp(2.3rem, 6vw, 4.4rem);
-      letter-spacing: -0.03em;
-    }
-
-    .intro {
-      max-width: 720px;
-      margin: 0;
-      font-size: 1.2rem;
-      line-height: 1.6;
-      opacity: 0.95;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 45px 24px 70px;
-    }
-
-    .toolbar {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 38px;
-    }
-
-    .search {
-      flex: 1;
-      min-width: 230px;
-      max-width: 450px;
-    }
-
-    .search input {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 1rem;
-      background: var(--surface);
-    }
-
-    .theme-button {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      padding: 12px 16px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-
-    section {
-      margin-bottom: 48px;
-    }
-
-    h2 {
-      margin-bottom: 18px;
-      font-size: 1.7rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      display: flex;
-      flex-direction: column;
-      min-height: 220px;
-      padding: 24px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.11);
-    }
-
-    .icon {
-      font-size: 2.4rem;
-      margin-bottom: 15px;
-    }
-
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 1.25rem;
-    }
-
-    .card p {
-      margin: 0 0 20px;
-      color: var(--muted);
-      line-height: 1.5;
-      flex-grow: 1;
-    }
-
-    .card a,
-    .coming-soon {
-      display: inline-block;
-      align-self: flex-start;
-      text-decoration: none;
-      font-weight: bold;
-      color: var(--accent);
-    }
-
-    .coming-soon {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    footer {
-      text-align: center;
-      color: var(--muted);
-      padding: 25px;
-      font-size: 0.9rem;
-    }
-
-    body.dark {
-      --bg: #17201d;
-      --surface: #222d29;
-      --text: #edf4f1;
-      --muted: #b4c4be;
-      --accent: #89c7b1;
-      --border: #35443f;
-      --shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    }
-
-    body.dark header {
-      background: linear-gradient(135deg, #183b31, #2e5d4e);
-    }
-
-    body.dark input {
-      color: var(--text);
-    }
-
-    @media (max-width: 600px) {
-      header {
-        padding: 45px 20px 38px;
-      }
-
-      main {
-        padding: 30px 18px 50px;
-      }
-
-      .card {
-        min-height: auto;
-      }
-    }
-  </style>
+:root{
+  --blue:#0d3450;--blue2:#1d5b86;--gold:#e0ab2d;--bg:#f3f6f8;
+  --surface:#fff;--text:#17212b;--muted:#66727d;--border:#d8e0e5;
+  --shadow:0 2px 8px rgba(13,52,80,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--blue);color:#fff;border-bottom:5px solid var(--gold);padding:34px 24px 30px}
+.header-content{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:42px}
+.brand-logo{flex:0 0 310px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 3px 12px rgba(0,0,0,.12)}
+.brand-logo img{display:block;width:100%;height:auto}
+.hero-copy{min-width:0}
+h1{margin:0 0 10px;font-size:clamp(2rem,4vw,3.35rem);line-height:1.05;letter-spacing:-.025em}
+.intro{max-width:690px;margin:0;font-size:1.12rem;line-height:1.55;color:rgba(255,255,255,.9)}
+main{max-width:1200px;margin:0 auto;padding:36px 24px 70px}
+.toolbar{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:34px}
+.search{flex:1;min-width:230px;max-width:520px}
+.search input{width:100%;padding:13px 15px;border:2px solid var(--border);border-radius:9px;font-size:1rem;background:var(--surface);color:var(--text)}
+.search input:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px rgba(13,52,80,.10)}
+.theme-button{border:0;background:#e9eef2;color:var(--blue);padding:12px 16px;border-radius:9px;cursor:pointer;font-size:1rem;font-weight:700}
+section{margin-bottom:46px}
+h2{margin:0 0 18px;padding-bottom:9px;border-bottom:3px solid var(--gold);font-size:1.65rem;color:var(--blue)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}
+.card{display:flex;flex-direction:column;min-height:218px;padding:22px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.card:hover{transform:translateY(-3px);border-color:#c4d1d9;box-shadow:0 7px 18px rgba(13,52,80,.12)}
+.icon{font-size:2.25rem;margin-bottom:14px}
+.card h3{margin:0 0 9px;font-size:1.2rem;color:var(--blue)}
+.card p{margin:0 0 18px;color:var(--muted);line-height:1.5;flex-grow:1}
+.card a,.coming-soon{display:inline-block;align-self:flex-start;text-decoration:none;font-weight:800;color:var(--blue)}
+.card a{border-bottom:3px solid var(--gold);padding-bottom:2px}
+.card a:hover{color:var(--blue2)}
+.coming-soon{color:var(--muted);font-size:.9rem}
+footer{text-align:center;color:var(--muted);padding:28px 20px 34px;font-size:.9rem;border-top:1px solid var(--border)}
+body.dark{--bg:#142735;--surface:#1d3545;--text:#f2f6f8;--muted:#c2cdd4;--border:#3b5667;--shadow:0 3px 12px rgba(0,0,0,.25)}
+body.dark header{background:#092a40}
+body.dark h2,body.dark .card h3,body.dark .card a{color:#fff}
+body.dark .theme-button{background:#29485c;color:#fff}
+body.dark .search input{background:#1d3545;color:#fff}
+@media(max-width:760px){
+  header{padding:24px 18px 22px}
+  .header-content{flex-direction:column;align-items:flex-start;gap:20px}
+  .brand-logo{flex-basis:auto;width:min(280px,80vw)}
+  main{padding:28px 18px 50px}
+}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.card{min-height:auto}}
+</style>
 </head>
 
 <body>
 
   <header>
     <div class="header-content">
-      <h1>Lärarverktyg</h1>
-      <p class="intro">
-        Digitala spel, aktiviteter och hjälpmedel för klassrummet.
-        Enkla att starta och gjorda för att fungera direkt i webbläsaren.
-      </p>
+      <div class="brand-logo">
+        <img src="assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg">
+      </div>
+      <div class="hero-copy">
+        <h1>Thomas Lärverktyg</h1>
+        <p class="intro">
+          Digitala spel, aktiviteter och hjälpmedel för lärande och undervisning.
+          Enkla att starta och gjorda för att fungera direkt i webbläsaren.
+        </p>
+      </div>
     </div>
   </header>
 
@@ -479,7 +342,7 @@
 
 
   <footer>
-    Lärarverktyg · Digitala verktyg för undervisningen
+    Thomas Lärverktyg · Digitala verktyg för lärande och undervisning
   </footer>
 
 
