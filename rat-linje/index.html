@@ -44,6 +44,8 @@ input[type=range]{width:100%;height:38px;accent-color:var(--blue)}
 .train-settings{background:#f6f9fb;border:1px solid #d8e3e9;border-radius:10px;padding:12px;margin:0 0 15px}
 .train-settings-title{font-weight:800;color:var(--blue);margin-bottom:8px}
 .setting-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:7px 0}
+.setting-row.k-setting{flex-wrap:nowrap}
+@media(max-width:520px){.setting-row.k-setting{flex-wrap:wrap}}
 .setting-label{font-weight:700;min-width:72px}
 .choice{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid #c9d6de;border-radius:8px;padding:7px 9px;cursor:pointer}
 .choice input{accent-color:var(--blue)}
@@ -128,7 +130,7 @@ button.secondary{background:#e9eef2;color:var(--lv-blue);border:0}
         <p class="instruction">Bestäm först var linjen skär y-axeln. Undersök sedan hur mycket y förändras när x ökar med 1.</p>
         <div class="train-settings">
           <div class="train-settings-title">Inställningar för nya uppgifter</div>
-          <div class="setting-row">
+          <div class="setting-row k-setting">
             <span class="setting-label">k-värde:</span>
             <label class="choice"><input type="radio" name="kSign" value="both" checked> Båda</label>
             <label class="choice"><input type="radio" name="kSign" value="positive"> Positiva</label>
