@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Multiplikationsbingo</title>
+<link rel="stylesheet" href="../assets/lararverktyg.css">
 
   <style>
     :root {
@@ -31,14 +32,12 @@
         radial-gradient(circle at bottom right, #dcfce7 0, transparent 25%),
         var(--bg);
       color: var(--text);
-      display: flex;
-      justify-content: center;
-      padding: 24px;
+      padding:0;
       transition: background 0.25s ease, color 0.25s ease;
     }
 
     .app {
-      width: min(1100px, 100%);
+      width:min(1100px,96vw);margin:28px auto;
       display: grid;
       gap: 20px;
     }
@@ -321,15 +320,12 @@
   </style>
 </head>
 
-<body>
+<body class="lv-page"><header class="lv-header"><div class="lv-header-inner"><a class="lv-back" href="../">← Tillbaka till lärverktyg</a><div class="lv-title-block"><h1 class="lv-title">Multiplikationsbingo</h1><p class="lv-subtitle">Träna multiplikation med bingo i klassrummet.</p></div><a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a></div></header>
 
   <a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
 
   <div class="app">
-    <header>
-      <h1>Multiplikationsbingo</h1>
-      <div class="subtitle">Slumpar multiplikationer från 1×1 till 10×10</div>
-    </header>
+    
 
     <main class="main-card">
       <section class="multiplication-box" aria-live="polite">
