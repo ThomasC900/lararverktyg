@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tornet i Hanoi – Lärarverktyg</title>
+<link rel="stylesheet" href="../assets/lararverktyg.css">
 <style>
 :root{--blue:#17365d;--gold:#e6b84a;--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#68758a;--green:#2f855a;--red:#b83232}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
@@ -18,11 +19,37 @@ button{font:inherit;font-weight:800;border:0;border-radius:10px;padding:11px 16p
 .peg{position:absolute;bottom:42px;width:12px;height:300px;background:#8793a5;border-radius:8px 8px 0 0;z-index:0}.base{position:absolute;bottom:32px;width:92%;height:14px;background:#68758a;border-radius:8px;z-index:0}.rings{width:100%;display:flex;flex-direction:column-reverse;align-items:center;z-index:1;margin-bottom:46px}.ring{height:25px;border-radius:8px;border:2px solid rgba(0,0,0,.15);margin-top:2px;box-shadow:0 2px 3px rgba(0,0,0,.15);background:var(--blue)}.ring.top{box-shadow:0 0 0 3px var(--gold),0 2px 3px rgba(0,0,0,.15)}.tower-label{position:absolute;bottom:0;font-weight:900;color:var(--blue)}
 .rules{display:grid;grid-template-columns:1fr 1fr;gap:18px}.rules h2{font-size:1.05rem;margin:0 0 8px;color:var(--blue)}.rules p,.rules ol{margin:0;color:#445269;line-height:1.55}.best{font-weight:800;color:var(--green)}
 @media(max-width:700px){main{padding:12px}.stats{margin-left:0}.game{gap:4px;min-height:350px}.tower{height:320px;padding:0 3px}.peg{height:235px}.ring{height:22px}.rules{grid-template-columns:1fr}}
+
+/* Design-test: gemensam Lärarverktyg-standard */
+body.lv-page{font-family:Arial,Helvetica,sans-serif;background:var(--lv-bg);color:var(--lv-text)}
+main.lv-main{max-width:1100px;padding-top:22px}
+.panel{border:1px solid var(--lv-border);border-radius:14px;box-shadow:0 2px 7px rgba(0,0,0,.06)}
+.field select{border-color:var(--lv-border);border-radius:9px}
+.field select:focus-visible{outline:3px solid var(--lv-gold);outline-offset:2px}
+button{background:var(--lv-blue);border-radius:9px}
+button:hover{background:var(--lv-blue-2)}
+button.secondary{background:#e9eef2;color:var(--lv-blue)}
+.stats .stat{background:#f6f9fb;border:1px solid var(--lv-border);border-radius:10px}
+.stats .stat strong,.message,.tower-label,.rules h2{color:var(--lv-blue)}
+.tower.selected{background:#fff9e8;box-shadow:inset 0 0 0 3px var(--lv-gold)}
+.ring.top{box-shadow:0 0 0 3px var(--lv-gold),0 2px 3px rgba(0,0,0,.15)}
+.rules{border-left:5px solid var(--lv-gold)}
+.best{color:var(--lv-green)}
+@media(max-width:700px){main.lv-main{padding-top:12px}}
 </style>
 </head>
-<body>
-<header><h1>Tornet i Hanoi</h1><a class="back" href="../">← Tillbaka till lärarverktyg</a></header>
-<main>
+<body class="lv-page">
+<header class="lv-header">
+  <div class="lv-header-inner">
+    <a class="lv-back" href="../">← Tillbaka till lärverktyg</a>
+    <div class="lv-title-block">
+      <h1 class="lv-title">Tornet i Hanoi</h1>
+      <p class="lv-subtitle">Flytta tornet med så få drag som möjligt.</p>
+    </div>
+    <a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a>
+  </div>
+</header>
+<main class="lv-main">
 <section class="panel controls">
 <label class="field">Antal ringar<select id="ringCount"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
 <button id="newGame">Nytt spel</button><button id="reset" class="secondary">Börja om</button>

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Avrundning</title>
+  <link rel="stylesheet" href="../assets/lararverktyg.css">
   <style>
     :root{
       --navy:#17324d; --gold:#e5b94f; --bg:#f4f7fa; --card:#fff;
@@ -84,15 +85,43 @@
       .stats,.summary-grid{grid-template-columns:repeat(2,1fr)}
       .panel{padding:18px}
     }
+  
+    /* Design-test: gemensam Lärarverktyg-standard */
+    body.lv-page{font-family:Arial,Helvetica,sans-serif;background:var(--lv-bg);color:var(--lv-text)}
+    .wrap.lv-main{max-width:1000px;margin:0 auto;padding-top:28px}
+    .panel{border:1px solid var(--lv-border);border-radius:14px;box-shadow:0 2px 7px rgba(0,0,0,.06)}
+    h2,.number,.stat strong,.summary-grid strong{color:var(--lv-blue)}
+    .check{border-color:var(--lv-border);border-radius:9px}
+    .check input{accent-color:var(--lv-blue)}
+    .check:has(input:checked){border-color:var(--lv-blue);background:var(--lv-blue);color:#fff;box-shadow:inset 0 -4px 0 var(--lv-gold)}
+    .all{border-color:var(--lv-gold);background:#fff9e8}
+    select,input.answer{border-color:var(--lv-border);border-radius:9px}
+    select:focus,input.answer:focus{border-color:var(--lv-blue);outline:none;box-shadow:0 0 0 4px rgba(18,59,93,.10)}
+    button{background:var(--lv-blue);border-radius:9px}
+    button:hover{background:var(--lv-blue-2)}
+    button.secondary{background:#e9eef2;color:var(--lv-blue)}
+    button.gold{background:var(--lv-blue);color:#fff}
+    button.gold:hover{background:var(--lv-blue-2)}
+    .digit-mark{background:var(--lv-gold);box-shadow:0 0 0 2px var(--lv-gold)}
+    .feedback.hint{background:#fff9e8;border-color:var(--lv-gold)}
+    .rulebox{background:#eef4f8;border-left:5px solid var(--lv-gold)}
+    .stat,.summary-grid div{border:1px solid var(--lv-border);border-radius:10px}
+    @media(max-width:700px){.wrap.lv-main{padding-top:16px}}
   </style>
 </head>
-<body>
-<header>
-  <h1>Avrundning</h1>
-  <a class="back" href="../">← Tillbaka till lärarverktyg</a>
+<body class="lv-page">
+<header class="lv-header">
+  <div class="lv-header-inner">
+    <a class="lv-back" href="../">← Tillbaka till lärverktyg</a>
+    <div class="lv-title-block">
+      <h1 class="lv-title">Avrundning</h1>
+      <p class="lv-subtitle">Träna på att avrunda tal till olika talsorter.</p>
+    </div>
+    <a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a>
+  </div>
 </header>
 
-<main class="wrap">
+<main class="wrap lv-main">
   <section id="setup" class="panel">
     <h2>Vad vill du träna på?</h2>
     <p>Välj en eller flera avrundningsnivåer.</p>

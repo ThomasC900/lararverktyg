@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Musikquiz – Svenska sommarlåtar</title>
+<link rel="stylesheet" href="../assets/lararverktyg.css">
 <style>
     :root {
         --bg1: #fff7d6;
@@ -20,7 +21,7 @@
         font-family: Arial, Helvetica, sans-serif;
         background: linear-gradient(135deg, var(--bg1), var(--bg2));
         color: var(--dark);
-        padding: 24px;
+        padding:0;
     }
 
     .back-link {
@@ -33,7 +34,7 @@
 
     .page {
         max-width: 1400px;
-        margin: 0 auto;
+        margin:28px auto;
         background: rgba(255,255,255,0.92);
         border-radius: 24px;
         box-shadow: 0 12px 35px rgba(0,0,0,0.12);
@@ -70,8 +71,8 @@
         padding: 10px 16px;
         font-weight: 700;
         cursor: pointer;
-        background: var(--dark);
-        color: white;
+        background:#0d3450;
+        color:white;
     }
     button.secondary {
         background: var(--accent2);
@@ -153,15 +154,10 @@
     }
 </style>
 </head>
-<body>
-<a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
+<body class="lv-page"><header class="lv-header"><div class="lv-header-inner"><a class="lv-back" href="../">← Tillbaka till lärverktyg</a><div class="lv-title-block"><h1 class="lv-title">Musikquiz – Svenska sommarlåtar</h1><p class="lv-subtitle">Ett musikquiz med svenska sommarlåtar.</p></div><a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a></div></header>
+
 <div class="page">
-    <header>
-        <h1>Musikquiz: Svenska sommarlåtar</h1>
-        <div class="subtitle">
-            Spela låten via Spotify-länken och ställ två frågor som mer eller mindre kopplar till låten, artisten, platsen eller känslan.
-        </div>
-    </header>
+    
 
     <div class="toolbar">
         <button onclick="document.body.classList.toggle('hide-answers')">Visa/dölj svar</button>

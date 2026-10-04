@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tärningskast</title>
+<link rel="stylesheet" href="../assets/lararverktyg.css">
 <style>
 :root{
   --bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;--line:#dce3ee;
@@ -17,9 +18,9 @@ body{
     radial-gradient(circle at top left,rgba(52,87,213,.12),transparent 34%),
     radial-gradient(circle at top right,rgba(108,77,230,.10),transparent 30%),
     var(--bg);
-  color:var(--text);padding:20px
+  color:var(--text);padding:0
 }
-.app{width:min(1200px,96vw);margin:0 auto}
+.app{width:min(1200px,96vw);margin:28px auto}
 .back-link{
   display:inline-block;margin-bottom:16px;text-decoration:none;background:rgba(255,255,255,.96);
   color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:999px;
@@ -33,7 +34,7 @@ h1{margin:0;font-size:clamp(2rem,4vw,3.4rem);letter-spacing:-.04em}
 .field label{display:block;font-size:.82rem;font-weight:800;color:var(--muted);margin:0 0 5px 4px}
 .field select{min-width:150px;padding:11px 12px;border:2px solid var(--line);border-radius:12px;font-size:1rem;font-weight:800;background:#fff;color:var(--text)}
 button{border:0;border-radius:14px;padding:13px 18px;font-size:1rem;font-weight:850;cursor:pointer}
-.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.primary{background:#0d3450;color:#fff}
 .secondary{background:#e9edf7;color:#344054}
 .dark{background:#172033;color:#fff}
 .controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}
@@ -81,13 +82,7 @@ body.fullscreen-mode .dark{background:rgba(255,255,255,.14);color:#fff}
 }
 </style>
 </head>
-<body>
-<div class="app">
-  <a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
-  <header>
-    <h1>Tärningskast 🎲</h1>
-    <p class="subtitle">Välj antal tärningar och hur många sidor de ska ha.</p>
-  </header>
+<body class="lv-page"><header class="lv-header"><div class="lv-header-inner"><a class="lv-back" href="../">← Tillbaka till lärverktyg</a><div class="lv-title-block"><h1 class="lv-title">Tärningskast 🎲</h1><p class="lv-subtitle">Välj antal tärningar och hur många sidor de ska ha.</p></div><a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a></div></header><div class="app">
 
   <main class="panel">
     <div class="setup">

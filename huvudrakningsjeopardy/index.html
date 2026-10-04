@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Huvudräknings-Jeopardy Åk 9</title>
+<link rel="stylesheet" href="../assets/lararverktyg.css">
 <style>
 :root{--bg:#071833;--panel:#0d2f68;--cell:#1546a0;--cell-hover:#2563eb;--gold:#ffd54a;--text:#fff;--muted:#dbe7ff;--used:#5b6780;--good:#16a34a;--bad:#dc2626;--warn:#f97316}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#030b1d 0%,var(--bg) 100%);color:var(--text)}
-.wrap{max-width:1700px;margin:0 auto;padding:18px}.backlink{display:inline-block;margin-bottom:8px;padding:10px 14px;border-radius:10px;background:#dbeafe;color:#111827;text-decoration:none;font-weight:800}.backlink:hover{background:#bfdbfe}
+.wrap{max-width:1700px;margin:28px auto;padding:18px}.backlink{display:inline-block;margin-bottom:8px;padding:10px 14px;border-radius:10px;background:#dbeafe;color:#111827;text-decoration:none;font-weight:800}.backlink:hover{background:#bfdbfe}
 h1{text-align:center;margin:8px 0 6px;font-size:2.35rem}.subtitle{text-align:center;color:var(--muted);margin-bottom:18px}
 .panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;box-shadow:0 10px 28px rgba(0,0,0,.18)}
 .top{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start}.setup{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.setup label{font-weight:700}
@@ -15,9 +16,9 @@ select,input{border:none;border-radius:10px;padding:10px 12px;font-size:1rem}.sc
 .team{background:var(--panel);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.14);text-align:center}.team input{width:100%;text-align:center;font-size:1.05rem;font-weight:bold;background:#fff;color:#111827;margin-bottom:10px}
 .points{font-size:2rem;font-weight:700;margin:10px 0 12px;color:var(--gold)}.btnrow{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
 button{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}.plus{background:var(--good);color:white}.minus{background:var(--bad);color:white}.small{background:#dbeafe;color:#111827}.danger{background:#fee2e2;color:#991b1b}.warning{background:#ffedd5;color:#9a3412}
-.question h2{margin:0 0 10px;font-size:1.3rem}.meta{color:var(--muted);margin-bottom:8px;font-size:.98rem}
+.question h2{margin:0 0 10px;font-size:1.3rem;color:#0d3450}.question .meta{color:#17212b!important;margin-bottom:8px;font-size:1rem;font-weight:800}
 .prompt{font-size:2.4rem;font-weight:900;text-align:center;background:rgba(255,255,255,.08);padding:22px;border-radius:14px;margin:12px 0;min-height:150px;display:flex;align-items:center;justify-content:center}
-.timerBox{text-align:center;font-size:1.4rem;font-weight:800;color:var(--gold);margin:8px 0}.answer{margin-top:12px;padding:16px;border-radius:12px;background:rgba(255,213,74,.13);border:1px solid rgba(255,213,74,.35);display:none;font-size:1.5rem;line-height:1.5;text-align:center}
+.question .timerBox{color:#0d3450!important;text-align:center;font-size:1.5rem;font-weight:900;margin:8px 0;text-shadow:none}.question .timerBox.warning,.question .timerBox.urgent{color:#b84444!important}.question .footer-note{color:#66727d!important;font-weight:700}.answer{margin-top:12px;padding:16px;border-radius:12px;background:rgba(255,213,74,.13);border:1px solid rgba(255,213,74,.35);display:none;font-size:1.5rem;line-height:1.5;text-align:center}
 .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.board{margin-top:18px}table{width:100%;border-collapse:separate;border-spacing:8px;table-layout:fixed}
 th,td{text-align:center;border-radius:14px;overflow:hidden}th{background:#0d2f68;padding:16px 8px;font-size:1rem;color:#fff4bf;border:1px solid rgba(255,255,255,.12)}
 td{background:var(--cell);color:var(--gold);font-weight:800;font-size:1.8rem;padding:20px 8px;cursor:pointer;user-select:none;border:1px solid rgba(255,255,255,.1);transition:transform .08s ease,background .12s ease}
@@ -25,11 +26,7 @@ td:hover{background:var(--cell-hover);transform:translateY(-1px)}td.used{backgro
 @media(max-width:1250px){.top{grid-template-columns:1fr}.scoreboard{grid-template-columns:repeat(3,1fr)}}@media(max-width:780px){.scoreboard{grid-template-columns:1fr}td{font-size:1.35rem;padding:14px 4px}th{font-size:.85rem}.prompt{font-size:1.8rem;min-height:120px}}
 </style>
 </head>
-<body>
-<div class="wrap">
-<a class="backlink" href="../">← Tillbaka till Lärarverktyg</a>
-<h1>Huvudräknings-Jeopardy Åk 9 🧠</h1>
-<div class="subtitle">Nya huvudräkningsuppgifter skapas varje gång du spelar. Svårighetsgraden stiger från 100 till 500 poäng.</div>
+<body class="lv-page"><header class="lv-header"><div class="lv-header-inner"><a class="lv-back" href="../">← Tillbaka till lärverktyg</a><div class="lv-title-block"><h1 class="lv-title">Huvudräknings-Jeopardy Åk 9 🧠</h1><p class="lv-subtitle">Nya huvudräkningsuppgifter skapas varje gång du spelar. Svårighetsgraden stiger från 100 till 500 poäng.</p></div><a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a></div></header><div class="wrap">
 
 <div class="top">
 <div class="panel">

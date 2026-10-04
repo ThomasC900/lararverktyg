@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Närmast vinner</title>
+<link rel="stylesheet" href="../assets/lararverktyg.css">
 <style>
 :root{
   --bg:#f4f7fb;
@@ -29,9 +30,8 @@ body{
     var(--bg);
   color:var(--text);
   min-height:100vh;
-  padding:20px;
 }
-.app{width:min(1250px,96vw);margin:0 auto}
+.app{width:min(1250px,96vw);margin:28px auto}
 .back-link{
   display:inline-block;
   margin-bottom:14px;
@@ -190,16 +190,7 @@ body.fullscreen-mode .secondary{background:rgba(255,255,255,.13);color:white}
 }
 </style>
 </head>
-<body>
-<div class="app">
-  <a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
-
-  <header>
-    <h1>Närmast vinner</h1>
-    <p class="subtitle">
-      Använd de fem blå talen och tillåtna räknesätt för att komma så nära måltalet som möjligt innan tiden är slut.
-    </p>
-  </header>
+<body class="lv-page"><header class="lv-header"><div class="lv-header-inner"><a class="lv-back" href="../">← Tillbaka till lärverktyg</a><div class="lv-title-block"><h1 class="lv-title">Närmast vinner</h1><p class="lv-subtitle">Använd talen och räknesätten för att komma så nära måltalet som möjligt.</p></div><a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a></div></header><div class="app">
 
   <main class="layout">
     <aside class="settings card">
