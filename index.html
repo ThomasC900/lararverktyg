@@ -30,7 +30,7 @@ main{max-width:1200px;margin:0 auto;padding:36px 24px 70px}
 section{margin-bottom:46px}
 h2{margin:0 0 18px;padding-bottom:9px;border-bottom:3px solid var(--gold);font-size:1.65rem;color:var(--blue)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}
-.card{display:flex;flex-direction:column;min-height:218px;padding:22px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.card{display:flex;flex-direction:column;min-height:218px;padding:22px;background:var(--surface);border:2px solid var(--blue);border-radius:14px;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .card:hover{transform:translateY(-3px);border-color:#c4d1d9;box-shadow:0 7px 18px rgba(13,52,80,.12)}
 .icon{font-size:2.25rem;margin-bottom:14px}
 .card h3{margin:0 0 9px;font-size:1.2rem;color:var(--blue)}
@@ -44,6 +44,7 @@ body.dark{--bg:#142735;--surface:#1d3545;--text:#f2f6f8;--muted:#c2cdd4;--border
 body.dark header{background:#092a40}
 body.dark h2,body.dark .card h3,body.dark .card a{color:#fff}
 body.dark .theme-button{background:#29485c;color:#fff}
+body.dark .card{border-color:var(--gold)}
 body.dark .search input{background:#1d3545;color:#fff}
 @media(max-width:760px){
   header{padding:24px 18px 22px}
