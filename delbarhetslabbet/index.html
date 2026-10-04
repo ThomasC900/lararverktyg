@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Delbarhetslabbet</title>
+<link rel="stylesheet" href="../assets/lararverktyg.css">
 <style>
 :root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;--accent:#3457d5;--accent2:#6c4de6;--good:#18864b;--bad:#c43b45;--warn:#b7791f;--line:#dce3ee;--shadow:0 12px 30px rgba(26,39,64,.10)}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-rounded,"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at top left,rgba(52,87,213,.12),transparent 35%),radial-gradient(circle at top right,rgba(108,77,230,.10),transparent 30%),var(--bg);color:var(--text);min-height:100vh}
 header{padding:28px 5vw 12px;text-align:center}h1{margin:0;font-size:clamp(2.2rem,5vw,4.6rem);letter-spacing:-.04em}.subtitle{margin:10px auto 0;color:var(--muted);font-size:clamp(1rem,2vw,1.35rem);max-width:900px}
 main{width:min(1500px,94vw);margin:0 auto 50px}.tabs{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:18px 0 28px}
 button{border:0;border-radius:16px;padding:15px 22px;font-size:1.05rem;font-weight:750;cursor:pointer;transition:.18s ease}button:hover{transform:translateY(-2px)}button:active{transform:translateY(0)}
-.tab-btn{background:#e7ebf6;color:#344054}.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:var(--shadow)}
+.tab-btn{background:#e7ebf6;color:#344054}.tab-btn.active{color:#fff;background:#0d3450;border-bottom:4px solid #e0ab2d;box-shadow:var(--shadow)}
 .panel{display:none}.panel.active{display:block}.rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
 .rule-card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);min-height:170px;display:flex;gap:17px;align-items:flex-start}
 .badge{width:62px;height:62px;flex:0 0 62px;border-radius:18px;display:grid;place-items:center;color:#fff;font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2))}
@@ -21,9 +22,9 @@ button{border:0;border-radius:16px;padding:15px 22px;font-size:1.05rem;font-weig
 .prompt{text-align:center;font-size:clamp(1.15rem,2.2vw,1.65rem);font-weight:700;margin:0 auto 20px}.choice-title{text-align:center;margin:0 0 12px;font-weight:800;color:#344054}
 .choice-grid{display:grid;grid-template-columns:repeat(7,minmax(74px,1fr));gap:12px;max-width:980px;margin:0 auto 24px}
 .choice-btn{background:#eef2f8;border:3px solid transparent;color:#24314d;border-radius:20px;min-height:76px;font-size:1.7rem;font-weight:900;padding:10px 8px}
-.choice-btn.selected{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 7px 16px rgba(52,87,213,.19)}
+.choice-btn.selected{color:#fff;background:#0d3450;border-bottom:4px solid #e0ab2d;box-shadow:0 7px 16px rgba(52,87,213,.19)}
 .choice-btn.correct{background:rgba(24,134,75,.12);color:var(--good);border-color:var(--good)}.choice-btn.wrong{background:rgba(196,59,69,.10);color:var(--bad);border-color:var(--bad)}.choice-btn.missed{background:rgba(183,121,31,.10);color:#8a5b17;border-color:#c48a2c}.choice-btn:disabled{cursor:default}
-.controls{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}.primary{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2))}.check{color:#fff;background:#172033;min-width:150px}
+.controls{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}.primary{color:#fff;background:#0d3450}.check{color:#fff;background:#172033;min-width:150px}
 .feedback{display:none;max-width:1050px;margin:28px auto 0}.feedback.show{display:block}.success{text-align:center;padding:22px;border-radius:22px;background:rgba(24,134,75,.09);border:2px solid rgba(24,134,75,.28)}
 .success .big-icon{font-size:2.8rem;display:block;margin-bottom:5px}.success h2{margin:0 0 6px;color:var(--good)}.success p{margin:0;font-size:1.08rem}
 .mistake-heading{margin:0 0 8px;text-align:center;font-size:1.75rem}.mistake-intro{margin:0 auto 18px;color:var(--muted);text-align:center;font-size:1.05rem}
@@ -54,9 +55,7 @@ button{border:0;border-radius:16px;padding:15px 22px;font-size:1.05rem;font-weig
 @media(max-width:850px){.choice-grid{grid-template-columns:repeat(4,1fr)}}@media(max-width:520px){.choice-grid{grid-template-columns:repeat(3,1fr)}.number{font-size:24vw}.practice{border-radius:22px}}
 </style>
 </head>
-<body>
-<a href="../" class="back-link">← Tillbaka till Lärarverktyg</a>
-<header><h1>Delbarhetslabbet</h1><p class="subtitle">Upptäck mönster, resonera och träna på att använda delbarhetsreglerna.</p></header>
+<body class="lv-page"><header class="lv-header"><div class="lv-header-inner"><a class="lv-back" href="../">← Tillbaka till lärverktyg</a><div class="lv-title-block"><h1 class="lv-title">Delbarhetslabbet</h1><p class="lv-subtitle">Upptäck mönster, resonera och träna på att använda delbarhetsreglerna.</p></div><a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a></div></header>
 <main>
 <div class="tabs"><button class="tab-btn active" data-target="rules">1. Gå igenom reglerna</button><button class="tab-btn" data-target="practice">2. Träna själv</button></div>
 <section id="rules" class="panel active">
