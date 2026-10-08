@@ -86,6 +86,19 @@ button{
 .answerbox input{
   width:100%;font-size:1.35rem;text-align:center;font-weight:800
 }
+.fraction-answer{text-align:center}
+.fraction-inputs{
+  display:grid;grid-template-rows:1fr 1fr;width:92px;margin:8px auto 0
+}
+.fraction-inputs input{width:92px;height:58px;border-radius:10px}
+.fraction-inputs .num-input{
+  border-bottom-left-radius:0;border-bottom-right-radius:0;
+  border-bottom:2px solid var(--ink)
+}
+.fraction-inputs .den-input{
+  border-top-left-radius:0;border-top-right-radius:0;border-top:0
+}
+.feedback .frac{vertical-align:middle;margin:0 .15em}
 .feedback{
   min-height:52px;margin:18px auto 0;max-width:650px;
   text-align:center;font-weight:900;font-size:1.05rem;
@@ -372,6 +385,21 @@ function addInput(id,label,placeholder){
   $("#answers").appendChild(box);
 }
 
+function addFractionInput(){
+  const box = document.createElement("div");
+  box.className = "answerbox fraction-answer";
+  box.innerHTML = `
+    <label id="fractionLabel" for="numerator">Bråkform</label>
+    <div class="fraction-inputs" role="group" aria-labelledby="fractionLabel">
+      <input id="numerator" class="num-input" type="text" inputmode="numeric"
+        autocomplete="off" aria-label="Täljare">
+      <input id="denominator" class="den-input" type="text" inputmode="numeric"
+        autocomplete="off" aria-label="Nämnare">
+    </div>
+  `;
+  $("#answers").appendChild(box);
+}
+
 function showTask(){
   answered = false;
   current = tasks[index];
@@ -410,7 +438,7 @@ function showTask(){
       $("#given").textContent = fmtDecimal(current.v,current.d);
     }
 
-    addInput("fraction","Bråkform","Till exempel 3/4");
+    addFractionInput();
 
     if(usePercent){
       addInput("percentAnswer","Procentform","Till exempel 75 %");
@@ -441,7 +469,8 @@ function check(){
       ok = Number.isFinite(x) && Math.abs(x-current.v) <= 0.00001;
     }
   }else{
-    ok = fractionMatches($("#fraction").value,current.n,current.d);
+    const fraction = `${$("#numerator").value.trim()}/${$("#denominator").value.trim()}`;
+    ok = fractionMatches(fraction,current.n,current.d);
   }
 
   if(usePercent){
@@ -476,18 +505,18 @@ function check(){
 
     let answer;
     if(current.d === 3){
-      answer = `${current.n}/${current.d} ≈ ${fmtDecimal(current.v,current.d)}`;
+      answer = `${fracHTML(current.n,current.d)} ≈ ${fmtDecimal(current.v,current.d)}`;
       if(usePercent){
         answer += ` ≈ ${fmtPercent(current.v,current.d)} %`;
       }
     }else{
-      answer = `${current.n}/${current.d} = ${fmtDecimal(current.v,current.d)}`;
+      answer = `${fracHTML(current.n,current.d)} = ${fmtDecimal(current.v,current.d)}`;
       if(usePercent){
         answer += ` = ${fmtPercent(current.v,current.d)} %`;
       }
     }
 
-    $("#feedback").textContent = `Inte riktigt. Försök igen. Ledtråd: ${answer}`;
+    $("#feedback").innerHTML = `Inte riktigt. Försök igen. Ledtråd: ${answer}`;
     $("#feedback").className = "feedback bad";
   }
 }
@@ -533,6 +562,8 @@ document.addEventListener("keydown",e=>{
 
   if(answered){
     next();
+  }else if(e.target.id === "numerator"){
+    $("#denominator").focus();
   }else{
     check();
   }
@@ -540,3 +571,4 @@ document.addEventListener("keydown",e=>{
 </script>
 </body>
 </html>
+
