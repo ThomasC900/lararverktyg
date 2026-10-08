@@ -80,6 +80,9 @@ button{
   gap:16px;max-width:650px;margin:0 auto
 }
 .answerbox{background:var(--soft);border-radius:16px;padding:15px}
+.answerbox:only-child{
+  grid-column:1 / -1;justify-self:center;width:min(100%,317px)
+}
 .answerbox label{
   display:block;font-weight:900;margin-bottom:7px;color:var(--blue)
 }
