@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Överslagsräkning – Thomas lärverktyg</title>
+<style>
+:root{
+  --blue:#12385b; --blue2:#0b2944; --gold:#e5b83b; --bg:#f4f7fa;
+  --card:#fff; --text:#172433; --muted:#607080; --green:#18794e; --red:#b42318;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--blue);color:#fff;border-bottom:5px solid var(--gold);padding:18px 22px}
+.head{max-width:1050px;margin:auto;display:flex;align-items:center;gap:18px}
+.back{color:white;text-decoration:none;border:1px solid rgba(255,255,255,.55);border-radius:9px;padding:9px 12px;font-weight:700}
+h1{font-size:clamp(1.65rem,4vw,2.45rem);margin:0}.sub{margin:4px 0 0;color:#d9e5ef}
+main{max-width:1050px;margin:24px auto;padding:0 16px 40px}
+.card{background:var(--card);border:2px solid #dbe3ea;border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 3px 10px #0000000d}
+h2{color:var(--blue);margin-top:0}.gold{border-left:6px solid var(--gold)}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:11px 16px;cursor:pointer}
+.primary,.tab.active{background:var(--blue);color:#fff}.secondary,.tab{background:#e8eef3;color:var(--blue)}
+.choice{background:#fff;color:var(--blue);border:2px solid #b9c8d5;min-width:52px}
+.choice.active{background:var(--gold);border-color:var(--gold);color:#18222c}
+.rule{background:#f8f2df;border:1px solid #ead28b;border-radius:12px;padding:14px 16px;margin:14px 0}
+.example{background:#f3f7fa;border-radius:12px;padding:16px;margin:12px 0;line-height:1.7}
+.bigmath{font-size:clamp(1.8rem,5vw,2.7rem);font-weight:700;text-align:center;margin:22px 0}
+.frac{display:inline-grid;grid-template-rows:auto auto;text-align:center;vertical-align:middle;line-height:1.15;min-width:2.4em}
+.frac .num{border-bottom:3px solid currentColor;padding:0 .28em .12em}
+.frac .den{padding:.12em .28em 0}
+.row .frac{font-size:1.15em}
+.frac-input{display:inline-grid;grid-template-rows:auto auto;text-align:center;vertical-align:middle}
+.frac-input .top{border-bottom:3px solid var(--text);padding:0 5px 6px}
+.frac-input .bottom{padding:6px 5px 0}
+.settings{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label{font-weight:700}
+.work{display:grid;gap:16px;max-width:700px;margin:0 auto}
+.row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:1.35rem;font-weight:700}
+input{width:110px;padding:10px;border:2px solid #9eb0bf;border-radius:9px;font-size:1.25rem;text-align:center}
+input:focus{outline:3px solid #e5b83b55;border-color:var(--gold)}
+.feedback{text-align:center;min-height:30px;font-weight:700;font-size:1.05rem}
+.ok{color:var(--green)}.bad{color:var(--red)}
+.score{text-align:center;color:var(--muted);font-weight:700}
+.hidden{display:none!important}
+.small{font-size:.94rem;color:var(--muted);line-height:1.5}
+@media(max-width:600px){.card{padding:16px}.head{align-items:flex-start}.back{padding:7px 9px}.row{font-size:1.15rem}input{width:92px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="head">
+  <a class="back" href="../">← Tillbaka</a>
+  <div><h1>Överslagsräkning</h1><p class="sub">Avrunda först – räkna sedan</p></div>
+ </div>
+</header>
+
+<main>
+ <div class="tabs">
+  <button class="tab active" id="infoTab">Genomgång</button>
+  <button class="tab" id="trainTab">Egen träning</button>
+ </div>
+
+ <section id="info">
+  <div class="card gold">
+   <h2>Vad är överslagsräkning?</h2>
+   <p>När vi överslagsräknar vill vi snabbt få ett <strong>ungefärligt svar</strong>. Därför gör vi talen enklare <strong>innan</strong> vi räknar.</p>
+   <div class="rule"><strong>Grundregel:</strong> Avrunda talen till <strong>första värdesiffran</strong> och räkna sedan med de avrundade talen.</div>
+   <div class="example"><strong>Exempel – addition</strong><br>82,5 + 39,2 + 58,6<br>≈ 80 + 40 + 60<br>= 180<br><strong>Svar: ≈ 180</strong></div>
+   <div class="example"><strong>Exempel – multiplikation</strong><br>525 · 1,7<br>≈ 500 · 2<br>= 1 000<br><strong>Svar: ≈ 1 000</strong></div>
+  </div>
+
+  <div class="card gold">
+   <h2>Division är speciell</h2>
+   <p>Vid division börjar vi med <strong>nämnaren</strong> (talet vi delar med). Avrunda den först. Därefter väljer vi ett tal nära täljaren som passar bra i nämnarens tabell.</p>
+   <div class="example"><strong>Exempel</strong><br><span class="frac"><span class="num">145</span><span class="den">7,1</span></span><br>1. Nämnaren: 7,1 ≈ <strong>7</strong><br>2. Ett tal nära 145 i 7:ans tabell är <strong>140</strong>.<br>3. <span class="frac"><span class="num">140</span><span class="den">7</span></span> = 20<br><strong>Svar: ≈ 20</strong></div>
+   <p class="small">Målet är en enkel huvudräkning som ger en rimlig uppskattning – inte det exakta svaret.</p>
+   <button class="primary" id="startBtn">Börja träna →</button>
+  </div>
+ </section>
+
+ <section id="training" class="hidden">
+  <div class="card">
+   <h2>Välj träning</h2>
+   <div class="settings">
+    <label>Räknesätt:</label>
+    <button class="choice op active" data-op="mix">Blandat</button>
+    <button class="choice op" data-op="+">+</button>
+    <button class="choice op" data-op="-">−</button>
+    <button class="choice op" data-op="*">×</button>
+    <button class="choice op" data-op="/">÷</button>
+   </div>
+  </div>
+
+  <div class="card">
+   <div class="score" id="score">Rätt: 0 &nbsp; • &nbsp; Försök: 0</div>
+   <div class="bigmath" id="problem"></div>
+   <div class="work">
+    <div>
+     <p style="text-align:center;margin:0 0 8px"><strong>Skriv de avrundade talen och räkna ut svaret</strong></p>
+     <div class="row" id="roundRow"></div>
+    </div>
+    <div>
+     <p style="text-align:center;margin:0 0 8px"><strong>2. Räkna med de avrundade talen</strong></p>
+     <div class="row" id="calcRow"></div>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div style="text-align:center">
+     <button class="primary" id="checkBtn">Kontrollera</button>
+     <button class="secondary hidden" id="nextBtn">Nästa uppgift →</button>
+    </div>
+   </div>
+  </div>
+ </section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+let selected="mix", current=null, tries=0, correct=0, attempts=0;
+const fmt=n=>String(n).replace(".",",");
+const parse=s=>Number(String(s).trim().replace(",",".").replace(/\s/g,""));
+const opText=o=>o==="*"?"·":o==="/"?"÷":o;
+
+function firstSig(n){
+ if(n===0)return 0;
+ const p=Math.floor(Math.log10(Math.abs(n)));
+ const f=10**p;
+ return Math.round(n/f)*f;
+}
+function niceNum(base, spread=.18, decimals=0){
+ let n=base*(1+(Math.random()*2-1)*spread);
+ return Number(n.toFixed(decimals));
+}
+// Generate a value that actually changes when rounded to one significant figure.
+function needsRounding(base, spread=.18, decimals=0){
+ let n, guard=0;
+ do {
+   n=niceNum(base,spread,decimals);
+   guard++;
+ } while (Math.abs(n-firstSig(n))<1e-9 && guard<200);
+ return n;
+}
+function makeProblem(){
+ let op=selected;
+ if(op==="mix") op=["+","-","*","/"][Math.floor(Math.random()*4)];
+ let vals=[], rounded=[];
+ if(op==="+"){
+   const three=Math.random()<.65;
+   if(three){
+    if(Math.random()<.5) vals=[needsRounding(80,.15,1),needsRounding(40,.18,1),needsRounding(60,.15,1)];
+    else vals=[needsRounding(300,.16,0),needsRounding(400,.15,0),needsRounding(300,.18,0)];
+   } else vals=[needsRounding(70,.16,0),needsRounding(40,.18,0)];
+   rounded=vals.map(firstSig);
+ } else if(op==="-"){
+   if(Math.random()<.5) vals=[needsRounding(90,.12,0),needsRounding(30,.15,0),needsRounding(12,.28,0)];
+   else vals=[needsRounding(600,.08,0),needsRounding(400,.08,0)];
+   rounded=vals.map(firstSig);
+ } else if(op==="*"){
+   if(Math.random()<.5) vals=[needsRounding(500,.12,0),needsRounding(2,.18,1)];
+   else vals=[needsRounding(40,.12,1),needsRounding(6,.15,1)];
+   rounded=vals.map(firstSig);
+ } else {
+   // Build division around a simple rounded divisor and a compatible numerator.
+   const divisors=[2,3,4,5,6,7,8,9,10,20,30,40,50,90];
+   const d=divisors[Math.floor(Math.random()*divisors.length)];
+   const q=[2,3,4,5,6,7,8,9,10,20,30,40][Math.floor(Math.random()*12)];
+   const nr=d*q;
+   let dDec=d<10?1:1, numDec=nr<50?1:0;
+   // Division: both original values must require a change before calculation.
+   // In particular, never generate a denominator that is already the intended rounded value.
+   let den;
+   do {
+     den=niceNum(d,.12,dDec);
+   } while (Math.abs(den-d)<1e-9 || firstSig(den)!==d);
+
+   let num;
+   do {
+     num=niceNum(nr,.045,numDec);
+   } while (Math.abs(num-nr)<1e-9);
+
+   vals=[num,den]; rounded=[nr,d];
+ }
+ return {op,vals,rounded};
+}
+function fractionHTML(a,b){
+ return `<span class="frac"><span class="num">${fmt(a)}</span><span class="den">${fmt(b)}</span></span>`;
+}
+function expression(vals,op){
+ return vals.map(fmt).join(" "+opText(op)+" ");
+}
+function result(vals,op){
+ if(op==="+") return vals.reduce((a,b)=>a+b,0);
+ if(op==="-") return vals.slice(1).reduce((a,b)=>a-b,vals[0]);
+ if(op==="*") return vals.reduce((a,b)=>a*b,1);
+ return vals[0]/vals[1];
+}
+function render(){
+ current=makeProblem(); tries=0;
+ if(current.op==="/"){
+   $("#problem").innerHTML=fractionHTML(current.vals[0],current.vals[1]);
+   $("#roundRow").innerHTML=`<span class="frac-input"><span class="top"><input inputmode="decimal" aria-label="Avrundad täljare" id="r0"></span><span class="bottom"><input inputmode="decimal" aria-label="Avrundad nämnare" id="r1"></span></span><span>=</span><input inputmode="decimal" id="answer" aria-label="Svar">`;
+ } else {
+   $("#problem").textContent=expression(current.vals,current.op);
+   $("#roundRow").innerHTML=current.vals.map((v,i)=>`<input inputmode="decimal" aria-label="Avrundat tal ${i+1}" id="r${i}">`).join(`<span>${opText(current.op)}</span>`) + `<span>=</span><input inputmode="decimal" id="answer" aria-label="Svar">`;
+ }
+ $("#calcRow").parentElement.classList.add("hidden");
+ $("#feedback").textContent=""; $("#feedback").className="feedback";
+ $("#checkBtn").classList.remove("hidden"); $("#nextBtn").classList.add("hidden");
+ if(current.op==="/"){
+   $("#r1").focus(); // Vid division börjar eleven med nämnaren.
+ } else {
+   $("#r0").focus();
+ }
+}
+function check(){
+ tries++; attempts++;
+ const userRounded=current.vals.map((_,i)=>parse($("#r"+i).value));
+ const target=current.rounded;
+ const roundOK=userRounded.every((n,i)=>Number.isFinite(n)&&Math.abs(n-target[i])<1e-9);
+ const ans=parse($("#answer").value), targetAns=result(target,current.op);
+ const ansOK=Number.isFinite(ans)&&Math.abs(ans-targetAns)<1e-9;
+ if(roundOK && ansOK){
+   correct++; $("#feedback").textContent="Rätt! Bra överslag."; $("#feedback").className="feedback ok";
+   $("#checkBtn").classList.add("hidden"); $("#nextBtn").classList.remove("hidden");
+ } else if(tries===1){
+   if(!roundOK){
+     $("#feedback").textContent=current.op==="/"
+       ?"Inte riktigt. Börja med nämnaren och välj sedan ett närliggande tal i den tabellen."
+       :"Inte riktigt. Titta på första värdesiffran och avrunda talen igen.";
+   } else $("#feedback").textContent="De avrundade talen är bra. Kontrollera nu uträkningen.";
+   $("#feedback").className="feedback bad";
+ } else {
+   const r=target.map(fmt).join(" "+opText(current.op)+" ");
+   $("#feedback").innerHTML=`Ett bra överslag är <strong>${r} = ${fmt(targetAns)}</strong>.`;
+   $("#feedback").className="feedback bad";
+ }
+ $("#score").innerHTML=`Rätt: ${correct} &nbsp; • &nbsp; Försök: ${attempts}`;
+}
+function showTraining(){
+ $("#info").classList.add("hidden"); $("#training").classList.remove("hidden");
+ $("#infoTab").classList.remove("active"); $("#trainTab").classList.add("active"); render();
+}
+$("#startBtn").onclick=showTraining; $("#trainTab").onclick=showTraining;
+$("#infoTab").onclick=()=>{ $("#training").classList.add("hidden");$("#info").classList.remove("hidden");$("#trainTab").classList.remove("active");$("#infoTab").classList.add("active");};
+$$(".op").forEach(b=>b.onclick=()=>{$$(".op").forEach(x=>x.classList.remove("active"));b.classList.add("active");selected=b.dataset.op;render();});
+$("#checkBtn").onclick=check; $("#nextBtn").onclick=render;
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("#training").classList.contains("hidden")){if(!$("#nextBtn").classList.contains("hidden"))render();else check();}});
+</script>
+
+<!-- GoatCounter -->
+<script data-goatcounter="https://lararverktyg.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
