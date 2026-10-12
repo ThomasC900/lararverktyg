@@ -1,46 +1,46 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-10-05&endDate=2026-10-11&lang=sv",
-  "week": 41,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-10-12&endDate=2026-10-18&lang=sv",
+  "week": 42,
   "year": 2026,
-  "period": "5 oktober – 9 oktober 2026",
-  "updated": "2026-10-11",
+  "period": "12 oktober – 16 oktober 2026",
+  "updated": "2026-10-12",
   "monthly_green": "Pumpa, lingon och päron",
   "days": [
     {
-      "date": "2026-10-05",
+      "date": "2026-10-12",
       "day": "Måndag",
-      "date_label": "5 oktober",
-      "meal1": "Korv stroganoff serveras med ris",
-      "meal2": "Korv stroganoff med sojakorv serveras med ris"
+      "date_label": "12 oktober",
+      "meal1": "Makaroner med rökt hönskött- och ostsås",
+      "meal2": "Pasta med tomat- och linssås"
     },
     {
-      "date": "2026-10-06",
+      "date": "2026-10-13",
       "day": "Tisdag",
-      "date_label": "6 oktober",
-      "meal1": "Pestogratinerad lax, potatis, kall vitlöks-limesås",
-      "meal2": "Grönsaksbiff serveras med kökets sås & potatis"
+      "date_label": "13 oktober",
+      "meal1": "Cowboysoppa serveras med bröd och krämiga pålägg",
+      "meal2": "Hedvigsoppa med sojafärs serveras med bröd och krämiga pålägg"
     },
     {
-      "date": "2026-10-07",
+      "date": "2026-10-14",
       "day": "Onsdag",
-      "date_label": "7 oktober",
-      "meal1": "Färsruta med potatis, örtstsekt svamp & gräddig enbärssås",
-      "meal2": "Persiljefärslimpa med potatis, svamp & enbärssås"
+      "date_label": "14 oktober",
+      "meal1": "Lasagnette med tomat och ost",
+      "meal2": "Veg biff, stekt potatis, sås"
     },
     {
-      "date": "2026-10-08",
+      "date": "2026-10-15",
       "day": "Torsdag",
-      "date_label": "8 oktober",
-      "meal1": "Tomatsoppa serveras med bröd och krämiga pålägg",
-      "meal2": "Pumpasoppa med höstens tillbehör"
+      "date_label": "15 oktober",
+      "meal1": "Kyckling med rostade rotfrukter & kökets goda sås",
+      "meal2": "Quornfilé med rostade rotfrukter & kökets goda sås"
     },
     {
-      "date": "2026-10-09",
+      "date": "2026-10-16",
       "day": "Fredag",
-      "date_label": "9 oktober",
-      "meal1": "Skivad kotlettrad med rostad potatis & yoghurtsås",
-      "meal2": "Jalapenonugget med ris & kall sås"
+      "date_label": "16 oktober",
+      "meal1": "Köttbullar serveras med potatismos",
+      "meal2": "Vegobullar serveras med potatismos"
     }
   ]
 }
