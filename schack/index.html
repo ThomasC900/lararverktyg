@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Schweizer/Monrad-turnering (8 ronder)</title>
+  <title>Schweizer/Monrad-turnering</title>
 <link rel="stylesheet" href="../assets/lararverktyg.css">
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
@@ -73,15 +73,15 @@
   <script data-goatcounter="https://lararverktyg.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
 </head>
-<body class="lv-page"><header class="lv-header"><div class="lv-header-inner"><a class="lv-back" href="../">← Tillbaka till lärverktyg</a><div class="lv-title-block"><h1 class="lv-title">Schweizer/Monrad-turnering — 8 ronder</h1><p class="lv-subtitle">Skapa och hantera en schackturnering med Monrad-system.</p></div><a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a></div></header>
+<body class="lv-page"><header class="lv-header"><div class="lv-header-inner"><a class="lv-back" href="../">← Tillbaka till lärverktyg</a><div class="lv-title-block"><h1 class="lv-title">Schweizer/Monrad-turnering</h1><p class="lv-subtitle">Skapa och hantera en schackturnering med Monrad-system.</p></div><a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a></div></header>
 
 <main class="grid">
   <section class="card">
     <h2>Turnering</h2>
     <div class="row no-print">
       <div>
-        <label>Antal ronder</label><br>
-        <span class="pill">8</span>
+        <label for="roundCount">Antal ronder</label><br>
+        <input id="roundCount" type="number" min="1" step="1" value="8" style="width:80px">
       </div>
       <div>
         <label>System</label><br>
@@ -119,7 +119,7 @@ David"></textarea>
 
     <div id="tournamentArea" style="display:none; margin-top:12px;">
       <div class="row">
-        <div><strong>Rond:</strong> <span id="roundLabel">1</span> / 8</div>
+        <div><strong>Rond:</strong> <span id="roundLabel">1</span> / <span id="roundTotal">8</span></div>
         <div class="muted">Poäng: vinst 1, remi ½, förlust 0. Bye ger 1 poäng.</div>
       </div>
 
@@ -140,6 +140,15 @@ David"></textarea>
 
   <aside class="card">
     <h2>Ställning</h2>
+    <div class="row no-print" style="margin-bottom:10px;">
+      <label for="standingsLimit">Visa</label>
+      <select id="standingsLimit">
+        <option value="3">Topp 3</option>
+        <option value="5">Topp 5</option>
+        <option value="10">Topp 10</option>
+        <option value="all" selected>Alla</option>
+      </select>
+    </div>
     <div class="muted" id="standingsHint">Skapa turneringen för att se ställning.</div>
     <div id="standingsArea" style="margin-top:10px;"></div>
 
@@ -149,7 +158,7 @@ David"></textarea>
         Den här sidan använder en förenklad FIDE-inspirerad Swiss-lottning:
         <ul>
           <li>Rond 1: slump</li>
-          <li>Rond 2–8: poängbaserad lottning, i första hand inom samma eller nära poänggrupp</li>
+          <li>Från rond 2: poängbaserad lottning, i första hand inom samma eller nära poänggrupp</li>
           <li><strong>Inga dubbelmöten:</strong> backtracking flyttar runt spelare inom/kring poänggruppen</li>
           <li><strong>Färgpreferenser:</strong> tar hänsyn till färgbalans, två raka färger och försöker undvika tre i rad</li>
           <li><strong>Bye:</strong> till lägst placerade som inte redan fått bye</li>
@@ -164,7 +173,8 @@ David"></textarea>
 
 <script>
 (() => {
-  const ROUNDS = 8;
+  const DEFAULT_ROUNDS = 8;
+  const totalRounds = () => t?.totalRounds ?? DEFAULT_ROUNDS;
   const STORAGE_KEY = "schweizer_monrad_v3";
   const $ = (id) => document.getElementById(id);
 
@@ -183,6 +193,9 @@ David"></textarea>
 
   function normalizeTournament(obj) {
     if (!obj || !obj.players) return obj;
+    if (!Number.isSafeInteger(obj.totalRounds) || obj.totalRounds < 1) obj.totalRounds = DEFAULT_ROUNDS;
+    obj.totalRounds = Math.max(obj.totalRounds, obj.rounds?.length || 0);
+    if (!["3", "5", "10", "all"].includes(obj.standingsLimit)) obj.standingsLimit = "all";
     for (const p of obj.players) {
       if (typeof p.whiteCount !== "number") p.whiteCount = 0;
       if (typeof p.blackCount !== "number") p.blackCount = 0;
@@ -342,8 +355,10 @@ David"></textarea>
 
   function renderStandings() {
     if (!t) return;
-    const rows = standings();
-    $("standingsHint").textContent = `Uppdaterad efter rond ${t.rounds.length} / ${ROUNDS}.`;
+    const allRows = standings();
+    const limit = $("standingsLimit").value;
+    const rows = limit === "all" ? allRows : allRows.slice(0, Number(limit));
+    $("standingsHint").textContent = `Uppdaterad efter rond ${t.rounds.length} / ${totalRounds()}. Visar ${rows.length} av ${allRows.length} spelare.`;
 
     let html = `<table>
       <thead><tr>
@@ -536,7 +551,15 @@ David"></textarea>
     if (!t) return;
 
     const roundNo = currentRoundNumber();
-    $("roundLabel").textContent = roundNo;
+    $("roundLabel").textContent = Math.min(roundNo, totalRounds());
+    if (roundNo > totalRounds()) {
+      $("pairingsArea").innerHTML = `<div class="note"><strong>Turneringen är klar.</strong> Alla ${totalRounds()} ronder är spelade.</div>`;
+      $("btnSaveRound").disabled = true;
+      $("btnNextRound").disabled = true;
+      $("saveHint").textContent = "Klart.";
+      renderHistory();
+      return;
+    }
 
     const pending = window.__pendingRound;
     const round = pending && pending.round === roundNo ? pending : (window.__pendingRound = pairRound(roundNo));
@@ -584,7 +607,7 @@ David"></textarea>
     $("btnNextRound").disabled = true;
     $("saveHint").textContent = "Fyll i resultat och spara.";
 
-    if (roundNo > ROUNDS) {
+    if (roundNo > totalRounds()) {
       $("pairingsArea").innerHTML = `<div class="note"><strong>Turneringen är klar.</strong> Inga fler ronder.</div>`;
       $("btnSaveRound").disabled = true;
       $("btnNextRound").disabled = true;
@@ -673,6 +696,10 @@ David"></textarea>
   }
 
   function showTournamentUI() {
+    $("roundCount").value = totalRounds();
+    $("roundCount").disabled = true;
+    $("roundTotal").textContent = totalRounds();
+    $("standingsLimit").value = t.standingsLimit || "all";
     $("setupArea").style.display = "none";
     $("tournamentArea").style.display = "block";
     renderStandings();
@@ -685,7 +712,7 @@ David"></textarea>
     let body = `
       <h1>Schweizer/Monrad-turnering</h1>
       <p><strong>Skapad:</strong> ${new Date(t.createdAt).toLocaleString("sv-SE")}</p>
-      <p><strong>Spelare:</strong> ${t.players.length} &nbsp; | &nbsp; <strong>Avslutade ronder:</strong> ${t.rounds.length}</p>
+      <p><strong>Spelare:</strong> ${t.players.length} &nbsp; | &nbsp; <strong>Avslutade ronder:</strong> ${t.rounds.length} / ${totalRounds()}</p>
     `;
 
     if (!t.rounds.length) {
@@ -791,7 +818,15 @@ David"></textarea>
       return;
     }
 
+    const roundCount = Number($("roundCount").value);
+    if (!Number.isSafeInteger(roundCount) || roundCount < 1) {
+      alert("Ange antal ronder som ett heltal, minst 1.");
+      $("roundCount").focus();
+      return;
+    }
     t = {
+      totalRounds: roundCount,
+      standingsLimit: $("standingsLimit").value,
       createdAt: new Date().toISOString(),
       players: names.map((name, idx) => ({
         id: idx + 1,
@@ -817,7 +852,7 @@ David"></textarea>
 
   $("btnSaveRound").addEventListener("click", () => {
     const roundNo = currentRoundNumber();
-    if (roundNo > ROUNDS) return;
+    if (roundNo > totalRounds()) return;
 
     const round = window.__pendingRound;
     if (!round || round.round !== roundNo) {
@@ -832,15 +867,16 @@ David"></textarea>
 
     applyRoundResults(round);
     window.__pendingRound = null;
+    $("btnSaveRound").disabled = true;
 
     renderStandings();
 
-    if (currentRoundNumber() <= ROUNDS) {
+    if (currentRoundNumber() <= totalRounds()) {
       $("btnNextRound").disabled = false;
       $("saveHint").textContent = "Sparat! Klicka på “Lotta nästa rond”.";
     } else {
       $("btnNextRound").disabled = true;
-      $("saveHint").textContent = "Turneringen är klar.";
+      renderCurrentRound();
     }
 
     renderHistory();
@@ -848,7 +884,7 @@ David"></textarea>
 
   $("btnNextRound").addEventListener("click", () => {
     if (!t) return;
-    if (currentRoundNumber() > ROUNDS) return;
+    if (currentRoundNumber() > totalRounds()) return;
     window.__pendingRound = pairRound(currentRoundNumber());
     renderCurrentRound();
     $("btnNextRound").disabled = true;
@@ -859,6 +895,7 @@ David"></textarea>
     if (!ok) return;
     localStorage.removeItem(STORAGE_KEY);
     t = null;
+    $("roundCount").disabled = false;
     window.__pendingRound = null;
     $("tournamentArea").style.display = "none";
     $("setupArea").style.display = "block";
@@ -904,6 +941,13 @@ David"></textarea>
     } finally {
       e.target.value = "";
     }
+  });
+
+  $("standingsLimit").addEventListener("change", () => {
+    if (!t) return;
+    t.standingsLimit = $("standingsLimit").value;
+    save();
+    renderStandings();
   });
 
   const existing = load();
