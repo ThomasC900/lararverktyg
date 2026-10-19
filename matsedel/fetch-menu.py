@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Hämtar aktuell veckomeny för Ölyckeskolan från Matilda Menus JSON-API."""
 from __future__ import annotations
-from datetime import date, timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 import json, sys, urllib.parse, urllib.request
 
 API = "https://menu.matildaplatform.com/api/menu"
 DISTRIBUTOR_ID = "6a5713fad6523cfd795c45ce"
 OUT = Path(__file__).with_name("menu.json")
+SWEDEN = ZoneInfo("Europe/Stockholm")
 DAYS = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
 MONTHS = {1:"januari",2:"februari",3:"mars",4:"april",5:"maj",6:"juni",7:"juli",8:"augusti",9:"september",10:"oktober",11:"november",12:"december"}
 
@@ -35,7 +37,7 @@ def first_course_name(meal):
     return ""
 
 def fetch():
-    today = date.today(); monday = monday_of(today); sunday = monday + timedelta(days=6)
+    today = datetime.now(SWEDEN).date(); monday = monday_of(today); sunday = monday + timedelta(days=6)
     params = urllib.parse.urlencode({"distributorId":DISTRIBUTOR_ID,"startDate":monday.isoformat(),"endDate":sunday.isoformat(),"lang":"sv"})
     url = f"{API}?{params}"
     data = get_json(url)
