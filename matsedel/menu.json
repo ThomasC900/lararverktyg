@@ -1,46 +1,46 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-10-12&endDate=2026-10-18&lang=sv",
-  "week": 42,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-10-19&endDate=2026-10-25&lang=sv",
+  "week": 43,
   "year": 2026,
-  "period": "12 oktober – 16 oktober 2026",
-  "updated": "2026-10-18",
+  "period": "19 oktober – 23 oktober 2026",
+  "updated": "2026-10-19",
   "monthly_green": "Pumpa, lingon och päron",
   "days": [
     {
-      "date": "2026-10-12",
+      "date": "2026-10-19",
       "day": "Måndag",
-      "date_label": "12 oktober",
-      "meal1": "Makaroner med rökt hönskött- och ostsås",
-      "meal2": "Pasta med tomat- och linssås"
+      "date_label": "19 oktober",
+      "meal1": "Chili of Doom",
+      "meal2": "Chili of Doom - dagens gröna"
     },
     {
-      "date": "2026-10-13",
+      "date": "2026-10-20",
       "day": "Tisdag",
-      "date_label": "13 oktober",
-      "meal1": "Cowboysoppa serveras med bröd och krämiga pålägg",
-      "meal2": "Hedvigsoppa med sojafärs serveras med bröd och krämiga pålägg"
+      "date_label": "20 oktober",
+      "meal1": "Monster Crunch",
+      "meal2": "Monster Crunch - dagens gröna"
     },
     {
-      "date": "2026-10-14",
+      "date": "2026-10-21",
       "day": "Onsdag",
-      "date_label": "14 oktober",
-      "meal1": "Lasagnette med tomat och ost",
-      "meal2": "Veg biff, stekt potatis, sås"
+      "date_label": "21 oktober",
+      "meal1": "Witch Feast",
+      "meal2": "Witch Feast - dagens gröna"
     },
     {
-      "date": "2026-10-15",
+      "date": "2026-10-22",
       "day": "Torsdag",
-      "date_label": "15 oktober",
-      "meal1": "Kyckling med rostade rotfrukter & kökets goda sås",
-      "meal2": "Quornfilé med rostade rotfrukter & kökets goda sås"
+      "date_label": "22 oktober",
+      "meal1": "Ghost Noodle Wok",
+      "meal2": "Ghost Noodle Wok - dagens gröna"
     },
     {
-      "date": "2026-10-16",
+      "date": "2026-10-23",
       "day": "Fredag",
-      "date_label": "16 oktober",
-      "meal1": "Köttbullar serveras med potatismos",
-      "meal2": "Vegobullar serveras med potatismos"
+      "date_label": "23 oktober",
+      "meal1": "Buuuuhrito Friday",
+      "meal2": "Buuuuhrito Friday - dagens gröna"
     }
   ]
 }
