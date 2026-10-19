@@ -139,6 +139,11 @@ button.secondary{background:#e9eef2;color:var(--lv-blue);border:0}
             <label class="choice"><input type="radio" name="kSign" value="negative"> Negativa</label>
           </div>
           <div class="setting-row">
+            <span class="setting-label">k-tal:</span>
+            <label class="choice"><input type="radio" name="kType" value="integer" checked> Heltal</label>
+            <label class="choice"><input type="radio" name="kType" value="halves"> Tillåt halvor</label>
+          </div>
+          <div class="setting-row">
             <span class="setting-label">m-värde:</span>
             <label class="choice"><input type="radio" name="mType" value="integer" checked> Heltal</label>
             <label class="choice"><input type="radio" name="mType" value="halves"> Tillåt halvor</label>
@@ -252,7 +257,7 @@ function draw(){
      addText(tx,Y(b)-10,"("+formatNum(a)+", "+formatNum(b)+")",anchor,14,"#613a7e");
    });
  }
- kVal.textContent=formatNum(k);mVal.textContent=formatNum(m);equation.textContent=formatEquation(k,m);
+ kVal.textContent=formatNum(k);mVal.textContent=formatNum(m);equation.textContent=mode==="train"?"y = kx + m":formatEquation(k,m);
 }
 function remember(){previous={k,m}}
 function setControls(kEnabled,mEnabled){
@@ -293,12 +298,15 @@ function setMode(next){
 }
 function newTask(){
  const sign=document.querySelector('input[name="kSign"]:checked').value;
+ const kType=document.querySelector('input[name="kType"]:checked').value;
  const mType=document.querySelector('input[name="mType"]:checked').value;
 
  let ks;
  if(sign==="positive") ks=[0.5,1,2,3];
  else if(sign==="negative") ks=[-3,-2,-1,-0.5];
  else ks=[-3,-2,-1,-0.5,0.5,1,2,3];
+
+ if(kType==="integer") ks=ks.filter(Number.isInteger);
 
  // m hålls en bit från kanten så att avläsning och hjälpgrafik blir tydlig.
  let ms=[];
@@ -348,7 +356,7 @@ document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setM
 document.getElementById("check").addEventListener("click",checkAnswer);
 document.getElementById("newTask").addEventListener("click",newTask);
 document.getElementById("hint").addEventListener("click",hint);
-document.querySelectorAll('input[name="kSign"], input[name="mType"]').forEach(r=>{
+document.querySelectorAll('input[name="kSign"], input[name="kType"], input[name="mType"]').forEach(r=>{
  r.addEventListener("change",()=>{if(mode==="train")newTask()});
 });
 setMode("m");
