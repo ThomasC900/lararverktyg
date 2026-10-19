@@ -30,7 +30,7 @@ main{max-width:1200px;margin:0 auto;padding:36px 24px 70px}
 .theme-button{border:0;background:#e9eef2;color:var(--blue);padding:12px 16px;border-radius:9px;cursor:pointer;font-size:1rem;font-weight:700}
 section{margin-bottom:46px}
 h2{margin:0 0 18px;padding-bottom:9px;border-bottom:3px solid var(--gold);font-size:1.65rem;color:var(--blue)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 .card{display:flex;flex-direction:column;min-height:218px;padding:22px;background:var(--surface);border:2px solid var(--blue);border-radius:14px;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .card:hover{transform:translateY(-3px);border-color:#c4d1d9;box-shadow:0 7px 18px rgba(13,52,80,.12)}
 .icon{font-size:2.25rem;margin-bottom:14px}
@@ -55,14 +55,14 @@ body.dark .search input{background:#1d3545;color:#fff}
 }
 @media(max-width:600px){.grid{grid-template-columns:1fr}.card{min-height:auto}}
 
-.math-group{margin:0 0 20px;border:2px solid var(--blue);border-radius:14px;background:var(--surface);overflow:hidden}
-.math-group summary{cursor:pointer;padding:20px;font-size:1.22rem;font-weight:700;color:var(--blue)}
-.math-group summary:focus-visible{outline:3px solid var(--gold);outline-offset:-5px}
-.math-group[open] summary{border-bottom:1px solid var(--border)}
-.math-group>.grid{padding:18px}
-.group-count{font-size:.88rem;font-weight:400;color:var(--muted);margin-left:14px;white-space:nowrap}
-body.dark .math-group{border-color:var(--gold)}
-body.dark .math-group summary{color:#fff}
+
+.card{position:relative;min-width:0;overflow-wrap:anywhere}
+.card a::after{content:"";position:absolute;inset:0;border-radius:12px}
+.card:focus-within{outline:3px solid var(--gold);outline-offset:3px}
+.back-link{display:inline-block;margin:0 0 20px;color:var(--blue);font-weight:700;text-decoration:none}
+body.dark .back-link{color:#fff}
+@media(max-width:1099px) and (min-width:851px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:850px) and (min-width:601px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 [hidden]{display:none!important}
 </style>
   <script data-goatcounter="https://lararverktyg.goatcounter.com/count"
@@ -104,117 +104,9 @@ body.dark .math-group summary{color:#fff}
     </div>
 
 
-<section class="tool-section"><h2>Matematik</h2><details class="math-group"><summary>Tal och tals användning<span class="group-count">9 verktyg</span></summary><div class="grid">
-<article class="card">
-  <div class="icon">✖️</div>
-  <h3>Multiplikationsträning</h3>
-  <p>
-    Träna valfria multiplikationstabeller 1–10. Tävla mot tiden och försök slå din bästa svit med rätt svar i rad.
-  </p>
-  <a href="multiplikationstraning/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">🔢</div>
-  <h3>Delbarhetslabbet</h3>
-  <p>
-    Träna delbarhetsregler och få direkt återkoppling på dina svar.
-  </p>
-  <a href="delbarhetslabbet/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">🧮</div>
-  <h3>Prioriteringslabbet</h3>
-  <p>
-    Träna prioriteringsregler med räknesätt, parenteser och potenser på valfri nivå.
-  </p>
-  <a href="prioriteringslabbet/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">➖</div>
-  <h3>Negativa tal</h3>
-  <p>
-    Träna negativa tal steg för steg med addition, subtraktion, multiplikation, division och potenser.
-  </p>
-  <a href="negativa-tal/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">½</div>
-  <h3>Bråk, decimal & procent</h3>
-  <p>
-    Träna sambandet mellan bråk och decimaltal. Välj bråkfamiljer, träna åt båda hållen och koppla på procentform.
-  </p>
-  <a href="brak-decimal-procent/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">➗</div>
-  <h3>Bråkräkning</h3>
-  <p>
-    Träna blandad form, bråkform och de fyra räknesätten med bråk. Välj samma eller olika nämnare vid addition och subtraktion.
-  </p>
-  <a href="brakrakning/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">🔟</div>
-  <h3>Multiplikation & division med 10, 100 och 1 000</h3>
-  <p>
-    Träna multiplikation och division med 10, 100 och 1 000. Förstå hur siffrornas platsvärde förändras i positionssystemet.
-  </p>
-  <a href="multiplikation-division-10-100-1000/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">≈</div>
-  <h3>Överslagsräkning</h3>
-  <p>Avrunda först och räkna sedan. Träna de fyra räknesätten och lär dig välja enkla tal vid division.</p>
-  <a href="overslagsrakning/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">🎯</div>
-  <h3>Avrundning</h3>
-  <p>
-    Träna på att avrunda tal från tusental till tusendel. Välj en eller flera nivåer och få stöd steg för steg när det behövs.
-  </p>
-  <a href="avrundning/">Starta →</a>
-</article>
-
-</div></details><details class="math-group"><summary>Algebra<span class="group-count">2 verktyg</span></summary><div class="grid">
-<article class="card">
-  <div class="icon">✏️</div>
-  <h3>Teckna algebraiska uttryck</h3>
-  <p>Översätt text till algebraiska uttryck. Blanda valfria nivåer med de fyra räknesätten och få ledtrådar och påminnelser om enheter. För åk 7.</p>
-  <a href="teckna-uttryck/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">🔢</div>
-  <h3>Värdet av ett algebraiskt uttryck</h3>
-  <p>Sätt in variabelns värde och beräkna uttrycket. Välj bland fyra nivåer med heltal, bråk, parenteser och tillämpningar. För åk 7.</p>
-  <a href="uttryckets-varde/">Starta →</a>
-</article>
-</div></details><details class="math-group"><summary>Samband och förändring<span class="group-count">3 verktyg</span></summary><div class="grid">
-<article class="card">
-  <div class="icon">📈</div>
-  <h3>Förändringsfaktor</h3>
-  <p>
-    Träna på höjning och sänkning. Bestäm förändringsfaktorn
-    och använd den för att beräkna nya värden.
-  </p>
-  <a href="forandringsfaktor/">Starta →</a>
-</article>
-<article class="card">
-  <div class="icon">📍</div>
-  <h3>Koordinatsystem</h3>
-  <p>Läs av koordinater och placera punkter i ett koordinatsystem från −10 till 10. Välj om frågor om kvadranter ska ingå.</p>
-  <a href="koordinatsystem/">Starta →</a>
-</article>
-<article class="card">
-    <div class="icon">📈</div>
-    <h3>Räta linjens ekvation</h3>
-    <p>
-        Upptäck och laborera med sambandet y = kx + m.
-        Träna på hur k och m påverkar grafen.
-    </p>
-    <a href="rat-linje/">Starta →</a>
-</article>
-</div></details><div class="grid"><article class="card">
+<section class="tool-section"><h2>Matematik</h2><div class="grid"><article class="card"><div class="icon">🔢</div><h3>Tal och tals användning</h3><p>Träna räknesätt, bråk, decimaltal, procent och avrundning.</p><a href="tal-och-tals-anvandning/">Visa 9 verktyg →</a></article>
+<article class="card"><div class="icon">✏️</div><h3>Algebra</h3><p>Teckna algebraiska uttryck och beräkna deras värde.</p><a href="algebra/">Visa 2 verktyg →</a></article>
+<article class="card"><div class="icon">📈</div><h3>Samband och förändring</h3><p>Utforska förändringsfaktor, koordinatsystem och räta linjens ekvation.</p><a href="samband-och-forandring/">Visa 3 verktyg →</a></article><article class="card">
   <div class="icon">🎲</div>
   <h3>Slumptalsgenerator</h3>
   <p>
@@ -349,6 +241,250 @@ body.dark .math-group summary{color:#fff}
   </p>
   <a href="exitticket/">Starta →</a>
 </article></div></section>
+<section id="searchResults" hidden aria-label="Sökresultat"><h2>Sökresultat</h2><div class="grid"><article class="card">
+  <div class="icon">✖️</div>
+  <h3>Multiplikationsträning</h3>
+  <p>
+    Träna valfria multiplikationstabeller 1–10. Tävla mot tiden och försök slå din bästa svit med rätt svar i rad.
+  </p>
+  <a href="multiplikationstraning/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🔢</div>
+  <h3>Delbarhetslabbet</h3>
+  <p>
+    Träna delbarhetsregler och få direkt återkoppling på dina svar.
+  </p>
+  <a href="delbarhetslabbet/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🧮</div>
+  <h3>Prioriteringslabbet</h3>
+  <p>
+    Träna prioriteringsregler med räknesätt, parenteser och potenser på valfri nivå.
+  </p>
+  <a href="prioriteringslabbet/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">➖</div>
+  <h3>Negativa tal</h3>
+  <p>
+    Träna negativa tal steg för steg med addition, subtraktion, multiplikation, division och potenser.
+  </p>
+  <a href="negativa-tal/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">½</div>
+  <h3>Bråk, decimal & procent</h3>
+  <p>
+    Träna sambandet mellan bråk och decimaltal. Välj bråkfamiljer, träna åt båda hållen och koppla på procentform.
+  </p>
+  <a href="brak-decimal-procent/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">➗</div>
+  <h3>Bråkräkning</h3>
+  <p>
+    Träna blandad form, bråkform och de fyra räknesätten med bråk. Välj samma eller olika nämnare vid addition och subtraktion.
+  </p>
+  <a href="brakrakning/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🔟</div>
+  <h3>Multiplikation & division med 10, 100 och 1 000</h3>
+  <p>
+    Träna multiplikation och division med 10, 100 och 1 000. Förstå hur siffrornas platsvärde förändras i positionssystemet.
+  </p>
+  <a href="multiplikation-division-10-100-1000/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">≈</div>
+  <h3>Överslagsräkning</h3>
+  <p>Avrunda först och räkna sedan. Träna de fyra räknesätten och lär dig välja enkla tal vid division.</p>
+  <a href="overslagsrakning/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🎯</div>
+  <h3>Avrundning</h3>
+  <p>
+    Träna på att avrunda tal från tusental till tusendel. Välj en eller flera nivåer och få stöd steg för steg när det behövs.
+  </p>
+  <a href="avrundning/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">✏️</div>
+  <h3>Teckna algebraiska uttryck</h3>
+  <p>Översätt text till algebraiska uttryck. Blanda valfria nivåer med de fyra räknesätten och få ledtrådar och påminnelser om enheter. För åk 7.</p>
+  <a href="teckna-uttryck/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🔢</div>
+  <h3>Värdet av ett algebraiskt uttryck</h3>
+  <p>Sätt in variabelns värde och beräkna uttrycket. Välj bland fyra nivåer med heltal, bråk, parenteser och tillämpningar. För åk 7.</p>
+  <a href="uttryckets-varde/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">📈</div>
+  <h3>Förändringsfaktor</h3>
+  <p>
+    Träna på höjning och sänkning. Bestäm förändringsfaktorn
+    och använd den för att beräkna nya värden.
+  </p>
+  <a href="forandringsfaktor/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">📍</div>
+  <h3>Koordinatsystem</h3>
+  <p>Läs av koordinater och placera punkter i ett koordinatsystem från −10 till 10. Välj om frågor om kvadranter ska ingå.</p>
+  <a href="koordinatsystem/">Starta →</a>
+</article>
+<article class="card">
+    <div class="icon">📈</div>
+    <h3>Räta linjens ekvation</h3>
+    <p>
+        Upptäck och laborera med sambandet y = kx + m.
+        Träna på hur k och m påverkar grafen.
+    </p>
+    <a href="rat-linje/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🎲</div>
+  <h3>Slumptalsgenerator</h3>
+  <p>
+    Simulera tärningskast och undersök sannolikhet och procentuell fördelning.
+  </p>
+  <a href="slumptalsgenerator/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🧠</div>
+  <h3>Begreppsträning NO/SO</h3>
+  <p>
+    Träna viktiga begrepp och förklaringar med flashcards,
+    flervalsfrågor och olika övningslägen. Klistra enkelt in
+    begreppslistor från exempelvis Google Kalkyl eller dokument.
+  </p>
+  <a href="begreppstraning/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🕒</div>
+  <h3>Die Uhr – klockan på tyska</h3>
+  <p>
+    Träna på att säga klockan på tyska. Tre nivåer från hel- och halvtimmar till kvart och femminutersintervall.
+  </p>
+  <a href="die-uhr/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🗂️</div>
+  <h3>Glosträning</h3>
+  <p>
+    Klistra in en gloslista och träna med flashcards eller stavningskontroll. Träna åt båda håll och repetera glosorna du missar.
+  </p>
+  <a href="glostraning/">Starta →</a>
+</article>
+<article class="card">
+          <div class="icon">✖️</div>
+          <h3>Multiplikationsbingo</h3>
+          <p>
+            Träna multiplikation på ett enkelt och spelifierat sätt.
+          </p>
+         <a href="multiplikationsbingo/">Starta →</a>
+        </article>
+<article class="card">
+  <div class="icon">🗼</div>
+  <h3>Tornet i Hanoi</h3>
+  <p>
+    Flytta hela tornet med så få drag som möjligt. Välj 3–10 ringar och försök nå det teoretiska minimumet.
+  </p>
+  <a href="tornet-i-hanoi/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🔵 🔴 🟢</div>
+  <h3>Division – tre i rad</h3>
+  <p>
+    Ett strategispel för 2–3 spelare. Välj tal, dividera och försök få tre i rad samtidigt som ni utforskar hur täljare och nämnare påverkar kvoten.
+  </p>
+  <a href="division-tre-i-rad/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🧠</div>
+  <h3>Huvudräknings-Jeopardy</h3>
+  <p>
+    Tävla i huvudräkning med slumpade uppgifter i sju områden och stigande svårighetsgrad.
+  </p>
+  <a href="huvudrakningsjeopardy/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🎵</div>
+  <h3>Svenska sommarlåtar</h3>
+  <p>
+    Musikquiz med svenska sommarlåtar. Elevversion med frågor och möjlighet att visa eller dölja svar.
+  </p>
+  <a href="musikquiz-svenska-sommarlatar-elev/">Starta elevversion →</a>
+</article>
+<article class="card">
+  <div class="icon">🎯</div>
+  <h3>Närmast vinner</h3>
+  <p>
+    Använd fem slumpade tal och olika räknesätt för att komma så nära måltalet som möjligt.
+  </p>
+  <a href="narmast-vinner/">Starta →</a>
+</article>
+<article class="card">
+          <div class="icon">💰</div>
+          <h3>Pay Out</h3>
+          <p>
+            Ett strategiskt matematikspel för elever och klassrum.
+          </p>
+        <a href="payout/">Starta →</a>
+        </article>
+<article class="card">
+  <div class="icon">♟️</div>
+  <h3>Schack</h3>
+  <p>
+    Genomför schackturneringar med automatisk lottning, resultat och tabell.
+  </p>
+  <a href="schack/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🍽️</div>
+  <h3>Veckans matsedel</h3>
+  <p>
+    Se aktuell matsedel för Ölyckeskolan. Menyn uppdateras automatiskt och är anpassad för utskrift på A4.
+  </p>
+  <a href="matsedel/">Visa matsedel →</a>
+</article>
+<article class="card">
+          <div class="icon">👥</div>
+          <h3>Gruppgenerator</h3>
+          <p>
+            Skapa slumpmässiga grupper snabbt och enkelt.
+          </p>
+         <a href="gruppgenerator/">Starta →</a>
+        </article>
+<article class="card">
+  <div class="icon">🎲</div>
+  <h3>Tärningskast</h3>
+  <p>
+    Kasta valfritt antal tärningar med 4, 6, 8, 10, 12, 20 eller 100 sidor. Anpassat för helskärmsvisning.
+  </p>
+  <a href="tarningskast/">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">⏱️</div>
+  <h3>Lektionstimer</h3>
+  <p>
+    Tydlig nedräkning för klassrummet. Ställ in tid eller sluttid och visa timern i helskärm.
+  </p>
+  <a href="lektionstimer/" target="_blank" rel="noopener">Starta →</a>
+</article>
+<article class="card">
+  <div class="icon">🚪</div>
+  <h3>Exit ticket</h3>
+  <p>
+    Skapa en tydlig exit ticket för klassrummet. Klistra in text, lägg till en bild och visa resultatet snyggt i helskärm.
+  </p>
+  <a href="exitticket/">Starta →</a>
+</article></div></section>
 <p id="noResults" role="status" hidden>Inga verktyg matchar din sökning.</p>
 
   </main>
@@ -360,49 +496,26 @@ body.dark .math-group summary{color:#fff}
 
 
   <script>
-    const searchInput = document.getElementById("searchInput");
-    const cards = document.querySelectorAll(".card");
-
-
-    const groups = [...document.querySelectorAll(".math-group")];
-    let groupStates = null;
-    searchInput.addEventListener("input", function () {
-      const searchTerm = this.value.trim().toLocaleLowerCase("sv");
-      if (searchTerm && !groupStates) groupStates = groups.map(group => group.open);
-      let visibleCount = 0;
-      cards.forEach(card => {
-        const group = card.closest(".math-group");
-        const section = card.closest(".tool-section");
-        const text = [card.textContent, group?.querySelector("summary").textContent,
-          section?.querySelector("h2").textContent].join(" ").toLocaleLowerCase("sv");
-        card.hidden = !text.includes(searchTerm);
-        if (!card.hidden) visibleCount++;
-      });
-      groups.forEach((group, index) => {
-        group.hidden = ![...group.querySelectorAll(".card")].some(card => !card.hidden);
-        if (searchTerm) group.open = !group.hidden;
-        else if (groupStates) group.open = groupStates[index];
-      });
-      document.querySelectorAll(".tool-section").forEach(section => {
-        section.hidden = ![...section.querySelectorAll(".card")].some(card => !card.hidden);
-      });
-      document.getElementById("noResults").hidden = visibleCount > 0;
-      if (!searchTerm) groupStates = null;
-    });
-
-
-    const themeButton = document.getElementById("themeButton");
-
-    themeButton.addEventListener("click", function () {
-      document.body.classList.toggle("dark");
-
-      if (document.body.classList.contains("dark")) {
-        themeButton.textContent = "☀️ Ljust läge";
-      } else {
-        themeButton.textContent = "🌙 Mörkt läge";
-      }
-    });
-  </script>
+const searchInput = document.getElementById("searchInput");
+const sections = [...document.querySelectorAll(".tool-section")];
+const results = document.getElementById("searchResults");
+const cards = [...results.querySelectorAll(".card")];
+searchInput.addEventListener("input", function () {
+ const term = this.value.trim().toLocaleLowerCase("sv");
+ sections.forEach(section => { section.hidden = Boolean(term); });
+ results.hidden = !term;
+ let count = 0;
+ cards.forEach(card => {
+  card.hidden = !card.textContent.toLocaleLowerCase("sv").includes(term);
+  if (!card.hidden) count++;
+ });
+ document.getElementById("noResults").hidden = !term || count > 0;
+});
+const themeButton = document.getElementById("themeButton");
+themeButton.addEventListener("click", () => {
+ document.body.classList.toggle("dark");
+ themeButton.textContent = document.body.classList.contains("dark") ? "☀️ Ljust läge" : "🌙 Mörkt läge";
+});</script>
 
 </body>
 </html>
