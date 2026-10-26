@@ -1,46 +1,46 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-10-19&endDate=2026-10-25&lang=sv",
-  "week": 43,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-10-26&endDate=2026-11-01&lang=sv",
+  "week": 44,
   "year": 2026,
-  "period": "19 oktober – 23 oktober 2026",
-  "updated": "2026-10-25",
+  "period": "26 oktober – 30 oktober 2026",
+  "updated": "2026-10-26",
   "monthly_green": "Pumpa, lingon och päron",
   "days": [
     {
-      "date": "2026-10-19",
+      "date": "2026-10-26",
       "day": "Måndag",
-      "date_label": "19 oktober",
-      "meal1": "Chili of Doom",
-      "meal2": "Chili of Doom - dagens gröna"
+      "date_label": "26 oktober",
+      "meal1": "Pytt i panna med inlagda rödbetor",
+      "meal2": "Grönsakspytt"
     },
     {
-      "date": "2026-10-20",
+      "date": "2026-10-27",
       "day": "Tisdag",
-      "date_label": "20 oktober",
-      "meal1": "Monster Crunch",
-      "meal2": "Monster Crunch - dagens gröna"
+      "date_label": "27 oktober",
+      "meal1": "Falafel med kökets tillbehör",
+      "meal2": ""
     },
     {
-      "date": "2026-10-21",
+      "date": "2026-10-28",
       "day": "Onsdag",
-      "date_label": "21 oktober",
-      "meal1": "Witch Feast",
-      "meal2": "Witch Feast - dagens gröna"
+      "date_label": "28 oktober",
+      "meal1": "Kokt lax serveras med dillsås & potatis",
+      "meal2": "Nuggets, potatis, kall örtsås veg"
     },
     {
-      "date": "2026-10-22",
+      "date": "2026-10-29",
       "day": "Torsdag",
-      "date_label": "22 oktober",
-      "meal1": "Ghost Noodle Wok",
-      "meal2": "Ghost Noodle Wok - dagens gröna"
+      "date_label": "29 oktober",
+      "meal1": "Bygg din egen Pastasallad",
+      "meal2": "Bygg din egen Pastasallad med växtbaserade strimlor"
     },
     {
-      "date": "2026-10-23",
+      "date": "2026-10-30",
       "day": "Fredag",
-      "date_label": "23 oktober",
-      "meal1": "Buuuuhrito Friday",
-      "meal2": "Buuuuhrito Friday - dagens gröna"
+      "date_label": "30 oktober",
+      "meal1": "Pulled pork med kökets tillbehör",
+      "meal2": "Pulled vego med kökets tillbehör"
     }
   ]
 }
