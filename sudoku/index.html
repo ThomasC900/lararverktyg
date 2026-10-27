@@ -166,22 +166,20 @@ function solveMedium(input){
   }
   return board.every(Boolean);
 }
-const grade=board=>solveSingles(board)?'easy':(solveMedium(board)||board.filter(Boolean).length>=30)?'medium':'hard';
-const TARGET={easy:40,medium:32,hard:26},RELEASE={easy:40,medium:36,hard:30};
+/* Nivåerna styrs av antalet givna siffror. Lätt och Medel går att lösa med
+   enkla singlar, Svår med singlar, låsta kandidater och nakna par – aldrig gissning. */
+const CLUES={easy:50,medium:42,hard:35};
+const solvable=(board,level)=>level==='hard'?solveMedium(board):solveSingles(board);
 function generate(level){
-  let fallback=null;
-  for(let attempt=0;attempt<256;attempt++){
+  const target=CLUES[level];
+  for(let attempt=0;;attempt++){
     const solution=solvedBoard(),givens=[...solution];
-    for(const pair of shuffle(Array.from({length:41},(_,i)=>[i,80-i]))){
-      const prev=pair.map(i=>givens[i]);pair.forEach(i=>{givens[i]=0});
-      const clues=givens.filter(Boolean).length;
-      if(clues<TARGET[level]||countSolutions(givens)!==1)pair.forEach((i,p)=>{givens[i]=prev[p]});
-      else if(clues<=RELEASE[level]&&grade(givens)===level)return{givens,solution};
-    }
-    fallback={givens,solution};
-    if(grade(givens)===level)return fallback;
+    let clues=81;
+    const tryRemove=cells=>{if(clues-cells.length<target)return;const prev=cells.map(i=>givens[i]);cells.forEach(i=>{givens[i]=0});if(countSolutions(givens)===1&&solvable(givens,level))clues-=cells.length;else cells.forEach((i,k)=>{givens[i]=prev[k]})};
+    for(const pair of shuffle(Array.from({length:41},(_,i)=>i===40?[40]:[i,80-i])))tryRemove(pair);
+    for(const i of shuffle([...Array(81).keys()]))if(givens[i])tryRemove([i]);
+    if(clues===target||attempt>=50)return{givens,solution};
   }
-  return fallback;
 }
 
 /* Spelet */
