@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudoku – Lärarverktyg</title>
+<link rel="stylesheet" href="../assets/lararverktyg.css">
+<style>
+*{box-sizing:border-box}
+body.lv-page{font-family:Arial,Helvetica,sans-serif;background:var(--lv-bg);color:var(--lv-text)}
+main.lv-main{max-width:1100px;padding-top:22px}
+button{font:inherit}
+button:focus-visible,.cell:focus-visible{outline:3px solid var(--lv-gold);outline-offset:2px}
+.panel{background:var(--lv-card);border:1px solid var(--lv-border);border-radius:14px;box-shadow:0 2px 7px rgba(0,0,0,.06);padding:18px;margin-bottom:18px}
+
+/* Inställningar och statistik */
+.controls{display:flex;gap:14px;align-items:end;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;font-weight:700}
+.levels{display:flex;gap:6px}
+.level{background:#fff;color:var(--lv-blue);border:2px solid var(--lv-border);border-radius:9px;padding:9px 14px;font-weight:700;cursor:pointer}
+.level:hover{border-color:var(--lv-blue)}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin-left:auto}
+.stat{background:#f6f9fb;border:1px solid var(--lv-border);border-radius:10px;padding:9px 14px;min-width:110px}
+.stat span{display:block;color:var(--lv-muted);font-size:.78rem;text-transform:uppercase;font-weight:800}
+.stat strong{font-size:1.25rem;color:var(--lv-blue);font-variant-numeric:tabular-nums}
+button.lv-btn-primary:disabled,button.lv-btn-secondary:disabled,.pad button:disabled{opacity:.45;cursor:default}
+
+/* Spelplan */
+.play{display:grid;grid-template-columns:minmax(0,560px) minmax(250px,1fr);gap:22px;align-items:start}
+.message{min-height:28px;text-align:center;font-weight:800;margin:0 0 12px;color:var(--lv-blue)}
+.message.good{color:var(--lv-green)}.message.bad{color:var(--lv-red)}
+.board-wrap{position:relative}
+.board{aspect-ratio:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;background:var(--lv-blue);border:3px solid var(--lv-blue);border-radius:8px;overflow:hidden;user-select:none}
+.box{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#9fb0bd}
+.cell{position:relative;min-width:0;aspect-ratio:1;border:0;border-radius:0;padding:0;background:#fff;color:var(--lv-blue-2);font-size:clamp(1.15rem,4.6vw,1.9rem);font-weight:700;line-height:1;cursor:pointer;display:grid;place-items:center}
+.cell.given{color:var(--lv-text);font-weight:800}
+.cell.related{background:#eef3f6}
+.cell.match{background:#dce8f0}
+.cell.selected{background:#fff3d6;box-shadow:inset 0 0 0 3px var(--lv-gold);z-index:1}
+.cell.wrong{background:#f8dede;color:var(--lv-red)}
+.notes{position:absolute;inset:3px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);color:var(--lv-muted);font-size:clamp(.45rem,1.7vw,.72rem);font-weight:700}
+.notes i{display:grid;place-items:center;font-style:normal}
+.board.paused .cell{filter:blur(6px)}
+.pause-overlay{position:absolute;inset:30%;z-index:5;border:0;border-radius:14px;background:rgba(13,52,80,.94);color:#fff;font-size:1.3rem;font-weight:800;cursor:pointer;box-shadow:inset 0 -5px 0 var(--lv-gold)}
+.pause-overlay small{display:block;margin-top:6px;font-size:.8rem;font-weight:400;opacity:.88}
+
+/* Sifferknappar */
+.tools{display:flex;flex-direction:column;gap:12px}
+.mode{display:flex;gap:8px}
+.mode button{flex:1;white-space:nowrap}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pad button{position:relative;aspect-ratio:1.6;background:#fff;color:var(--lv-blue);border:2px solid var(--lv-border);border-radius:10px;font-size:1.6rem;font-weight:800;cursor:pointer}
+.pad button:hover:not(:disabled){border-color:var(--lv-blue)}
+.pad small{position:absolute;right:6px;bottom:4px;color:var(--lv-muted);font-size:.7rem;font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.actions button{flex:1 1 auto}
+.done{display:none;padding:14px;border-radius:10px;background:#e4f2ea;color:var(--lv-green);font-weight:800;text-align:center;border:1px solid #bfdcca}
+.done.forfeited{background:#eef2f5;color:var(--lv-muted);border-color:var(--lv-border)}
+.done.show{display:block}
+
+/* Instruktioner */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:18px;border-left:5px solid var(--lv-gold)}
+.rules h2{font-size:1.05rem;margin:0 0 8px;color:var(--lv-blue)}
+.rules p,.rules ol{margin:0;color:#445269;line-height:1.55}
+kbd{background:#eef2f5;border:1px solid var(--lv-border);border-bottom-width:2px;border-radius:5px;padding:0 5px;font-family:inherit;font-size:.85em}
+
+@media(max-width:860px){.play{grid-template-columns:1fr}.board-wrap{max-width:560px;margin:auto;width:100%}.tools{max-width:560px;margin:auto;width:100%}.pad{grid-template-columns:repeat(9,1fr);gap:4px}.pad button{aspect-ratio:auto;height:58px;padding:0;font-size:1.45rem;border-radius:8px}.pad small{right:3px;bottom:2px;font-size:.55rem}}
+@media(max-width:700px){main.lv-main{padding-top:12px}.panel{padding:12px}.stats{margin-left:0;width:100%}.stat{flex:1;min-width:0;padding:8px 10px}.rules{grid-template-columns:1fr}.levels{width:100%}.level{flex:1}.mode button{font-size:.92rem;padding:9px 8px}}
+</style>
+</head>
+<body class="lv-page">
+<header class="lv-header">
+  <div class="lv-header-inner">
+    <a class="lv-back" href="../">← Tillbaka till lärverktyg</a>
+    <div class="lv-title-block">
+      <h1 class="lv-title">Sudoku</h1>
+      <p class="lv-subtitle">Fyll i siffrorna 1–9 så att varje rad, kolumn och ruta blir komplett.</p>
+    </div>
+    <a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a>
+  </div>
+</header>
+<main class="lv-main">
+<section class="panel controls">
+  <div class="field">Svårighetsgrad
+    <div class="levels" role="group" aria-label="Svårighetsgrad">
+      <button class="level" data-level="easy" type="button">Lätt</button>
+      <button class="level" data-level="medium" type="button">Medel</button>
+      <button class="level" data-level="hard" type="button">Svår</button>
+    </div>
+  </div>
+  <button id="newGame" class="lv-btn-primary" type="button">Nytt spel</button>
+  <div class="stats">
+    <div class="stat"><span>Tid</span><strong id="time">0:00</strong></div>
+    <div class="stat"><span>Misstag</span><strong id="mistakes">0</strong></div>
+    <div class="stat"><span>Kvar</span><strong id="left">–</strong></div>
+  </div>
+</section>
+
+<section class="panel">
+  <div id="message" class="message" aria-live="polite"></div>
+  <div class="play">
+    <div class="board-wrap">
+      <div id="board" class="board" role="grid" aria-label="Sudokubräde"></div>
+      <button id="resume" class="pause-overlay" type="button" hidden>Pausat<small>Klicka för att fortsätta</small></button>
+    </div>
+    <div class="tools">
+      <div class="mode">
+        <button id="notesBtn" class="lv-btn-secondary" type="button" aria-pressed="false">✎ Anteckningar: av</button>
+        <button id="pauseBtn" class="lv-btn-secondary" type="button">Ⅱ Paus</button>
+      </div>
+      <div id="pad" class="pad" aria-label="Siffror"></div>
+      <div class="actions">
+        <button id="erase" class="lv-btn-secondary" type="button">⌫ Sudda</button>
+        <button id="restart" class="lv-btn-secondary" type="button">Börja om</button>
+        <button id="reveal" class="lv-btn-secondary" type="button">Visa lösning</button>
+      </div>
+      <div id="done" class="done" role="status"></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel rules">
+  <div>
+    <h2>Så spelar du</h2>
+    <ol>
+      <li>Välj svårighetsgrad och klicka på <strong>Nytt spel</strong>.</li>
+      <li>Klicka på en tom ruta och välj en siffra.</li>
+      <li>Slå på <strong>Anteckningar</strong> för att skriva små kandidater i en ruta.</li>
+      <li>Fel siffra räknas som ett misstag och skrivs inte in.</li>
+    </ol>
+  </div>
+  <div>
+    <h2>Regler</h2>
+    <p>Varje rad, varje kolumn och varje 3 × 3-ruta ska innehålla siffrorna 1–9 exakt en gång. Varje sudoku har bara en lösning.</p>
+    <p style="margin-top:8px">Tangentbord: <kbd>1</kbd>–<kbd>9</kbd> skriver, <kbd>Backsteg</kbd> suddar, piltangenterna flyttar och <kbd>A</kbd> växlar anteckningar.</p>
+  </div>
+</section>
+</main>
+<script>
+(()=>{
+/* Generator – portad från corv1e/sudoku. Varje pussel har exakt en lösning
+   och graderas efter vilka lösningstekniker som krävs. */
+const DIGITS=[1,2,3,4,5,6,7,8,9];
+const PEERS=Array.from({length:81},(_,index)=>{const row=Math.floor(index/9),col=index%9,s=new Set();for(let i=0;i<9;i++){s.add(row*9+i);s.add(i*9+col)}const br=Math.floor(row/3)*3,bc=Math.floor(col/3)*3;for(let r=br;r<br+3;r++)for(let c=bc;c<bc+3;c++)s.add(r*9+c);s.delete(index);return[...s]});
+const ROWS=Array.from({length:9},(_,r)=>Array.from({length:9},(_,c)=>r*9+c));
+const COLS=Array.from({length:9},(_,c)=>Array.from({length:9},(_,r)=>r*9+c));
+const BOXES=Array.from({length:9},(_,b)=>Array.from({length:9},(_,i)=>(Math.floor(b/3)*3+Math.floor(i/3))*9+(b%3)*3+i%3));
+const UNITS=[...ROWS,...COLS,...BOXES];
+const rnd=()=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]/4294967296};
+const shuffle=items=>{for(let i=items.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[items[i],items[j]]=[items[j],items[i]]}return items};
+const candidates=(board,index)=>{if(board[index])return[];const used=new Set(PEERS[index].map(i=>board[i]));return DIGITS.filter(n=>!used.has(n))};
+function countSolutions(input,limit=2){const board=[...input];let count=0;(function visit(){if(count>=limit)return;let best=-1,options=[];for(let i=0;i<81;i++){if(board[i])continue;const next=candidates(board,i);if(!next.length)return;if(best<0||next.length<options.length){best=i;options=next}}if(best<0){count++;return}for(const v of options){board[best]=v;visit();board[best]=0}})();return count}
+function solvedBoard(){const base=(r,c)=>(r*3+Math.floor(r/3)+c)%9;const rows=shuffle([0,1,2]).flatMap(b=>shuffle([0,1,2]).map(r=>b*3+r));const cols=shuffle([0,1,2]).flatMap(s=>shuffle([0,1,2]).map(c=>s*3+c));const nums=shuffle([...DIGITS]);return rows.flatMap(r=>cols.map(c=>nums[base(r,c)]))}
+function solveSingles(input){const board=[...input];while(board.some(v=>!v)){let changed=false;for(let i=0;i<81;i++){const o=candidates(board,i);if(!board[i]&&o.length===1){board[i]=o[0];changed=true}}for(const unit of UNITS)for(let n=1;n<=9;n++){const spots=unit.filter(i=>!board[i]&&candidates(board,i).includes(n));if(spots.length===1){board[spots[0]]=n;changed=true}}if(!changed)return false}return true}
+function solveMedium(input){
+  const board=[...input],options=board.map((v,i)=>new Set(v?[]:candidates(board,i)));
+  const place=(i,v)=>{board[i]=v;options[i].clear();for(const p of PEERS[i])options[p].delete(v)};
+  for(let pass=0;pass<300&&board.some(v=>!v);pass++){
+    let changed=false;
+    for(let i=0;i<81;i++){if(!board[i]&&options[i].size===1){place(i,[...options[i]][0]);changed=true}if(!board[i]&&options[i].size===0)return false}
+    for(const unit of UNITS)for(let v=1;v<=9;v++){if(unit.some(i=>board[i]===v))continue;const spots=unit.filter(i=>!board[i]&&options[i].has(v));if(spots.length===1){place(spots[0],v);changed=true}}
+    if(changed)continue;
+    for(const box of BOXES){const inBox=new Set(box);for(let v=1;v<=9;v++){const spots=box.filter(i=>!board[i]&&options[i].has(v));if(spots.length<2)continue;const rows=new Set(spots.map(i=>Math.floor(i/9))),cols=new Set(spots.map(i=>i%9));if(rows.size===1)for(const i of ROWS[[...rows][0]])if(!inBox.has(i)&&options[i].delete(v))changed=true;if(cols.size===1)for(const i of COLS[[...cols][0]])if(!inBox.has(i)&&options[i].delete(v))changed=true}}
+    for(const unit of UNITS){const pairs=new Map();for(const i of unit){if(options[i].size!==2)continue;const key=[...options[i]].sort().join('');pairs.set(key,[...(pairs.get(key)||[]),i])}for(const[key,cells]of pairs)if(cells.length===2)for(const i of unit)if(!cells.includes(i))for(const d of key)if(options[i].delete(Number(d)))changed=true}
+    if(!changed)return false;
+  }
+  return board.every(Boolean);
+}
+/* Nivåerna styrs av antalet givna siffror. Lätt och Medel går att lösa med
+   enkla singlar, Svår med singlar, låsta kandidater och nakna par – aldrig gissning. */
+const CLUES={easy:50,medium:42,hard:35};
+const solvable=(board,level)=>level==='hard'?solveMedium(board):solveSingles(board);
+function generate(level){
+  const target=CLUES[level];
+  for(let attempt=0;;attempt++){
+    const solution=solvedBoard(),givens=[...solution];
+    let clues=81;
+    const tryRemove=cells=>{if(clues-cells.length<target)return;const prev=cells.map(i=>givens[i]);cells.forEach(i=>{givens[i]=0});if(countSolutions(givens)===1&&solvable(givens,level))clues-=cells.length;else cells.forEach((i,k)=>{givens[i]=prev[k]})};
+    for(const pair of shuffle(Array.from({length:41},(_,i)=>i===40?[40]:[i,80-i])))tryRemove(pair);
+    for(const i of shuffle([...Array(81).keys()]))if(givens[i])tryRemove([i]);
+    if(clues===target||attempt>=50)return{givens,solution};
+  }
+}
+
+/* Spelet */
+const $=id=>document.getElementById(id);
+const boardEl=$('board'),padEl=$('pad'),msg=$('message'),doneEl=$('done');
+const NAMES={easy:'Lätt',medium:'Medel',hard:'Svår'};
+const KEY='lararverktyg-sudoku';
+let level='easy',game=null,selected=null,notesMode=false,paused=false,startedAt=0,timer=null,wrongTimer=null;
+const cells=[];
+for(let b=0;b<9;b++){const box=document.createElement('div');box.className='box';box.setAttribute('role','presentation');BOXES[b].forEach(i=>{const c=document.createElement('button');c.type='button';c.className='cell';c.setAttribute('role','gridcell');c.addEventListener('click',()=>select(i));cells[i]=c;box.appendChild(c)});boardEl.appendChild(box)}
+const padBtns=DIGITS.map(n=>{const b=document.createElement('button');b.type='button';b.addEventListener('click',()=>enter(n));padEl.appendChild(b);return b});
+
+const value=i=>game.givens[i]||game.entries[i];
+const finished=()=>game&&game.state!=='playing';
+const elapsed=()=>game?game.elapsed+(startedAt?Date.now()-startedAt:0):0;
+const fmt=ms=>{const t=Math.floor(ms/1000),h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${m}:${String(s).padStart(2,'0')}`};
+function save(){if(!game)return;try{localStorage.setItem(KEY,JSON.stringify({...game,elapsed:elapsed()}))}catch(e){}}
+function say(text,kind=''){msg.textContent=text;msg.className='message'+(kind?' '+kind:'')}
+function run(on){clearInterval(timer);if(on&&!finished()&&!paused){if(!startedAt)startedAt=Date.now();timer=setInterval(()=>{$('time').textContent=fmt(elapsed())},1000)}else if(startedAt){game.elapsed=elapsed();startedAt=0}$('time').textContent=fmt(elapsed())}
+
+function render(){
+  document.querySelectorAll('.level').forEach(b=>b.classList.toggle('lv-choice-selected',b.dataset.level===level));
+  if(!game)return;
+  const sel=selected===null?0:value(selected),peers=new Set(selected===null?[]:PEERS[selected]);
+  cells.forEach((c,i)=>{
+    const v=value(i);
+    c.className='cell'+(game.givens[i]?' given':'')+(peers.has(i)?' related':'')+(sel&&v===sel?' match':'')+(selected===i?' selected':'');
+    if(v)c.textContent=v;else c.innerHTML=game.notes[i].length?'<span class="notes">'+DIGITS.map(n=>`<i>${game.notes[i].includes(n)?n:''}</i>`).join('')+'</span>':'';
+    c.setAttribute('aria-label',`Rad ${Math.floor(i/9)+1}, kolumn ${i%9+1}${v?', '+v:', tom'}${game.notes[i].length&&!v?', anteckningar '+game.notes[i].join(' '):''}`);
+    c.tabIndex=selected===i||(selected===null&&i===0)?0:-1;
+  });
+  const counts=DIGITS.map(n=>cells.filter((_,i)=>value(i)===n).length);
+  padBtns.forEach((b,k)=>{b.innerHTML=`${k+1}<small>${9-counts[k]}</small>`;b.disabled=finished()||paused||counts[k]===9;b.setAttribute('aria-label',`Siffran ${k+1}, ${9-counts[k]} kvar`)});
+  $('left').textContent=cells.filter((_,i)=>!value(i)).length;
+  $('mistakes').textContent=game.mistakes;
+  $('notesBtn').textContent=`✎ Anteckningar: ${notesMode?'på':'av'}`;
+  $('notesBtn').classList.toggle('lv-choice-selected',notesMode);
+  $('notesBtn').setAttribute('aria-pressed',notesMode);
+  ['notesBtn','pauseBtn','erase','restart','reveal'].forEach(id=>{$(id).disabled=finished()});
+  $('pauseBtn').textContent=paused?'▶ Fortsätt':'Ⅱ Paus';
+  boardEl.classList.toggle('paused',paused);$('resume').hidden=!paused;
+  doneEl.className='done'+(finished()?' show':'')+(game.state==='forfeited'?' forfeited':'');
+  doneEl.textContent=game.state==='solved'?`Löst! ${NAMES[game.level]} på ${fmt(game.elapsed)} med ${game.mistakes} misstag.`:game.state==='forfeited'?'Lösningen visas. Klicka på Nytt spel för att spela igen.':'';
+}
+
+function newGame(){
+  run(false);say('Skapar ett nytt sudoku …');$('newGame').disabled=true;
+  setTimeout(()=>{
+    const {givens,solution}=generate(level);
+    game={level,givens,solution,entries:Array(81).fill(0),notes:Array.from({length:81},()=>[]),mistakes:0,elapsed:0,state:'playing'};
+    selected=null;notesMode=false;paused=false;startedAt=0;$('newGame').disabled=false;
+    say(`Nytt sudoku – ${NAMES[level].toLowerCase()} nivå. Lycka till!`);render();run(true);save();
+  },30);
+}
+function select(i){if(!game||paused)return;selected=i;render();cells[i].focus()}
+function enter(n){
+  if(!game||finished()||paused||selected===null)return;
+  const i=selected;
+  if(game.givens[i]){say('Den siffran är given och kan inte ändras.');return}
+  if(n===0){game.entries[i]=0;game.notes[i]=[];say('');render();save();return}
+  if(notesMode){if(game.entries[i])return;const at=game.notes[i].indexOf(n);at>=0?game.notes[i].splice(at,1):game.notes[i].push(n);game.notes[i].sort();render();save();return}
+  if(game.entries[i]===n)return;
+  if(game.solution[i]!==n){
+    game.mistakes++;render();save();say(`${n} passar inte där. Misstag: ${game.mistakes}.`,'bad');
+    clearTimeout(wrongTimer);cells[i].classList.add('wrong');cells[i].textContent=n;wrongTimer=setTimeout(render,650);return;
+  }
+  game.entries[i]=n;game.notes[i]=[];PEERS[i].forEach(p=>{game.notes[p]=game.notes[p].filter(v=>v!==n)});
+  if(cells.every((_,k)=>value(k)===game.solution[k])){run(false);game.state='solved';say('Snyggt jobbat! Sudokut är löst.','good')}else say('');
+  render();save();
+}
+function pause(on){if(!game||finished())return;paused=on;run(!on);if(!on)say('');render();save()}
+
+document.querySelectorAll('.level').forEach(b=>b.addEventListener('click',()=>{level=b.dataset.level;render();if(!game||finished()||confirm(`Starta ett nytt sudoku på nivån ${NAMES[level].toLowerCase()}?`))newGame()}));
+$('newGame').addEventListener('click',()=>{if(!game||finished()||confirm('Starta ett nytt sudoku? Det pågående spelet försvinner.'))newGame()});
+$('notesBtn').addEventListener('click',()=>{notesMode=!notesMode;render()});
+$('pauseBtn').addEventListener('click',()=>pause(!paused));
+$('resume').addEventListener('click',()=>pause(false));
+$('erase').addEventListener('click',()=>enter(0));
+$('restart').addEventListener('click',()=>{if(!game||!confirm('Börja om? Alla ifyllda siffror, anteckningar, tid och misstag nollställs.'))return;run(false);Object.assign(game,{entries:Array(81).fill(0),notes:Array.from({length:81},()=>[]),mistakes:0,elapsed:0,state:'playing'});paused=false;startedAt=0;say('Pusslet är nollställt.');render();run(true);save()});
+$('reveal').addEventListener('click',()=>{if(!game||!confirm('Visa lösningen? Det här spelet avslutas.'))return;run(false);paused=false;game.entries=game.solution.map((v,i)=>game.givens[i]?0:v);game.notes=game.notes.map(()=>[]);game.state='forfeited';say('');render();save()});
+document.addEventListener('keydown',e=>{
+  if(!game||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(/^[1-9]$/.test(e.key)){enter(Number(e.key));e.preventDefault()}
+  else if(['Backspace','Delete','0'].includes(e.key)){enter(0);e.preventDefault()}
+  else if(e.key.toLowerCase()==='a'||e.key.toLowerCase()==='n'){if(!finished()){notesMode=!notesMode;render()}}
+  else if(e.key.startsWith('Arrow')&&!paused){const i=selected??0,r=Math.floor(i/9),c=i%9;const d={ArrowUp:[-1,0],ArrowDown:[1,0],ArrowLeft:[0,-1],ArrowRight:[0,1]}[e.key];select(((r+d[0]+9)%9)*9+(c+d[1]+9)%9);e.preventDefault()}
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&game&&!finished()&&!paused)pause(true)});
+window.addEventListener('pagehide',save);
+
+try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&saved.givens&&saved.givens.length===81){game=saved;level=saved.level;paused=saved.state==='playing';say(paused?'Välkommen tillbaka! Ditt senaste spel är sparat.':'')}}catch(e){}
+if(game){render();run(false)}else newGame();
+})();
+</script>
+</body></html>
