@@ -108,6 +108,53 @@
   background:#e9eef2;color:var(--lv-blue);border:0;border-radius:9px;
   padding:9px 12px;font-weight:700;cursor:pointer;
 }
+
+/* Primär fortsättningsknapp: Nästa uppgift.
+   Använd class="lv-btn-next" i nya verktyg. Äldre vanliga id:n fångas också upp. */
+.lv-btn-next,
+button#next,
+button#nextBtn,
+button#nextQuestion,
+button.next{
+  min-width:210px;
+  padding:15px 24px;
+  font-size:1.08rem;
+  font-weight:800;
+  border-radius:12px;
+  background:var(--lv-blue);
+  color:#fff;
+  border:3px solid var(--lv-gold);
+  box-shadow:0 3px 8px rgba(13,52,80,.22);
+  cursor:pointer;
+  transition:transform .12s ease,filter .12s ease,box-shadow .12s ease;
+}
+.lv-btn-next:hover,
+button#next:hover,
+button#nextBtn:hover,
+button#nextQuestion:hover,
+button.next:hover{
+  background:var(--lv-blue-2);
+  filter:brightness(1.06);
+  box-shadow:0 5px 12px rgba(13,52,80,.28);
+}
+.lv-btn-next:active,
+button#next:active,
+button#nextBtn:active,
+button#nextQuestion:active,
+button.next:active{
+  transform:translateY(1px);
+  box-shadow:0 2px 5px rgba(13,52,80,.22);
+}
+.lv-btn-next:focus-visible,
+button#next:focus-visible,
+button#nextBtn:focus-visible,
+button#nextQuestion:focus-visible,
+button.next:focus-visible{
+  outline:3px solid var(--lv-gold);
+  outline-offset:3px;
+}
+.lv-btn-next .lv-next-arrow{color:var(--lv-gold)}
+
 .lv-choice-selected{
   background:var(--lv-blue)!important;color:#fff!important;
   border-color:var(--lv-blue)!important;
@@ -149,5 +196,12 @@
     width:118px;
     height:48px;
     margin-left:0;
+  }
+  .lv-btn-next,
+  button#next,
+  button#nextBtn,
+  button#nextQuestion,
+  button.next{
+    width:100%;
   }
 }
