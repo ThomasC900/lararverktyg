@@ -1,46 +1,46 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-10-26&endDate=2026-11-01&lang=sv",
-  "week": 44,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-11-02&endDate=2026-11-08&lang=sv",
+  "week": 45,
   "year": 2026,
-  "period": "26 oktober – 30 oktober 2026",
-  "updated": "2026-11-01",
-  "monthly_green": "Pumpa, lingon och päron",
+  "period": "2 november – 6 november 2026",
+  "updated": "2026-11-02",
+  "monthly_green": "Rotselleri, rättika & clementin",
   "days": [
     {
-      "date": "2026-10-26",
+      "date": "2026-11-02",
       "day": "Måndag",
-      "date_label": "26 oktober",
-      "meal1": "Pytt i panna med inlagda rödbetor",
-      "meal2": "Grönsakspytt"
+      "date_label": "2 november",
+      "meal1": "Fisk med ost- och dilltäcke serveras med potatis och kall sås",
+      "meal2": "Kebabgryta, bulgur"
     },
     {
-      "date": "2026-10-27",
+      "date": "2026-11-03",
       "day": "Tisdag",
-      "date_label": "27 oktober",
-      "meal1": "Falafel med kökets tillbehör",
-      "meal2": ""
+      "date_label": "3 november",
+      "meal1": "Gulaschsoppa serveras med bröd och krämiga pålägg",
+      "meal2": "Gulaschsoppa på sojafärs serveras med bröd och krämiga pålägg"
     },
     {
-      "date": "2026-10-28",
+      "date": "2026-11-04",
       "day": "Onsdag",
-      "date_label": "28 oktober",
-      "meal1": "Kokt lax serveras med dillsås & potatis",
-      "meal2": "Nuggets, potatis, kall örtsås veg"
+      "date_label": "4 november",
+      "meal1": "Falukorv med stuvade makaroner och tillbehör",
+      "meal2": "Sojakorv med stuvade makaroner"
     },
     {
-      "date": "2026-10-29",
+      "date": "2026-11-05",
       "day": "Torsdag",
-      "date_label": "29 oktober",
-      "meal1": "Bygg din egen Pastasallad",
-      "meal2": "Bygg din egen Pastasallad med växtbaserade strimlor"
+      "date_label": "5 november",
+      "meal1": "Krämig lasagnette med kökets kalla sås",
+      "meal2": "Lax lasagnette (s)"
     },
     {
-      "date": "2026-10-30",
+      "date": "2026-11-06",
       "day": "Fredag",
-      "date_label": "30 oktober",
-      "meal1": "Pulled pork med kökets tillbehör",
-      "meal2": "Pulled vego med kökets tillbehör"
+      "date_label": "6 november",
+      "meal1": "Köttfärslimpa serveras med potatis & äppeltzatziki",
+      "meal2": "Hirslimpa serveras med potatis & morotstzatziki"
     }
   ]
 }
