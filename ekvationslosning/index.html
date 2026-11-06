@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ekvationslösning · Lärverktyg</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#122944;background:#f1f5fa;--blue:#102841;--gold:#eab94f;--line:#ced9e6}
+*{box-sizing:border-box}
+body{margin:0}
+.wrap{max-width:940px;margin:auto;padding-inline:clamp(16px,4vw,36px)}
+header{background:var(--blue);color:white;border-bottom:4px solid var(--gold);padding:22px 0 32px}
+.site-logo{float:right;display:block;width:clamp(90px,24vw,210px);margin:0 0 10px 12px;background:white;border-radius:12px;padding:6px}
+.site-logo img{width:100%;height:auto;display:block}
+header .wrap{display:flow-root}
+header a{color:white;text-decoration:none;font-weight:700}
+.brand{color:var(--gold);font-size:.9rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin:24px 0 4px}
+h1{font-size:clamp(2rem,6vw,3.3rem);margin:0;line-height:1.12}
+header p:last-child{color:#dbe6f3;margin-bottom:0}
+main{padding-block:22px 36px}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:clamp(15px,4vw,26px);margin-bottom:16px;box-shadow:0 4px 14px #132c4810}
+h2{font-size:1.22rem;margin:0 0 12px}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+button,input{font:inherit}
+button{cursor:pointer}
+.level{border:1px solid var(--line);background:#f6f8fc;color:var(--blue);text-align:left;border-radius:11px;padding:10px 12px}
+.level strong,.level small{display:block}
+.level[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:white}
+.level[aria-pressed=true] strong{color:#ffcf6c}
+:focus-visible{outline:3px solid #996206;outline-offset:3px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{background:#fff1cd;border-radius:20px;padding:6px 12px;font-weight:750}
+.math{font-family:Cambria,"Times New Roman",serif;font-variant-numeric:lining-nums}
+.problem{text-align:center;background:#edf3fa;border-radius:12px;padding:18px 5px;font-size:clamp(1.55rem,5.8vw,2.65rem);margin:15px 0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.04;margin-inline:2px}
+.frac span:first-child{border-bottom:1px solid;padding:0 5px 2px}
+.frac span:last-child{padding:2px 5px 0}
+#history{padding:0;margin:0;list-style:none}
+#history li{display:flex;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid #e7edf3}
+#history .math{font-size:1.25rem}
+.step{margin:18px 0 6px;font-weight:800}
+#instruction{margin:0 0 12px}
+.fields{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:9px;max-width:440px}
+label{font-size:.85rem;font-weight:700;display:block;margin-bottom:4px}
+input{width:100%;border:1px solid #a5b7cc;border-radius:8px;padding:10px;text-align:center;font-size:1.15rem;color:inherit}
+.equals{align-self:end;margin-bottom:11px;font-size:1.25rem}
+.fields.fraction-mode{align-items:end}
+.fraction-mode .equals{margin-bottom:36px}
+.fraction-mode #right{margin-bottom:25px}
+.frac-input{border:0;padding:0;margin:0;min-width:0}
+.frac-input legend{font-size:.85rem;font-weight:700;margin-bottom:4px;padding:0}
+.frac-input input{display:block;max-width:120px;margin-inline:auto;padding:6px}
+.fraction-bar{display:block;max-width:120px;margin:4px auto;border-top:2px solid var(--blue)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.primary,.secondary{border-radius:9px;padding:9px 14px;font-weight:750}
+.primary{background:var(--blue);color:white;border:1px solid var(--blue)}
+.secondary{background:white;color:var(--blue);border:1px solid #a5b7cc}
+#feedback{min-height:1.5em;margin:12px 0 0;font-weight:650}
+.error{color:#9b2525}.good{color:#176239}
+[hidden]{display:none!important}
+@media(max-width:480px){.levels{grid-template-columns:1fr}.level{display:flex;align-items:baseline;gap:8px}.level strong{white-space:nowrap}}
+</style>
+<script data-goatcounter="https://lararverktyg.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<header><div class="wrap">
+<a class="site-logo" href="../"><img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></a>
+<a href="../algebra/">← Tillbaka till Algebra</a>
+<p class="brand">Lärverktyg · Algebra</p>
+<h1>Ekvationslösning</h1>
+<p>Årskurs 7 · Lös ekvationen ett steg i taget.</p>
+</div></header>
+<main class="wrap">
+<section class="panel" aria-labelledby="levels-title">
+<h2 id="levels-title">Välj nivå</h2>
+<div class="levels">
+<button class="level" type="button" data-level="1" aria-pressed="true"><strong>Nivå 1</strong><small>En variabelterm</small></button>
+<button class="level" type="button" data-level="2" aria-pressed="false"><strong>Nivå 2</strong><small>Två variabeltermer</small></button>
+<button class="level" type="button" data-level="3" aria-pressed="false"><strong>Nivå 3</strong><small>Fler termer att samla</small></button>
+</div>
+</section>
+<section class="panel" aria-labelledby="problem-title">
+<div class="row"><strong id="problem-title">Ekvation</strong><span class="badge" id="streak">Rätt i rad 0</span></div>
+<div class="problem math" id="problem"></div>
+<ol id="history" aria-label="Godkända steg"></ol>
+<form id="answer" novalidate>
+<p class="step" id="step"></p>
+<p id="instruction"></p>
+<div class="fields" id="fields">
+<div id="plain-left"><label for="left">Vänsterled</label><input id="left" autocomplete="off" spellcheck="false" maxlength="40" aria-describedby="instruction"></div>
+<fieldset class="frac-input" id="fraction-left" hidden>
+<legend>Vänsterled</legend>
+<input id="numerator" aria-label="Täljare" autocomplete="off" spellcheck="false" maxlength="12">
+<span class="fraction-bar" aria-hidden="true"></span>
+<input id="denominator" aria-label="Nämnare" inputmode="numeric" autocomplete="off" maxlength="12">
+</fieldset>
+<span class="equals" aria-hidden="true">=</span>
+<div><label for="right">Högerled</label><input id="right" autocomplete="off" spellcheck="false" maxlength="40" aria-describedby="instruction"></div>
+</div>
+<div class="actions">
+<button class="primary" type="submit">Kontrollera steget</button>
+<button class="secondary" type="button" id="skip">Hoppa över</button>
+</div>
+</form>
+<p id="feedback" role="status" aria-live="polite"></p>
+<button class="primary" type="button" id="next" hidden>Nästa ekvation</button>
+</section>
+</main>
+<script>
+"use strict";
+const get = id => document.getElementById(id);
+const levelButtons = [...document.querySelectorAll(".level")];
+const random = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+const pick = values => values[random(0, values.length - 1)];
+const nonzero = () => random(2, 16) * pick([-1, 1]);
+const minus = value => String(value).replace(/-/g, "−");
+
+function term(coefficient, variable) {
+  if (coefficient === 1) return variable;
+  if (coefficient === -1) return "−" + variable;
+  return minus(coefficient) + variable;
+}
+
+function expression(terms, variable) {
+  return terms.map(([value, isVariable], index) => {
+    const magnitude = isVariable ? term(Math.abs(value), variable) : Math.abs(value);
+    const sign = index ? (value < 0 ? " − " : " + ") : (value < 0 ? "−" : "");
+    return sign + magnitude;
+  }).join("");
+}
+
+function generate(level) {
+  const variable = pick(["x", "x", "y"]);
+  const divisor = level === 1 && random(1, 3) === 1 ? random(2, 5) : 1;
+  const coefficients = [divisor > 1 ? 1 : random(2, 7)];
+  const constants = [nonzero()];
+  if (level === 2) coefficients.push(pick([-2, -1, 1, 2, 3]));
+  if (level === 3) {
+    const extraConstants = pick([0, 1, 2]);
+    if (extraConstants < 2) coefficients.push(pick([-3, -2, -1, 1, 2, 3, 4]));
+    if (extraConstants === 0) coefficients.push(pick([-3, -2, -1, 1, 2, 3, 4]));
+    for (let i = 0; i < extraConstants; i++) constants.push(nonzero());
+  }
+  const coefficient = coefficients.reduce((a, b) => a + b);
+  const constant = constants.reduce((a, b) => a + b);
+  if ((Math.abs(coefficient) < 2 && divisor === 1) || constant === 0) return generate(level);
+
+  const solution = random(1, 8) * divisor;
+  const isolated = coefficient * solution / divisor;
+  const right = isolated + constant;
+  const variableTerm = divisor > 1 ? variable + "/" + divisor : term(coefficient, variable);
+  const combined = variableTerm + (constant < 0 ? " − " : " + ") + Math.abs(constant);
+  const terms = coefficients.map(value => [value, true]);
+  constants.forEach(value => terms.splice(random(1, terms.length), 0, [value, false]));
+  const start = divisor > 1 ? combined : expression(terms, variable);
+  const steps = [];
+  if (level > 1) steps.push({left: combined, right, instruction: "Slå ihop termer av samma typ i vänsterledet."});
+  steps.push({left: variableTerm, right: isolated, instruction: "Gör samma ändring i båda leden så att variabeltermen står ensam."});
+  steps.push({left: variable, right: solution, instruction: "Gör samma ändring i båda leden så att variabeln står ensam."});
+  return {variable, start, right, steps};
+}
+
+function normalize(value) {
+  return String(value).toLowerCase().replace(/[−–]/g, "-").replace(/\s/g, "");
+}
+
+function parseSide(value, variable) {
+  const input = normalize(value);
+  const number = input.match(/^[+-]?\d+$/);
+  if (number) return [0, Number(input)];
+  const pattern = new RegExp("^([+-]?)(\\d*)(?:[·*])?" + variable + "(?:/(\\d+))?([+-]\\d+)?$");
+  const variableFirst = input.match(pattern);
+  if (variableFirst && (!variableFirst[3] || Number(variableFirst[3]))) {
+    const [, sign, coefficient, denominator, constant] = variableFirst;
+    return [(sign === "-" ? -1 : 1) * Number(coefficient || 1) / Number(denominator || 1), Number(constant || 0)];
+  }
+  const constantFirst = input.match(/^([+-]?\d+)([+-].+)$/);
+  if (constantFirst) {
+    const variableOnly = constantFirst[2].match(pattern);
+    if (variableOnly && !variableOnly[4] && (!variableOnly[3] || Number(variableOnly[3]))) {
+      const [, sign, coefficient, denominator] = variableOnly;
+      return [(sign === "-" ? -1 : 1) * Number(coefficient || 1) / Number(denominator || 1), Number(constantFirst[1])];
+    }
+  }
+  return null;
+}
+
+function matches(input, expected, variable) {
+  if (expected === variable) return normalize(input) === variable;
+  const actual = parseSide(input, variable);
+  const target = parseSide(expected, variable);
+  return actual && actual[0] === target[0] && actual[1] === target[1];
+}
+
+function appendMath(node, left, right) {
+  const fraction = left.match(/^([xy])\/(\d+)(.*)$/);
+  if (fraction) {
+    const stack = document.createElement("span");
+    stack.className = "frac";
+    stack.setAttribute("aria-label", fraction[1] + " delat med " + fraction[2]);
+    for (const part of fraction.slice(1, 3)) {
+      const span = document.createElement("span");
+      span.setAttribute("aria-hidden", "true");
+      span.textContent = part;
+      stack.append(span);
+    }
+    node.append(stack, fraction[3]);
+  } else node.append(left);
+  node.append(" = " + minus(right));
+}
+
+let level = 1;
+let streak = 0;
+let problem;
+let stepIndex = 0;
+let hadError = false;
+const form = get("answer");
+const left = get("left");
+const right = get("right");
+const numerator = get("numerator");
+const denominator = get("denominator");
+const feedback = get("feedback");
+
+function updateStreak() {
+  get("streak").textContent = "Rätt i rad " + streak;
+}
+
+function showStep(focus) {
+  get("step").textContent = "Steg " + (stepIndex + 1) + " av " + problem.steps.length;
+  const expected = problem.steps[stepIndex];
+  const fractionMode = expected.left.includes("/");
+  get("instruction").textContent = expected.instruction;
+  get("plain-left").hidden = fractionMode;
+  get("fraction-left").hidden = !fractionMode;
+  get("fields").classList.toggle("fraction-mode", fractionMode);
+  form.reset();
+  if (focus) (fractionMode ? numerator : left).focus();
+}
+
+function newProblem(focus = true) {
+  let candidate;
+  do candidate = generate(level);
+  while (problem && candidate.start === problem.start && candidate.right === problem.right);
+  problem = candidate;
+  stepIndex = 0;
+  hadError = false;
+  get("problem").replaceChildren();
+  appendMath(get("problem"), problem.start, problem.right);
+  get("history").replaceChildren();
+  feedback.textContent = "";
+  get("next").hidden = true;
+  form.hidden = false;
+  showStep(focus);
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  if (form.hidden) return;
+  const expected = problem.steps[stepIndex];
+  const fractionMode = expected.left.includes("/");
+  const inputs = fractionMode ? [numerator, denominator, right] : [left, right];
+  const missing = inputs.find(input => !input.value.trim());
+  if (missing) {
+    feedback.className = "error";
+    feedback.textContent = fractionMode
+      ? "Fyll i täljaren, nämnaren och högerledet."
+      : "Fyll i båda leden innan du kontrollerar.";
+    missing.focus();
+    return;
+  }
+  const leftAnswer = fractionMode ? numerator.value + "/" + denominator.value : left.value;
+  const validFraction = !fractionMode ||
+    (/^[+-]?(?:\d+)?[xy]$/.test(normalize(numerator.value)) && /^\d+$/.test(normalize(denominator.value)));
+  if (!validFraction || !matches(leftAnswer, expected.left, problem.variable) || !matches(right.value, expected.right, problem.variable)) {
+    streak = 0;
+    hadError = true;
+    updateStreak();
+    feedback.className = "error";
+    feedback.textContent = "Steget stämmer inte ännu. Försök igen.";
+    return;
+  }
+  stepIndex++;
+  const item = document.createElement("li");
+  const math = document.createElement("span");
+  math.className = "math";
+  appendMath(math, expected.left, expected.right);
+  item.append("✓ Steg " + stepIndex, math);
+  get("history").append(item);
+  feedback.className = "good";
+  if (stepIndex < problem.steps.length) {
+    feedback.textContent = "Rätt! Fortsätt med nästa steg.";
+    showStep(true);
+    return;
+  }
+  if (!hadError) streak++;
+  updateStreak();
+  feedback.textContent = "Rätt! Du har löst ekvationen.";
+  form.hidden = true;
+  get("next").hidden = false;
+  get("next").focus();
+});
+
+get("next").addEventListener("click", () => newProblem());
+get("skip").addEventListener("click", () => {
+  streak = 0;
+  updateStreak();
+  newProblem();
+});
+levelButtons.forEach(button => button.addEventListener("click", () => {
+  const chosen = Number(button.dataset.level);
+  if (chosen === level) return;
+  level = chosen;
+  streak = 0;
+  updateStreak();
+  levelButtons.forEach(option => option.setAttribute("aria-pressed", option === button));
+  newProblem();
+}));
+newProblem(false);
+</script>
+</body>
+</html>
