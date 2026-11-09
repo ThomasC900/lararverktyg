@@ -1,46 +1,46 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-11-02&endDate=2026-11-08&lang=sv",
-  "week": 45,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-11-09&endDate=2026-11-15&lang=sv",
+  "week": 46,
   "year": 2026,
-  "period": "2 november – 6 november 2026",
-  "updated": "2026-11-08",
+  "period": "9 november – 13 november 2026",
+  "updated": "2026-11-09",
   "monthly_green": "Rotselleri, rättika & clementin",
   "days": [
     {
-      "date": "2026-11-02",
+      "date": "2026-11-09",
       "day": "Måndag",
-      "date_label": "2 november",
-      "meal1": "Fisk med ost- och dilltäcke serveras med potatis och kall sås",
-      "meal2": "Kebabgryta, bulgur"
+      "date_label": "9 november",
+      "meal1": "Köttbullar serveras med spagetti & tomatsås",
+      "meal2": "Ärtbullar serveras med spagetti & kryddig tomatsås"
     },
     {
-      "date": "2026-11-03",
+      "date": "2026-11-10",
       "day": "Tisdag",
-      "date_label": "3 november",
-      "meal1": "Gulaschsoppa serveras med bröd och krämiga pålägg",
-      "meal2": "Gulaschsoppa på sojafärs serveras med bröd och krämiga pålägg"
+      "date_label": "10 november",
+      "meal1": "Kycklingfilé, kokt potatis, rödkål, brysselkål, brunsås & äpplemos",
+      "meal2": "Quornfilé, kokt potatis, rödkål, brysselkål, brunsås & äpplemos"
     },
     {
-      "date": "2026-11-04",
+      "date": "2026-11-11",
       "day": "Onsdag",
-      "date_label": "4 november",
-      "meal1": "Falukorv med stuvade makaroner och tillbehör",
-      "meal2": "Sojakorv med stuvade makaroner"
+      "date_label": "11 november",
+      "meal1": "Västkustburgare med bröd & potatismos",
+      "meal2": "Grönsaksbiff Caribbean med bröd och potatismos"
     },
     {
-      "date": "2026-11-05",
+      "date": "2026-11-12",
       "day": "Torsdag",
-      "date_label": "5 november",
-      "meal1": "Krämig lasagnette med kökets kalla sås",
-      "meal2": "Lax lasagnette (s)"
+      "date_label": "12 november",
+      "meal1": "Thaisoppa serveras med bröd och krämiga pålägg",
+      "meal2": "Sydamerikansk soppa med kokosgrädde, bröd & krämiga pålägg"
     },
     {
-      "date": "2026-11-06",
+      "date": "2026-11-13",
       "day": "Fredag",
-      "date_label": "6 november",
-      "meal1": "Köttfärslimpa serveras med potatis & äppeltzatziki",
-      "meal2": "Hirslimpa serveras med potatis & morotstzatziki"
+      "date_label": "13 november",
+      "meal1": "Kasslergratäng med mango chutney serveras med ris",
+      "meal2": "Quorngratäng med mango chutneysås serveras med ris"
     }
   ]
 }
