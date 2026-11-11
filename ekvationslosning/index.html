@@ -36,8 +36,9 @@ button{cursor:pointer}
 .frac span:first-child{border-bottom:1px solid;padding:0 5px 2px}
 .frac span:last-child{padding:2px 5px 0}
 #history{padding:0;margin:0;list-style:none}
-#history li{display:flex;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid #e7edf3}
-#history .math{font-size:1.25rem}
+#history li{margin:18px 0}
+.step-label{display:block;font-size:.95rem;font-weight:700;color:#176239}
+.problem.correct-step{background:#edf8ef;margin:8px 0 0}
 .step{margin:18px 0 6px;font-weight:800}
 #instruction{margin:0 0 12px}
 .fields{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:9px;max-width:440px}
@@ -284,9 +285,12 @@ form.addEventListener("submit", event => {
   stepIndex++;
   const item = document.createElement("li");
   const math = document.createElement("span");
-  math.className = "math";
+  math.className = "problem math correct-step";
   appendMath(math, expected.left, expected.right);
-  item.append("✓ Steg " + stepIndex, math);
+  const label = document.createElement("span");
+  label.className = "step-label";
+  label.textContent = "✓ Steg " + stepIndex;
+  item.append(label, math);
   get("history").append(item);
   feedback.className = "good";
   if (stepIndex < problem.steps.length) {
