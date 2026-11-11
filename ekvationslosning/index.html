@@ -80,7 +80,7 @@ input{width:100%;border:1px solid #a5b7cc;border-radius:8px;padding:10px;text-al
 </div>
 </section>
 <section class="panel" aria-labelledby="problem-title">
-<div class="row"><strong id="problem-title">Ekvation</strong><span class="badge" id="streak">Rätt i rad 0</span></div>
+<div class="row"><strong id="problem-title">Ekvation</strong><div class="row" aria-label="Resultat"><span class="badge" id="total">Korrekt lösta 0</span><span class="badge" id="streak">Rätt i rad 0</span></div></div>
 <div class="problem math" id="problem"></div>
 <ol id="history" aria-label="Godkända steg"></ol>
 <form id="answer" novalidate>
@@ -211,6 +211,7 @@ function appendMath(node, left, right) {
 
 let level = 1;
 let streak = 0;
+let totalCorrect = 0;
 let problem;
 let stepIndex = 0;
 let hadError = false;
@@ -222,6 +223,7 @@ const denominator = get("denominator");
 const feedback = get("feedback");
 
 function updateStreak() {
+  get("total").textContent = "Korrekt lösta " + totalCorrect;
   get("streak").textContent = "Rätt i rad " + streak;
 }
 
@@ -292,6 +294,7 @@ form.addEventListener("submit", event => {
     showStep(true);
     return;
   }
+  totalCorrect++;
   if (!hadError) streak++;
   updateStreak();
   feedback.textContent = "Rätt! Du har löst ekvationen.";
