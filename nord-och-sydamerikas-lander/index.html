@@ -618,10 +618,12 @@ function guess(id) {
   }
   tries++;
   const correct = id === current.id;
+  const clickedName = countries.find(country => country.id === id).name;
   if (!correct && tries < 3) {
     wrong.add(id);
     $('attempt').textContent = `Försök ${tries + 1} av 3`;
-    $('status').textContent = tries === 1 ? 'Inte rätt. Du har två chanser kvar.' : 'Inte rätt. Du har en chans kvar.';
+    $('status').textContent = 'Du klickade på ' + clickedName + '. ' +
+      (tries === 1 ? 'Du har två chanser kvar.' : 'Du har en chans kvar.');
     return;
   }
   state = 'feedback';
@@ -638,7 +640,9 @@ function guess(id) {
   }
   updateResults();
   $('attempt').textContent = correct ? 'Rätt!' : 'Tre försök använda';
-  $('status').textContent = correct ? current.name + '.' : 'Rätt svar är ' + current.name + '.';
+  $('status').textContent = correct
+    ? 'Du klickade på ' + current.name + '. Rätt svar!'
+    : 'Du klickade på ' + clickedName + '. Rätt svar är ' + current.name + ', som nu markeras rött.';
   advanceId = setTimeout(nextQuestion, correct ? 1300 : 2700);
 }
 
