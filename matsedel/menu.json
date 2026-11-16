@@ -1,46 +1,46 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-11-09&endDate=2026-11-15&lang=sv",
-  "week": 46,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-11-16&endDate=2026-11-22&lang=sv",
+  "week": 47,
   "year": 2026,
-  "period": "9 november – 13 november 2026",
-  "updated": "2026-11-15",
+  "period": "16 november – 20 november 2026",
+  "updated": "2026-11-16",
   "monthly_green": "Rotselleri, rättika & clementin",
   "days": [
     {
-      "date": "2026-11-09",
+      "date": "2026-11-16",
       "day": "Måndag",
-      "date_label": "9 november",
-      "meal1": "Köttbullar serveras med spagetti & tomatsås",
-      "meal2": "Ärtbullar serveras med spagetti & kryddig tomatsås"
+      "date_label": "16 november",
+      "meal1": "Chili con carne med ris & kökets tillbehör",
+      "meal2": "Chili sin carne med bulgur"
     },
     {
-      "date": "2026-11-10",
+      "date": "2026-11-17",
       "day": "Tisdag",
-      "date_label": "10 november",
-      "meal1": "Kycklingfilé, kokt potatis, rödkål, brysselkål, brunsås & äpplemos",
-      "meal2": "Quornfilé, kokt potatis, rödkål, brysselkål, brunsås & äpplemos"
+      "date_label": "17 november",
+      "meal1": "Panerad lax serveras med potatis & remouladsås",
+      "meal2": "Hemlagad morotsbiff serveras med bulgur och dillsås"
     },
     {
-      "date": "2026-11-11",
+      "date": "2026-11-18",
       "day": "Onsdag",
-      "date_label": "11 november",
-      "meal1": "Västkustburgare med bröd & potatismos",
-      "meal2": "Grönsaksbiff Caribbean med bröd och potatismos"
+      "date_label": "18 november",
+      "meal1": "Mexicosoppa med sojafärs serveras med bröd och krämiga pålägg",
+      "meal2": "Sötpotatissoppa med hembakat bröd och krämiga pålägg"
     },
     {
-      "date": "2026-11-12",
+      "date": "2026-11-19",
       "day": "Torsdag",
-      "date_label": "12 november",
-      "meal1": "Thaisoppa serveras med bröd och krämiga pålägg",
-      "meal2": "Sydamerikansk soppa med kokosgrädde, bröd & krämiga pålägg"
+      "date_label": "19 november",
+      "meal1": "Biff med bambuskott serveras med ris",
+      "meal2": "Soja stripes med bambuskott serveras med ris"
     },
     {
-      "date": "2026-11-13",
+      "date": "2026-11-20",
       "day": "Fredag",
-      "date_label": "13 november",
-      "meal1": "Kasslergratäng med mango chutney serveras med ris",
-      "meal2": "Quorngratäng med mango chutneysås serveras med ris"
+      "date_label": "20 november",
+      "meal1": "Burgare med bröd, klyftpotatis, sallad & dressing",
+      "meal2": "Falafelburgare, bröd, dressing, klyftpotatis"
     }
   ]
 }
