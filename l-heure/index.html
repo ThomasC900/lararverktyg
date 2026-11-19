@@ -21,6 +21,20 @@ h1,h2{color:var(--blue);margin-top:0}h1{text-align:center;font-size:clamp(30px,5
 .question{font-size:25px;font-weight:800;color:var(--blue);margin-bottom:16px}.feedback{min-height:48px;font-size:18px;font-weight:700;margin:14px 0}.score{display:flex;gap:28px;margin:14px 0;font-size:18px}.score b{font-size:25px;color:var(--blue)}
 .tip{margin-top:18px;background:#edf3f6;border-radius:14px;padding:16px;line-height:1.55}.small{font-size:14px;color:#68777e}
 @media(max-width:750px){.introgrid,.gamegrid{grid-template-columns:1fr}.panel{padding:17px}.question{font-size:21px}}
+
+[hidden]{display:none!important}
+.modes,.audio-controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.modes{margin-bottom:20px}
+.mode.active{background:var(--blue);color:white;border-color:var(--blue)}
+.gamegrid.listening{grid-template-columns:minmax(0,1fr);text-align:center}
+.listening .score{justify-content:center}
+.listening .answers{grid-template-columns:repeat(4,minmax(0,1fr));max-width:780px;margin:0 auto}
+.listening .answer{padding:8px;text-align:center}
+.listening .answer .clock{display:block;width:100%}
+.audio-controls{align-items:center;margin-bottom:12px}
+#audioStatus{margin:0 0 12px}
+#audioStatus:empty{display:none}
+@media(max-width:600px){.listening .answers{grid-template-columns:repeat(2,minmax(0,1fr));max-width:390px}}
 </style>
   <script data-goatcounter="https://lararverktyg.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
@@ -41,6 +55,11 @@ När visarna visar tolv använder vi <b lang="fr">midi</b> (tolv på dagen). Tol
 </section>
 
 <section class="panel">
+<h2 style="text-align:center">Välj övningsläge</h2>
+<div class="modes" role="group" aria-label="Övningsläge">
+<button class="mode btn active" data-mode="read" aria-pressed="true">Läs av klockan</button>
+<button class="mode btn" data-mode="listen" aria-pressed="false">Lyssna och välj</button>
+</div>
 <h2 style="text-align:center">Välj nivå</h2>
 <div class="levels">
 <button class="level active" data-level="1">Nivå 1<br><span class="small">Hel & halv</span></button>
@@ -50,19 +69,25 @@ När visarna visar tolv använder vi <b lang="fr">midi</b> (tolv på dagen). Tol
 </section>
 
 <section class="panel">
-<div class="gamegrid">
-<div class="clockbox">
-<svg class="clock" id="clock" viewBox="0 0 240 240" aria-label="Analog klocka">
+<div class="gamegrid" id="gameGrid">
+<div class="clockbox" id="readClock">
+<svg class="clock" id="clockFace" role="img" viewBox="0 0 240 240" aria-label="Analog klocka">
 <circle cx="120" cy="120" r="105" fill="#fffdf8" stroke="#163f5b" stroke-width="5"/>
-<g id="ticks"></g><g id="numbers"></g>
-<line id="hourHand" x1="120" y1="120" x2="120" y2="65" stroke="#163f5b" stroke-width="9" stroke-linecap="round"/>
-<line id="minuteHand" x1="120" y1="120" x2="120" y2="35" stroke="#e5ad36" stroke-width="6" stroke-linecap="round"/>
+<g class="clock-ticks"></g><g class="clock-numbers"></g>
+<line class="hour-hand" x1="120" y1="120" x2="120" y2="65" stroke="#163f5b" stroke-width="9" stroke-linecap="round"/>
+<line class="minute-hand" x1="120" y1="120" x2="120" y2="35" stroke="#e5ad36" stroke-width="6" stroke-linecap="round"/>
 <circle cx="120" cy="120" r="8" fill="#163f5b"/>
 </svg>
 </div>
 <div>
 <div class="small">Nivå <span id="levelLabel">1</span></div>
-<div class="question" lang="fr">Quelle heure est-il ?</div>
+<div class="question" id="readPrompt" lang="fr">Quelle heure est-il ?</div>
+<div id="listenPrompt" hidden>
+<div class="question">Vilken klocka visar tiden du hör?</div>
+<div class="audio-controls"><button id="playTime" class="btn primary">▶ Spela upp</button></div>
+<p id="audioStatus" class="small" role="status"></p>
+</div>
+
 <div id="answers" class="answers"></div>
 <div id="feedback" class="feedback" aria-live="polite"></div>
 <div class="score"><div>Rätt<br><b id="score">0</b></div><div>Försök<br><b id="tries">0</b></div><div>Rätt i rad<br><b id="streak">0</b></div></div>
@@ -76,16 +101,43 @@ När visarna visar tolv använder vi <b lang="fr">midi</b> (tolv på dagen). Tol
 </div>
 
 <script>
-const ticks=document.getElementById("ticks"), nums=document.getElementById("numbers");
-for(let i=0;i<60;i++){let a=i*6*Math.PI/180, major=i%5===0;let r1=major?91:97,r2=102;
- let l=document.createElementNS("http://www.w3.org/2000/svg","line");
- l.setAttribute("x1",120+r1*Math.sin(a));l.setAttribute("y1",120-r1*Math.cos(a));
- l.setAttribute("x2",120+r2*Math.sin(a));l.setAttribute("y2",120-r2*Math.cos(a));
- l.setAttribute("stroke","#163f5b");l.setAttribute("stroke-width",major?3:1);ticks.appendChild(l)}
-for(let n=1;n<=12;n++){let a=n*30*Math.PI/180,t=document.createElementNS("http://www.w3.org/2000/svg","text");
- t.setAttribute("x",120+76*Math.sin(a));t.setAttribute("y",125-76*Math.cos(a));t.setAttribute("text-anchor","middle");
- t.setAttribute("font-size","18");t.setAttribute("font-weight","700");t.setAttribute("fill","#163f5b");t.textContent=n;nums.appendChild(t)}
-let level=1,score=0,tries=0,streak=0,current,locked=false;
+const byId = id => document.getElementById(id);
+const clockFace = byId("clockFace");
+const ticks = clockFace.querySelector(".clock-ticks");
+const numbers = clockFace.querySelector(".clock-numbers");
+
+for (let i = 0; i < 60; i++) {
+  const angle = i * Math.PI / 30;
+  const major = i % 5 === 0;
+  const innerRadius = major ? 91 : 97;
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line.setAttribute("x1", 120 + innerRadius * Math.sin(angle));
+  line.setAttribute("y1", 120 - innerRadius * Math.cos(angle));
+  line.setAttribute("x2", 120 + 102 * Math.sin(angle));
+  line.setAttribute("y2", 120 - 102 * Math.cos(angle));
+  line.setAttribute("stroke", "#163f5b");
+  line.setAttribute("stroke-width", major ? 3 : 1);
+  ticks.appendChild(line);
+}
+for (let n = 1; n <= 12; n++) {
+  const angle = n * Math.PI / 6;
+  const number = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  number.setAttribute("x", 120 + 76 * Math.sin(angle));
+  number.setAttribute("y", 125 - 76 * Math.cos(angle));
+  number.setAttribute("text-anchor", "middle");
+  number.setAttribute("font-size", "18");
+  number.setAttribute("font-weight", "700");
+  number.setAttribute("fill", "#163f5b");
+  number.textContent = n;
+  numbers.appendChild(number);
+}
+
+let level = 1;
+let mode = "read";
+let score = 0, tries = 0, streak = 0;
+let current, locked;
+let utterance;
+
 const hourWords = ["", "une heure", "deux heures", "trois heures", "quatre heures",
   "cinq heures", "six heures", "sept heures", "huit heures", "neuf heures",
   "dix heures", "onze heures", "midi"];
@@ -101,18 +153,166 @@ function frenchTime(hour, minute) {
   if (minute < 30) return `Il est ${currentHour} ${minuteWords[minute]}.`;
   return `Il est ${nextHour} moins ${minuteWords[60 - minute]}.`;
 }
-function choices(){return level===1?[0,30]:level===2?[0,15,30,45]:[0,5,10,15,20,25,30,35,40,45,50,55]}
-function draw(h,m){document.getElementById("minuteHand").setAttribute("transform",`rotate(${m*6} 120 120)`);document.getElementById("hourHand").setAttribute("transform",`rotate(${(h%12)*30+m*.5} 120 120)`)}
-function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function newQ(){locked=false;document.getElementById("next").disabled=true;document.getElementById("feedback").textContent="";let ms=choices(),h=1+Math.floor(Math.random()*12),m=ms[Math.floor(Math.random()*ms.length)];current={h,m,ans:frenchTime(h,m)};draw(h,m);
- let set=new Set([current.ans]);while(set.size<4){let hh=1+Math.floor(Math.random()*12),mm=ms[Math.floor(Math.random()*ms.length)];set.add(frenchTime(hh,mm))}
- let box=document.getElementById("answers");box.innerHTML="";shuffle([...set]).forEach(txt=>{let b=document.createElement("button");b.className="answer";b.lang="fr";b.textContent=txt;b.onclick=()=>check(b,txt);box.appendChild(b)})}
-function check(b,txt){if(locked)return;locked=true;tries++;if(txt===current.ans){score++;streak++;b.classList.add("correct");document.getElementById("feedback").textContent="✓ Rätt!"}else{streak=0;b.classList.add("wrong");document.getElementById("feedback").textContent="Inte riktigt. Rätt svar är: ";const correction=document.createElement("span");correction.lang="fr";correction.textContent=current.ans;document.getElementById("feedback").appendChild(correction);[...document.querySelectorAll(".answer")].forEach(x=>{if(x.textContent===current.ans)x.classList.add("correct")})}update();document.getElementById("next").disabled=false}
-function update(){scoreEl.textContent=score;triesEl.textContent=tries;streakEl.textContent=streak}
-const scoreEl=document.getElementById("score"),triesEl=document.getElementById("tries"),streakEl=document.getElementById("streak");
-document.getElementById("next").onclick=newQ;document.getElementById("reset").onclick=()=>{score=tries=streak=0;update();newQ()};
-document.querySelectorAll(".level").forEach(b=>b.onclick=()=>{level=+b.dataset.level;document.querySelectorAll(".level").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("levelLabel").textContent=level;newQ()});
-newQ();
+
+const minutesByLevel = [[], [0, 30], [0, 15, 30, 45],
+  [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]];
+const playButton = byId("playTime");
+const audioStatus = byId("audioStatus");
+const speech = window.speechSynthesis;
+const canSpeak = Boolean(speech && window.SpeechSynthesisUtterance);
+const answers = byId("answers");
+const feedback = byId("feedback");
+const nextButton = byId("next");
+const modeButtons = document.querySelectorAll(".mode");
+const levelButtons = document.querySelectorAll(".level");
+
+function stopAudio() {
+  if (!utterance) return;
+  utterance = undefined;
+  speech.cancel();
+}
+
+function playTime() {
+  stopAudio();
+  audioStatus.textContent = "";
+  const phrase = new SpeechSynthesisUtterance(frenchTime(current.hour, current.minute));
+  const voices = speech.getVoices();
+  const frenchVoice = voices.find(voice => /^fr-fr$/i.test(voice.lang))
+    || voices.find(voice => /^fr(?:[-_]|$)/i.test(voice.lang));
+  if (voices.length && !frenchVoice) {
+    audioStatus.textContent = "Ingen fransk röst hittades på den här enheten. Du kan växla till Läs av klockan.";
+    return;
+  }
+  phrase.lang = frenchVoice?.lang || "fr-FR";
+  if (frenchVoice) phrase.voice = frenchVoice;
+  phrase.rate = 0.9;
+  phrase.onend = () => {
+    if (utterance === phrase) utterance = undefined;
+  };
+  phrase.onerror = () => {
+    if (utterance !== phrase) return;
+    utterance = undefined;
+    audioStatus.textContent = "Det gick inte att spela upp tiden. Försök igen eller växla till Läs av klockan.";
+  };
+  utterance = phrase;
+  speech.speak(phrase);
+}
+
+function setClock(clock, {hour, minute}) {
+  clock.querySelector(".minute-hand").setAttribute("transform", `rotate(${minute * 6} 120 120)`);
+  clock.querySelector(".hour-hand").setAttribute("transform", `rotate(${(hour % 12) * 30 + minute * 0.5} 120 120)`);
+}
+
+function shuffle(items) {
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  return items;
+}
+
+function newQuestion() {
+  stopAudio();
+  audioStatus.textContent = canSpeak ? "" : "Den här webbläsaren saknar uppläsning. Du kan växla till Läs av klockan.";
+  locked = false;
+  nextButton.disabled = true;
+  feedback.textContent = "";
+  const times = Array.from({length: 12}, (_, i) => i + 1)
+    .flatMap(hour => minutesByLevel[level].map(minute => ({hour, minute})));
+  const options = shuffle(times).slice(0, 4);
+  current = options[0];
+  if (mode === "read") setClock(clockFace, current);
+  answers.replaceChildren();
+  shuffle(options).forEach((time, index) => {
+    const button = document.createElement("button");
+    button.className = "answer";
+    if (mode === "listen") {
+      const clock = clockFace.cloneNode(true);
+      clock.removeAttribute("id");
+      clock.setAttribute("aria-hidden", "true");
+      setClock(clock, time);
+      const label = document.createElement("span");
+      label.className = "clock-label";
+      label.textContent = String.fromCharCode(65 + index);
+      button.setAttribute("aria-label", `Klocka ${label.textContent}, ${time.hour}:${String(time.minute).padStart(2, "0")}`);
+      button.append(clock, label);
+    } else {
+      button.lang = "fr";
+      button.textContent = frenchTime(time.hour, time.minute);
+    }
+    button.dataset.correct = String(time === current);
+    button.onclick = () => checkAnswer(button, time);
+    answers.appendChild(button);
+  });
+}
+
+function checkAnswer(button, time) {
+  if (locked) return;
+  locked = true;
+  tries++;
+  if (time === current) {
+    score++;
+    streak++;
+    button.classList.add("correct");
+    feedback.textContent = "✓ Rätt!";
+  } else {
+    streak = 0;
+    button.classList.add("wrong");
+    const correctButton = answers.querySelector('[data-correct="true"]');
+    correctButton.classList.add("correct");
+    if (mode === "listen") {
+      feedback.textContent = `Inte riktigt. Rätt svar är klocka ${correctButton.querySelector(".clock-label").textContent}.`;
+    } else {
+      feedback.textContent = "Inte riktigt. Rätt svar är: ";
+      const correction = document.createElement("span");
+      correction.lang = "fr";
+      correction.textContent = frenchTime(current.hour, current.minute);
+      feedback.appendChild(correction);
+    }
+  }
+  updateScore();
+  nextButton.disabled = false;
+}
+
+function updateScore() {
+  byId("score").textContent = score;
+  byId("tries").textContent = tries;
+  byId("streak").textContent = streak;
+}
+
+playButton.disabled = !canSpeak;
+playButton.onclick = playTime;
+nextButton.onclick = newQuestion;
+byId("reset").onclick = () => {
+  score = tries = streak = 0;
+  updateScore();
+  newQuestion();
+};
+modeButtons.forEach(button => {
+  button.onclick = () => {
+    mode = button.dataset.mode;
+    const listening = mode === "listen";
+    modeButtons.forEach(item => {
+      item.classList.toggle("active", item === button);
+      item.setAttribute("aria-pressed", String(item === button));
+    });
+    byId("gameGrid").classList.toggle("listening", listening);
+    byId("readClock").hidden = listening;
+    byId("readPrompt").hidden = listening;
+    byId("listenPrompt").hidden = !listening;
+    newQuestion();
+  };
+});
+levelButtons.forEach(button => {
+  button.onclick = () => {
+    level = Number(button.dataset.level);
+    levelButtons.forEach(item => item.classList.toggle("active", item === button));
+    byId("levelLabel").textContent = level;
+    newQuestion();
+  };
+});
+window.addEventListener("pagehide", stopAudio);
+newQuestion();
 </script>
 </body>
 </html>
