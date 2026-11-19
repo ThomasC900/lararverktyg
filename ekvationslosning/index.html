@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ekvationslösning · Lärverktyg</title>
-<meta name="description" content="Träna ekvationslösning steg för steg på tre nivåer. Matematik för årskurs 7 och repetition i årskurs 8–9, med återkoppling efter varje steg.">
+<meta name="description" content="Träna ekvationslösning steg för steg på fyra nivåer, även med obekanta i båda leden. För årskurs 7 och repetition i årskurs 8–9.">
 <link rel="canonical" href="https://thomasc900.github.io/lararverktyg/ekvationslosning/">
 <style>
 :root{font-family:system-ui,sans-serif;color:#122944;background:#f1f5fa;--blue:#102841;--gold:#eab94f;--line:#ced9e6}
@@ -22,7 +22,7 @@ header p:last-child{color:#dbe6f3;margin-bottom:0}
 main{padding-block:22px 36px}
 .panel{background:white;border:1px solid var(--line);border-radius:18px;padding:clamp(15px,4vw,26px);margin-bottom:16px;box-shadow:0 4px 14px #132c4810}
 h2{font-size:1.22rem;margin:0 0 12px}
-.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
 button,input{font:inherit}
 button{cursor:pointer}
 .level{border:1px solid var(--line);background:#f6f8fc;color:var(--blue);text-align:left;border-radius:11px;padding:10px 12px}
@@ -61,6 +61,7 @@ input{width:100%;border:1px solid #a5b7cc;border-radius:8px;padding:10px;text-al
 #feedback{min-height:1.5em;margin:12px 0 0;font-weight:650}
 .error{color:#9b2525}.good{color:#176239}
 [hidden]{display:none!important}
+@media(max-width:700px){.levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.levels{grid-template-columns:1fr}.level{display:flex;align-items:baseline;gap:8px}.level strong{white-space:nowrap}}
 header p:last-child{line-height:1.55}.exercise-guide{line-height:1.6}.exercise-guide summary{cursor:pointer;font-weight:750}.exercise-guide p:last-child{margin-bottom:0}
 </style>
@@ -72,13 +73,14 @@ header p:last-child{line-height:1.55}.exercise-guide{line-height:1.6}.exercise-g
 <a href="../algebra/">← Tillbaka till Algebra</a>
 <p class="brand">Lärverktyg · Algebra</p>
 <h1>Ekvationslösning</h1>
-<p>Träna på att lösa ekvationer steg för steg. Verktyget är främst anpassat för årskurs 7 och passar även för repetition i årskurs 8–9. Välj mellan tre nivåer och öva på att förenkla uttryck, utföra samma operation i båda leden och bestämma den obekanta.</p>
+<p>Träna på att lösa ekvationer steg för steg. Verktyget är främst anpassat för årskurs 7 och passar även för repetition i årskurs 8–9. Välj mellan fyra nivåer och öva på att förenkla uttryck, utföra samma operation i båda leden och bestämma den obekanta.</p>
 </div></header>
 <main class="wrap">
 <details class="panel exercise-guide">
 <summary>Så fungerar övningen</summary>
 <p>Lös varje ekvation genom att skriva de mellanled som efterfrågas. På de högre nivåerna behöver du först samla termer av samma typ. Du får återkoppling efter varje steg och kan följa både antalet lösta ekvationer och hur många du klarat i rad.</p>
 <p>Exempel: Ekvationen <span class="math">4x + 11 = 27</span> löses genom att först subtrahera 11 i båda leden, så att <span class="math">4x = 16</span>. Dividera sedan båda leden med 4. Lösningen är <span class="math">x = 4</span>.</p>
+<p>På nivå 4 finns den obekanta i båda leden. Samla först termer av samma typ om det behövs. Subtrahera sedan lika många obekanta från båda leden så att de försvinner från ledet som har färst.</p>
 </details>
 <section class="panel" aria-labelledby="levels-title">
 <h2 id="levels-title">Välj nivå</h2>
@@ -86,6 +88,7 @@ header p:last-child{line-height:1.55}.exercise-guide{line-height:1.6}.exercise-g
 <button class="level" type="button" data-level="1" aria-pressed="true"><strong>Nivå 1</strong><small>En variabelterm</small></button>
 <button class="level" type="button" data-level="2" aria-pressed="false"><strong>Nivå 2</strong><small>Två variabeltermer</small></button>
 <button class="level" type="button" data-level="3" aria-pressed="false"><strong>Nivå 3</strong><small>Fler termer att samla</small></button>
+<button class="level" type="button" data-level="4" aria-pressed="false"><strong>Nivå 4</strong><small>Obekanta i båda leden</small></button>
 </div>
 </section>
 <section class="panel" aria-labelledby="problem-title">
@@ -138,8 +141,60 @@ function expression(terms, variable) {
   }).join("");
 }
 
+function generateBothSides(variable) {
+  const smallerCoefficient = random(1, 4);
+  const difference = random(1, 4);
+  const largerCoefficient = smallerCoefficient + difference;
+  const solution = random(1, 8);
+  const isolated = difference * solution;
+  const largerSideConstant = random(1, 12);
+  const smallerSideConstant = largerSideConstant + isolated;
+  const largerSideIsLeft = pick([true, false]);
+  const largerSideName = largerSideIsLeft ? "vänsterledet" : "högerledet";
+  const smallerSideName = largerSideIsLeft ? "högerledet" : "vänsterledet";
+
+  function sides(largerSide, smallerSide) {
+    return largerSideIsLeft
+      ? {left: String(largerSide), right: String(smallerSide)}
+      : {left: String(smallerSide), right: String(largerSide)};
+  }
+
+  const largerTerms = [[largerCoefficient, true], [largerSideConstant, false]];
+  const smallerTerms = [[smallerCoefficient, true], [smallerSideConstant, false]];
+  const combined = sides(expression(largerTerms, variable), expression(smallerTerms, variable));
+  const steps = [];
+  const sideToSimplify = pick([null, largerSideName, smallerSideName]);
+  if (sideToSimplify) {
+    const terms = sideToSimplify === largerSideName ? largerTerms : smallerTerms;
+    const extra = pick([-2, -1, 1, 2].filter(value => value < terms[0][0]));
+    terms[0][0] -= extra;
+    terms.push([extra, true]);
+    steps.push({...combined, instruction: "Slå ihop termer av samma typ i " + sideToSimplify + "."});
+  }
+
+  const remaining = expression([[difference, true], [largerSideConstant, false]], variable);
+  steps.push({
+    ...sides(remaining, smallerSideConstant),
+    instruction: "Subtrahera lika många obekanta från båda leden så att de försvinner från " + smallerSideName + "."
+  });
+  steps.push({
+    ...sides(term(difference, variable), isolated),
+    instruction: "Gör samma ändring i båda leden så att variabeltermen står ensam i " + largerSideName + "."
+  });
+  if (difference > 1) {
+    steps.push({
+      ...sides(variable, solution),
+      instruction: "Dividera båda leden med talet framför variabeln så att den står ensam."
+    });
+  }
+
+  const start = sides(expression(largerTerms, variable), expression(smallerTerms, variable));
+  return {variable, start: start.left, right: start.right, steps};
+}
+
 function generate(level) {
   const variable = pick(["x", "x", "y"]);
+  if (level === 4) return generateBothSides(variable);
   const divisor = level === 1 && random(1, 3) === 1 ? random(2, 5) : 1;
   const coefficients = [divisor > 1 ? 1 : random(2, 7)];
   const constants = [nonzero()];
