@@ -1,46 +1,46 @@
 {
   "school": "Ölyckeskolan",
-  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-11-16&endDate=2026-11-22&lang=sv",
-  "week": 47,
+  "source": "https://menu.matildaplatform.com/api/menu?distributorId=6a5713fad6523cfd795c45ce&startDate=2026-11-23&endDate=2026-11-29&lang=sv",
+  "week": 48,
   "year": 2026,
-  "period": "16 november – 20 november 2026",
-  "updated": "2026-11-22",
+  "period": "23 november – 27 november 2026",
+  "updated": "2026-11-23",
   "monthly_green": "Rotselleri, rättika & clementin",
   "days": [
     {
-      "date": "2026-11-16",
+      "date": "2026-11-23",
       "day": "Måndag",
-      "date_label": "16 november",
-      "meal1": "Chili con carne med ris & kökets tillbehör",
-      "meal2": "Chili sin carne med bulgur"
+      "date_label": "23 november",
+      "meal1": "Spaghetti med köttfärssås",
+      "meal2": "Spaghetti med färssås"
     },
     {
-      "date": "2026-11-17",
+      "date": "2026-11-24",
       "day": "Tisdag",
-      "date_label": "17 november",
-      "meal1": "Panerad lax serveras med potatis & remouladsås",
-      "meal2": "Hemlagad morotsbiff serveras med bulgur och dillsås"
+      "date_label": "24 november",
+      "meal1": "Ost- och broccolisoppa, serveras med bröd och krämiga pålägg",
+      "meal2": "Grönsakssoppa med bröd och krämiga pålägg"
     },
     {
-      "date": "2026-11-18",
+      "date": "2026-11-25",
       "day": "Onsdag",
-      "date_label": "18 november",
-      "meal1": "Mexicosoppa med sojafärs serveras med bröd och krämiga pålägg",
-      "meal2": "Sötpotatissoppa med hembakat bröd och krämiga pålägg"
+      "date_label": "25 november",
+      "meal1": "Butter chicken med basmatiris",
+      "meal2": "Butter pannoumi med basmatiris"
     },
     {
-      "date": "2026-11-19",
+      "date": "2026-11-26",
       "day": "Torsdag",
-      "date_label": "19 november",
-      "meal1": "Biff med bambuskott serveras med ris",
-      "meal2": "Soja stripes med bambuskott serveras med ris"
+      "date_label": "26 november",
+      "meal1": "Lasagnette med tomat och ost",
+      "meal2": "Hirsbiff med potatis"
     },
     {
-      "date": "2026-11-20",
+      "date": "2026-11-27",
       "day": "Fredag",
-      "date_label": "20 november",
-      "meal1": "Burgare med bröd, klyftpotatis, sallad & dressing",
-      "meal2": "Falafelburgare, bröd, dressing, klyftpotatis"
+      "date_label": "27 november",
+      "meal1": "Pulled pork med bröd, rostad potatis, dressing & grönsaker",
+      "meal2": "Kebab med bröd, rostad potatis, dressing & grönsaker"
     }
   ]
 }
