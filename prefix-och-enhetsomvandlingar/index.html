@@ -8,9 +8,9 @@
   <link rel="canonical" href="https://thomasc900.github.io/lararverktyg/prefix-och-enhetsomvandlingar/">
   <link rel="icon" href="../favicon.png" type="image/png" sizes="96x96">
   <link rel="stylesheet" href="../assets/lararverktyg.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
   <script data-goatcounter="https://lararverktyg.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-  <script src="tool.js" defer></script>
+  <script src="tool.js?v=2" defer></script>
 </head>
 <body class="lv-page">
   <header class="lv-header">
@@ -110,6 +110,33 @@
           <button type="button" id="stop" class="lv-btn-secondary">Avsluta träningen</button>
         </div>
       </form>
+
+      <div class="practice-support">
+        <section aria-labelledby="practice-prefix-title">
+          <h3 id="practice-prefix-title">Prefixraden</h3>
+          <div id="practice-ladder" class="ladder" aria-label="Prefix från störst till minst"></div>
+        </section>
+        <section aria-labelledby="place-value-title">
+          <h3 id="place-value-title">Laborera i positionssystemet</h3>
+          <p>Uppgiftens tal står i fältet. Placera talet och flytta siffrorna ett steg i taget. Decimaltecknet står kvar.</p>
+          <form id="place-value-form" class="place-value-entry">
+            <label for="place-value-input">Tal att placera</label>
+            <div class="place-value-controls">
+              <input id="place-value-input" class="lv-input" type="text" inputmode="decimal" autocomplete="off" maxlength="24">
+              <button class="lv-btn-primary">Placera talet</button>
+            </div>
+          </form>
+          <div class="place-value-scroll">
+            <div id="place-value-grid" class="place-value-grid" aria-label="Positionssystem"></div>
+          </div>
+          <p id="place-value-status" class="place-value-status" role="status"></p>
+          <div class="place-value-controls">
+            <button type="button" id="shift-left" class="lv-btn-secondary" disabled>← Flytta åt vänster</button>
+            <button type="button" id="shift-right" class="lv-btn-secondary" disabled>Flytta åt höger →</button>
+            <button type="button" id="reset-place-value" class="lv-btn-secondary" disabled>Återställ</button>
+          </div>
+        </section>
+      </div>
     </section>
 
     <section id="result" class="lv-card panel result" hidden>

@@ -159,6 +159,7 @@ function showTask() {
   $("next").hidden = true;
   $("feedback").textContent = "";
   $("feedback").className = "feedback";
+  preparePlaceValue(value);
   $("answer").focus();
 }
 
@@ -197,9 +198,91 @@ function nextTask() {
   showView("result");
 }
 
+const maxWholeDigits = 9;
+const maxFractionDigits = 8;
+let placedValue = null;
+let movedValue = null;
+let leftmostPower = 3;
+let rightmostPower = -3;
+
+function preparePlaceValue(value) {
+  $("place-value-input").value = format(value);
+  placedValue = movedValue = null;
+  leftmostPower = 3;
+  rightmostPower = -3;
+  renderPlaceValue();
+  $("place-value-grid").parentElement.scrollLeft = 0;
+}
+
+function fitsPlaceValue(value) {
+  const [whole, fraction = ""] = value.split(".");
+  return whole.length <= maxWholeDigits && fraction.length <= maxFractionDigits;
+}
+
+function renderPlaceValue() {
+  const [whole, fraction = ""] = (movedValue ?? "").split(".");
+  leftmostPower = Math.max(leftmostPower, whole.length - 1);
+  rightmostPower = Math.min(rightmostPower, -fraction.length);
+
+  const grid = $("place-value-grid");
+  const cells = [];
+  const columns = [];
+  for (let power = leftmostPower; power >= rightmostPower; power--) {
+    const cell = document.createElement("div");
+    cell.className = "place-value-column";
+    const label = document.createElement("span");
+    label.textContent = format(shiftDecimal("1", power));
+    const digit = document.createElement("b");
+    digit.textContent = power >= 0 ? whole.at(-power - 1) ?? "" : fraction[-power - 1] ?? "";
+    cell.append(label, digit);
+    cells.push(cell);
+    columns.push(Math.abs(power) >= 6 ? "minmax(3.4rem, 1fr)" : "minmax(var(--place-column-min), 1fr)");
+    if (power === 0) {
+      const comma = document.createElement("span");
+      comma.className = "place-value-comma";
+      comma.textContent = ",";
+      comma.setAttribute("aria-hidden", "true");
+      cells.push(comma);
+      columns.push("1rem");
+    }
+  }
+
+  grid.style.gridTemplateColumns = columns.join(" ");
+  grid.replaceChildren(...cells);
+  $("place-value-status").textContent = movedValue === null ? "" : "Talet i positionssystemet är " + format(movedValue) + ".";
+  $("shift-left").disabled = movedValue === null || !fitsPlaceValue(shiftDecimal(movedValue, 1));
+  $("shift-right").disabled = movedValue === null || !fitsPlaceValue(shiftDecimal(movedValue, -1));
+  $("reset-place-value").disabled = movedValue === null;
+}
+
+function movePlaceValue(power) {
+  movedValue = shiftDecimal(movedValue, power);
+  renderPlaceValue();
+}
+
 for (const button of document.querySelectorAll("[data-view]")) {
   button.addEventListener("click", () => showView(button.dataset.view));
 }
+
+$("practice-ladder").append(...ladderCells.map(cell => cell.cloneNode(true)));
+$("place-value-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const value = normalizeDecimal($("place-value-input").value);
+  if (value === null || !fitsPlaceValue(value)) {
+    $("place-value-status").textContent = "Skriv ett tal med högst nio heltalssiffror och åtta decimaler.";
+    $("place-value-input").focus();
+    return;
+  }
+  placedValue = movedValue = value;
+  renderPlaceValue();
+});
+$("shift-left").addEventListener("click", () => movePlaceValue(1));
+$("shift-right").addEventListener("click", () => movePlaceValue(-1));
+$("reset-place-value").addEventListener("click", () => {
+  movedValue = placedValue;
+  $("place-value-input").value = format(placedValue);
+  renderPlaceValue();
+});
 
 $("demo-base").append(...bases.map((base, index) => new Option(base.name, index)));
 fillDemoUnits();
