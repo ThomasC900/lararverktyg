@@ -30,8 +30,8 @@ button { font-weight: 700; }
 .ladder b { align-self: center; line-height: 1.05; }
 .ladder span { font-weight: 700; font-size: 1.2em; }
 .ladder small { font-size: .9em; }
-.ladder .between { background: #fff3d5; }
-.ladder .endpoint {
+.example .ladder .between { background: #fff3d5; }
+.example .ladder .endpoint {
   background: var(--lv-blue);
   color: white;
   border-color: var(--lv-blue);
@@ -42,6 +42,7 @@ button { font-weight: 700; }
 .rules b { color: var(--lv-blue); }
 .rules p { margin: 4px 0 0; }
 .example { background: #f4f7fb; border: 1px solid var(--lv-border); border-radius: 12px; padding: 16px; }
+.example .ladder { margin-top: 12px; }
 .demo-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
 .demo-controls label { display: grid; gap: 4px; font-weight: 700; }
 .lv-input { color: var(--lv-text); padding: 8px 10px; }

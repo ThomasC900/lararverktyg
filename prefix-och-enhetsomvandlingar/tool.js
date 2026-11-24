@@ -13,7 +13,8 @@ const bases = [
   { name: "liter", symbol: "l" },
   { name: "gram", symbol: "g" }
 ];
-const ladderCells = [...$("ladder").children];
+const prefixCells = [...$("ladder").children];
+const demoCells = prefixCells.map(cell => cell.cloneNode(true));
 let tasks = [];
 let index = 0;
 let firstTry = 0;
@@ -71,7 +72,7 @@ function renderDemo() {
   const to = prefixes[$("demo-to").selectedIndex];
   const power = from.power - to.power;
   const value = normalizeDecimal($("demo-value").value);
-  for (const cell of ladderCells) {
+  for (const cell of demoCells) {
     const cellPower = Number(cell.dataset.power);
     cell.classList.toggle("endpoint", cellPower === from.power || cellPower === to.power);
     cell.classList.toggle("between", cellPower > Math.min(from.power, to.power) && cellPower < Math.max(from.power, to.power));
@@ -264,7 +265,8 @@ for (const button of document.querySelectorAll("[data-view]")) {
   button.addEventListener("click", () => showView(button.dataset.view));
 }
 
-$("practice-ladder").append(...ladderCells.map(cell => cell.cloneNode(true)));
+$("practice-ladder").append(...prefixCells.map(cell => cell.cloneNode(true)));
+$("demo-ladder").append(...demoCells);
 $("place-value-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const value = normalizeDecimal($("place-value-input").value);
