@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prefix och enhetsomvandlingar – Thomas Lärverktyg</title>
+  <meta name="description" content="Lär dig vad kilo, hekto, deka, deci, centi och milli betyder. Träna sedan på att omvandla enheter för meter, liter och gram.">
+  <link rel="canonical" href="https://thomasc900.github.io/lararverktyg/prefix-och-enhetsomvandlingar/">
+  <link rel="icon" href="../favicon.png" type="image/png" sizes="96x96">
+  <link rel="stylesheet" href="../assets/lararverktyg.css">
+  <link rel="stylesheet" href="style.css">
+  <script data-goatcounter="https://lararverktyg.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <script src="tool.js" defer></script>
+</head>
+<body class="lv-page">
+  <header class="lv-header">
+    <div class="lv-header-inner">
+      <a class="lv-back" href="../">← Tillbaka till lärverktyg</a>
+      <div class="lv-title-block">
+        <h1 class="lv-title">Prefix och enhetsomvandlingar</h1>
+        <p class="lv-subtitle">Utforska prefixen och träna på att omvandla meter, liter och gram.</p>
+      </div>
+      <a class="lv-header-logo" href="../" aria-label="Thomas Lärverktyg – startsidan">
+        <img src="../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg">
+      </a>
+    </div>
+  </header>
+
+  <main class="lv-main lv-content-narrow">
+    <section id="intro" class="lv-card panel">
+      <h2 tabindex="-1">Så fungerar prefix</h2>
+      <p>Ett prefix sätts framför enhetens namn och visar hur stor enheten är. Kilo betyder 1 000, så 1 kilometer är 1 000 meter. Centi betyder en hundradel, så 1 centimeter är 0,01 meter. Samma prefix betyder lika mycket oavsett enhet.</p>
+
+      <div id="ladder" class="ladder" aria-label="Prefix från störst till minst">
+        <div data-power="3"><b>kilo</b><span>k</span><small>1 000</small></div>
+        <div data-power="2"><b>hekto</b><span>h</span><small>100</small></div>
+        <div data-power="1"><b>deka</b><span>da</span><small>10</small></div>
+        <div data-power="0"><b>utan prefix</b><span>–</span><small>1</small></div>
+        <div data-power="-1"><b>deci</b><span>d</span><small>0,1</small></div>
+        <div data-power="-2"><b>centi</b><span>c</span><small>0,01</small></div>
+        <div data-power="-3"><b>milli</b><span>m</span><small>0,001</small></div>
+      </div>
+      <div class="rules">
+        <div><b>Mot en mindre enhet →</b><p>Multiplicera talet med 10 för varje steg åt höger i raden. Två steg ger × 100.</p></div>
+        <div><b>← Mot en större enhet</b><p>Dividera talet med 10 för varje steg åt vänster i raden. Tre steg ger ÷ 1 000.</p></div>
+      </div>
+
+      <form id="demo" class="example">
+        <h3>Prova en omvandling</h3>
+        <div class="demo-controls">
+          <label>Grundenhet<select id="demo-base" class="lv-input"></select></label>
+          <label>Tal<input id="demo-value" class="lv-input" type="text" inputmode="decimal" value="2,5" maxlength="18" autocomplete="off"></label>
+          <label>Från<select id="demo-from" class="lv-input"></select></label>
+          <label>Till<select id="demo-to" class="lv-input"></select></label>
+          <button type="button" id="swap" class="lv-btn-secondary">Byt håll ↔</button>
+        </div>
+        <output id="demo-result" class="demo-result"></output>
+      </form>
+      <div class="actions">
+        <button type="button" data-view="setup" class="lv-btn-primary">Gå vidare till träningen →</button>
+        <a class="related" href="../multiplikation-division-10-100-1000/">× och ÷ med 10, 100 och 1 000</a>
+      </div>
+    </section>
+
+    <section id="setup" class="lv-card panel" hidden>
+      <h2 tabindex="-1">Ställ in träningen</h2>
+      <form id="settings">
+        <fieldset aria-describedby="prefix-help">
+          <legend>Prefix</legend>
+          <p id="prefix-help" class="hint">Välj minst två alternativ. Välj även ”Utan prefix” om du vill träna med exempelvis m, l eller g.</p>
+          <div id="prefix-choices" class="choices"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Grundenheter</legend>
+          <div id="base-choices" class="choices"></div>
+        </fieldset>
+        <label class="count">Antal uppgifter
+          <select id="count" class="lv-input">
+            <option>10</option>
+            <option selected>15</option>
+            <option>20</option>
+            <option>30</option>
+          </select>
+        </label>
+        <p id="settings-feedback" class="bad" role="alert" hidden></p>
+        <div class="actions">
+          <button class="lv-btn-primary">Starta träningen →</button>
+          <button type="button" data-view="intro" class="lv-btn-secondary">← Genomgången</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="practice" class="lv-card panel" hidden aria-label="Träning">
+      <div class="practice-top"><span id="question-count"></span><span id="streak"></span></div>
+      <progress id="progress" aria-label="Avklarade uppgifter"></progress>
+      <h2 id="problem" class="problem"></h2>
+      <form id="answer-form">
+        <div class="answer-box">
+          <label for="answer">Ditt svar</label>
+          <div class="answer-line">
+            <input id="answer" class="lv-input" type="text" inputmode="decimal" autocomplete="off" maxlength="28" aria-describedby="problem answer-unit">
+            <b id="answer-unit"></b>
+          </div>
+        </div>
+        <p id="feedback" class="feedback" role="status"></p>
+        <div class="actions practice-actions">
+          <button id="check" class="lv-btn-primary">Rätta</button>
+          <button type="button" id="show-answer" class="lv-btn-secondary">Visa svaret</button>
+          <button type="button" id="next" class="lv-btn-next" hidden>Nästa uppgift <span class="lv-next-arrow">→</span></button>
+          <button type="button" id="stop" class="lv-btn-secondary">Avsluta träningen</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="result" class="lv-card panel result" hidden>
+      <h2 tabindex="-1">Träningen är klar!</h2>
+      <p id="score" class="score"></p>
+      <p id="summary"></p>
+      <div class="actions practice-actions">
+        <button type="button" data-view="setup" class="lv-btn-primary">Träna igen</button>
+        <button type="button" data-view="intro" class="lv-btn-secondary">← Genomgången</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
