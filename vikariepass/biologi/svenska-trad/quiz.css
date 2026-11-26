@@ -1,0 +1,62 @@
+main { max-width: 1080px; }
+.panel { padding: clamp(16px, 3vw, 28px); }
+.panel p { line-height: 1.55; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.actions select { width: auto; padding: 6px 10px; }
+button, select { font: inherit; min-height: 44px; }
+.stats {
+  margin: 0 0 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.stats div { background: #eef3f7; border-radius: 8px; text-align: center; padding: 9px 4px; }
+.stats dt { font-size: .9rem; color: var(--muted); }
+.stats dd { margin: 3px 0 0; font-weight: 700; color: var(--blue); font-size: 1.12rem; }
+.photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.photo {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 6px 9px;
+  background: #f7fafc;
+  border: 1px solid var(--border);
+  color: var(--blue);
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: zoom-in;
+}
+.photo:hover { border-color: var(--blue); }
+.photo img {
+  display: block;
+  width: 100%;
+  height: clamp(130px, 25vw, 300px);
+  object-fit: contain;
+  background: #e8eef2;
+  border-radius: 4px;
+}
+.answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0 0; }
+.answers button { font-weight: 700; }
+.answers button[aria-disabled="true"] { cursor: default; }
+.answers button.correct { background: #e6f5e9; color: #185435; border-color: #2b7650; }
+.answers button.wrong { background: #fbe9e7; color: #872c27; border-color: #a44740; }
+.feedback:empty { margin: 0; }
+.feedback:not(:empty) { padding: 10px 12px; background: #eef3f7; border-radius: 8px; }
+.credits { font-size: .9rem; }
+#photo-dialog {
+  max-width: min(94vw, 1000px);
+  max-height: 94vh;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  color: var(--blue);
+}
+#photo-dialog::backdrop { background: #142635cc; }
+#large-photo { display: block; max-width: 100%; max-height: 78vh; margin: auto; object-fit: contain; }
+.dialog-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+@media (max-width: 540px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .photos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .photo:first-child { grid-column: 1 / -1; }
+  .photo:first-child img { height: 220px; }
+}
