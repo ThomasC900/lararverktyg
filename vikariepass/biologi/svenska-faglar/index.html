@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Svenska fåglar · Thomas Lärverktyg</title>
+  <meta name="description" content="Känn igen vanliga svenska fåglar på foton av hela fågeln, huvudet och fjäderdräkten. Ett digitalt vikariepass i biologi för åk 7–9.">
+  <link rel="icon" href="../../../favicon.png" type="image/png">
+  <link rel="stylesheet" href="../../sidor.css">
+  <link rel="stylesheet" href="../../../assets/lararverktyg.css">
+  <link rel="stylesheet" href="../bildquiz.css?v=1">
+  <script data-goatcounter="https://lararverktyg.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+  <script src="quiz.js" defer></script>
+  <script src="../bildquiz.js?v=1" defer></script>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="brand-logo"><img src="../../../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></div>
+      <div>
+        <h1>Svenska fåglar</h1>
+        <p class="intro">Vikariepass i biologi · Åk 7–9</p>
+      </div>
+    </div>
+  </header>
+  <main>
+    <a class="back-link" href="../">← Tillbaka till biologipassen</a>
+    <section class="lv-card panel" id="setup">
+      <h2>Vilken fågel är det?</h2>
+      <p>Titta på hela fågeln. Jämför sedan huvudet, näbben och fjäderdräkten och välj ett av de fyra svaren. Du kan klicka på en bild för att förstora den.</p>
+      <form id="settings" class="actions">
+        <label for="length">Antal frågor</label>
+        <select id="length" class="lv-input">
+          <option value="20" selected>20 frågor</option>
+          <option value="8">8 frågor</option>
+        </select>
+        <button class="lv-btn-primary" type="submit">Starta passet</button>
+      </form>
+      <noscript><p>Övningen behöver JavaScript för att visa frågor och återkoppling.</p></noscript>
+    </section>
+    <section class="lv-card panel" id="exercise" aria-labelledby="question" hidden>
+      <dl class="stats">
+        <div><dt>Fråga</dt><dd id="position"></dd></div>
+        <div><dt>Antal rätt</dt><dd id="score">0</dd></div>
+        <div><dt>Rätt i rad</dt><dd id="streak">0</dd></div>
+        <div><dt>Bästa svit</dt><dd id="best">0</dd></div>
+      </dl>
+      <h2 id="question" tabindex="-1">Vilken fågel är det?</h2>
+      <div class="photos" id="photos"></div>
+      <div class="answers" id="answers" role="group" aria-label="Svarsalternativ"></div>
+      <p class="feedback" id="feedback" role="status"></p>
+      <button class="lv-btn-next" id="next" type="button" hidden>Nästa fråga</button>
+    </section>
+    <section class="lv-card panel" id="summary" aria-labelledby="summary-title" hidden>
+      <h2 id="summary-title" tabindex="-1">Passet är klart!</h2>
+      <p id="result"></p>
+      <p id="result-best"></p>
+      <div class="actions">
+        <button class="lv-btn-primary" id="again" type="button">Spela igen</button>
+        <button class="lv-btn-secondary" id="change" type="button">Ändra antal frågor</button>
+      </div>
+    </section>
+    <p class="credits"><a href="bildkallor.html">Bildkällor och licenser</a></p>
+  </main>
+  <dialog id="photo-dialog" aria-labelledby="photo-title">
+    <div class="dialog-bar">
+      <strong id="photo-title"></strong>
+      <form method="dialog"><button class="lv-btn-secondary" type="submit" autofocus>Stäng</button></form>
+    </div>
+    <img id="large-photo" alt="">
+  </dialog>
+</body>
+</html>
