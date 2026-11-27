@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Träna på sammansatta ord och särskrivning. Rätta ett skolanslag i ett digitalt vikariepass i svenska för åk 7–9.">
+  <title>Ord som hör ihop · Thomas Lärverktyg</title>
+  <link rel="icon" href="../../../favicon.png" type="image/png">
+  <link rel="stylesheet" href="../../sidor.css">
+  <link rel="stylesheet" href="../../../assets/lararverktyg.css">
+  <link rel="stylesheet" href="sarskrivning.css">
+  <script data-goatcounter="https://lararverktyg.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+  <script src="sarskrivning.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="brand-logo"><img src="../../../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></div>
+      <div>
+        <h1>Ord som hör ihop</h1>
+        <p class="intro">Särskrivning · Vikariepass i svenska · Åk 7–9</p>
+      </div>
+    </div>
+  </header>
+  <main class="lesson">
+    <a class="back-link" href="../">← Tillbaka till svenskpassen</a>
+    <p class="lesson-intro">Upptäck vad ett mellanslag kan göra med betydelsen. Träna sedan på att skriva ihop ord och rätta ett skolanslag. Passet tar cirka 35 minuter.</p>
+    <noscript><p>Aktivera JavaScript för att kunna göra övningarna.</p></noscript>
+    <p id="progress" class="progress">Del 1 av 5</p>
+
+    <section id="discover" class="lv-card panel" aria-labelledby="discover-title">
+      <h2 id="discover-title" tabindex="-1">Upptäck skillnaden</h2>
+      <div id="discover-quiz"></div>
+    </section>
+
+    <section id="guide" class="lv-card panel" aria-labelledby="guide-title" hidden>
+      <h2 id="guide-title" tabindex="-1">Lär dig knepet</h2>
+      <p>En <strong>särskrivning</strong> uppstår när du delar ett sammansatt ord med ett mellanslag. Läs hela meningen och fråga dig vad orden betyder tillsammans.</p>
+      <div class="examples">
+        <article>
+          <h3>En skolväska</h3>
+          <p><em>Skol-</em> och <em>väska</em> bildar tillsammans ett ord för en sorts väska. Skriv ihop delarna.</p>
+        </article>
+        <article>
+          <h3>En tung skolväska</h3>
+          <p><em>Tung</em> beskriver väskan. Skriv <em>tung</em> för sig och behåll <em>skolväska</em> som ett ord.</p>
+        </article>
+      </div>
+      <p>Prova att förklara ordet med <em>för</em> eller <em>till</em>. En <strong>skolväska</strong> är en väska <em>för</em> skolan. Knepet kan hjälpa dig att se hur delarna hör ihop.</p>
+      <button type="button" class="lv-btn-next" id="start-practice">Börja träna</button>
+    </section>
+
+    <section id="practice" class="lv-card panel" aria-labelledby="practice-title" hidden>
+      <h2 id="practice-title" tabindex="-1">Träna i meningar</h2>
+      <p>Läs meningen och välj den skrivning som passar.</p>
+      <dl class="stats">
+        <div><dt>Antal rätt</dt><dd id="correct-count">0</dd></div>
+        <div><dt>Antal rätt i rad</dt><dd id="streak-count">0</dd></div>
+      </dl>
+      <div id="practice-quiz"></div>
+      <details><summary>Visa knepet igen</summary><p>Skriv ihop delarna när de bildar ett sammansatt ord, som <em>skolväska</em>. Skriv beskrivande ord för sig, som <em>tung</em> i <em>en tung skolväska</em>.</p></details>
+    </section>
+
+    <section id="notice" class="lv-card panel" aria-labelledby="notice-title" hidden>
+      <h2 id="notice-title" tabindex="-1">Rätta skolans anslag</h2>
+      <p>Klicka på de inramade uttryck du vill skriva ihop. Klicka igen för att lägga tillbaka mellanslaget. Behåll mellanslagen där orden ska stå för sig.</p>
+      <article class="notice" aria-labelledby="poster-title">
+        <h3 id="poster-title">Bokloppis på fredag</h3>
+        <div id="poster"></div>
+      </article>
+      <button type="button" class="lv-btn-primary" id="check-notice">Kontrollera anslaget</button>
+      <div id="notice-feedback" class="feedback" role="status"></div>
+      <button type="button" class="lv-btn-next" id="start-exit" hidden>Till sista uppgiften</button>
+    </section>
+
+    <section id="exit" class="lv-card panel" aria-labelledby="exit-title" hidden>
+      <h2 id="exit-title" tabindex="-1">Avsluta på egen hand</h2>
+      <p>Skriv av meningen. Ändra mellanslagen där det behövs.</p>
+      <p class="sentence">Vi hängde vår färg glada affisch på anslags tavlan.</p>
+      <form id="exit-form">
+        <label for="correction">Din rättade mening</label>
+        <textarea id="correction" class="lv-input" rows="2" required></textarea>
+        <label for="explanation">Förklara ett av dina val med egna ord.</label>
+        <textarea id="explanation" class="lv-input" rows="3" required></textarea>
+        <button type="submit" class="lv-btn-primary" id="check-exit">Kontrollera meningen</button>
+      </form>
+      <div id="exit-feedback" class="feedback" role="status"></div>
+      <button type="button" class="lv-btn-next" id="finish-lesson" hidden>Avsluta passet</button>
+    </section>
+
+    <section id="finished" class="lv-card panel" aria-labelledby="finished-title" hidden>
+      <h2 id="finished-title" tabindex="-1">Passet är klart</h2>
+      <p id="result"></p>
+      <h3>Din förklaring</h3>
+      <p id="final-explanation" class="written-answer"></p>
+      <button type="button" class="lv-btn-secondary" id="restart">Börja om</button>
+    </section>
+  </main>
+</body>
+</html>
