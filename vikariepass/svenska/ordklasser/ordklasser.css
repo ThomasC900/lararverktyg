@@ -1,0 +1,147 @@
+.guide-grid, .stats, .answers {
+  display: grid;
+  gap: 14px;
+}
+
+.guide-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.guide-card, .panel {
+  padding: clamp(16px, 3vw, 26px);
+  line-height: 1.5;
+}
+
+.guide-card h3, .comparison h3 {
+  margin: 0;
+  color: var(--blue);
+}
+
+.guide-card p:last-child, .comparison p:last-child {
+  margin-bottom: 0;
+}
+
+.guide-card strong {
+  display: block;
+}
+
+.examples {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.comparison {
+  margin: 18px 0;
+  background: #eef5fa;
+}
+
+.training-link {
+  display: inline-block;
+  text-decoration: none;
+  line-height: 1.5;
+}
+
+.panel:not(.comparison) {
+  max-width: 880px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+select, button {
+  font: inherit;
+}
+
+select.lv-input {
+  padding: 9px 12px;
+}
+
+.stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 24px;
+  text-align: center;
+}
+
+.stats div {
+  padding: 8px;
+  border-radius: 9px;
+  background: #eef5fa;
+  color: var(--blue);
+}
+
+.stats dd {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.sentence {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+}
+
+mark {
+  padding: .08em .22em;
+  border-radius: .18em;
+  background: #ffebae;
+  color: inherit;
+  font-weight: 700;
+}
+
+.answers {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.answers button {
+  min-height: 48px;
+  border: 2px solid var(--border);
+}
+
+.answers button:enabled:hover {
+  border-color: var(--blue);
+}
+
+.answers button:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.answers button[data-state="correct"], .feedback[data-state="correct"] {
+  background: #e4f3ea;
+  border-color: #2d7d59;
+  color: #174d35;
+}
+
+.answers button[data-state="incorrect"], .feedback[data-state="incorrect"] {
+  background: #fbeaea;
+  border-color: #b84444;
+  color: #802727;
+}
+
+.feedback:empty {
+  margin: 0;
+}
+
+.feedback:not(:empty) {
+  padding: 12px 16px;
+  border-radius: 9px;
+}
+
+@media (max-width: 850px) {
+  .guide-grid, .answers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

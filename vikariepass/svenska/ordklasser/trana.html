@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ordklasser – träning · Thomas Lärverktyg</title>
+  <link rel="icon" href="../../../favicon.png" type="image/png">
+  <link rel="stylesheet" href="../../sidor.css">
+  <link rel="stylesheet" href="../../../assets/lararverktyg.css">
+  <link rel="stylesheet" href="ordklasser.css">
+  <script data-goatcounter="https://lararverktyg.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+  <script type="module" src="quiz.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="brand-logo"><img src="../../../assets/lararverktyg-logo.svg" alt="Thomas Lärverktyg"></div>
+      <div>
+        <h1>Träna ordklasser</h1>
+        <p class="intro">Vikariepass i svenska · Åk 7–9</p>
+      </div>
+    </div>
+  </header>
+  <main>
+    <a class="back-link" href="./">← Tillbaka till genomgången</a>
+    <section class="lv-card panel" id="setup">
+      <h2>Välj antal träningsord</h2>
+      <p>Läs meningen och välj ordklass för det markerade ordet.</p>
+      <form id="settings" class="actions">
+        <label for="length">Antal ord</label>
+        <select id="length" class="lv-input">
+          <option value="10">10 ord</option>
+          <option value="15" selected>15 ord</option>
+          <option value="20">20 ord</option>
+        </select>
+        <button class="lv-btn-primary" type="submit">Starta träningen</button>
+      </form>
+      <noscript><p>Träningen behöver JavaScript för att visa frågorna.</p></noscript>
+    </section>
+    <section class="lv-card panel" id="exercise" aria-labelledby="question" hidden>
+      <dl class="stats">
+        <div><dt>Fråga</dt><dd id="position"></dd></div>
+        <div><dt>Antal rätt</dt><dd id="score">0</dd></div>
+        <div><dt>Rätt i rad</dt><dd id="streak">0</dd></div>
+        <div><dt>Bästa svit</dt><dd id="best">0</dd></div>
+      </dl>
+      <h2 id="question">Vilken ordklass tillhör det markerade ordet?</h2>
+      <p id="sentence" class="sentence" tabindex="-1"></p>
+      <div class="answers" id="answers" role="group" aria-label="Ordklasser"></div>
+      <p class="feedback" id="feedback" role="status" tabindex="-1"></p>
+      <button class="lv-btn-next" id="next" type="button" hidden>Nästa ord</button>
+    </section>
+    <section class="lv-card panel" id="summary" aria-labelledby="summary-title" hidden>
+      <h2 id="summary-title" tabindex="-1">Passet är klart!</h2>
+      <p id="result"></p>
+      <p id="result-best"></p>
+      <div class="actions">
+        <button class="lv-btn-primary" id="again" type="button">Träna igen</button>
+        <button class="lv-btn-secondary" id="change" type="button">Ändra antal ord</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
